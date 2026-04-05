@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/cycling02/LocalMusicPlayer/compare/v1.0.0...v1.0.1) (2026-04-05)
+
+
+### 📝 文档
+
+* **ci:** 更新CI/CD文档，集成release-please自动化发布系统 ([5c39c27](https://github.com/cycling02/LocalMusicPlayer/commit/5c39c2705efbeac189e1c377f220e11624446c31))
+
 ## 1.0.0 (2026-04-05)
 
 
