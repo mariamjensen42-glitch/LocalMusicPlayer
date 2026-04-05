@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/cycling02/LocalMusicPlayer/compare/v1.0.1...v1.1.0) (2026-04-05)
+
+
+### ✨ 新功能
+
+* **statistics:** 添加播放统计功能及统计页面 ([e2c4488](https://github.com/cycling02/LocalMusicPlayer/commit/e2c448849219108a40e4e7007c93f7b329ef0758))
+* **ui:** 重构主窗口界面并新增播放器样式和全局转换器 ([49dc241](https://github.com/cycling02/LocalMusicPlayer/commit/49dc24117731bdaa89650c09755af69670f0e163))
+
 ## [1.0.1](https://github.com/cycling02/LocalMusicPlayer/compare/v1.0.0...v1.0.1) (2026-04-05)
 
 
