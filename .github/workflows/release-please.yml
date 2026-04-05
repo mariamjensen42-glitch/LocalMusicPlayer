@@ -1,0 +1,99 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  # 当 release-please 创建 release 后，触发构建
+  build-and-release:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: win-x64
+            artifact_name: LocalMusicPlayer-win-x64
+            asset_name: LocalMusicPlayer-win-x64.zip
+          - os: windows-latest
+            target: win-x86
+            artifact_name: LocalMusicPlayer-win-x86
+            asset_name: LocalMusicPlayer-win-x86.zip
+          - os: ubuntu-latest
+            target: linux-x64
+            artifact_name: LocalMusicPlayer-linux-x64
+            asset_name: LocalMusicPlayer-linux-x64.tar.gz
+          - os: macos-latest
+            target: osx-x64
+            artifact_name: LocalMusicPlayer-osx-x64
+            asset_name: LocalMusicPlayer-osx-x64.tar.gz
+          - os: macos-latest
+            target: osx-arm64
+            artifact_name: LocalMusicPlayer-osx-arm64
+            asset_name: LocalMusicPlayer-osx-arm64.tar.gz
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvlc-dev vlc
+
+      - name: Install macOS dependencies
+        if: matrix.os == 'macos-latest'
+        run: brew install vlc
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Publish
+        run: |
+          dotnet publish -c Release -r ${{ matrix.target }} --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o ./publish
+
+      - name: Create Windows archive
+        if: matrix.os == 'windows-latest'
+        run: Compress-Archive -Path ./publish/* -DestinationPath ./${{ matrix.asset_name }}
+
+      - name: Create Unix archive
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd ./publish
+          tar -czf ../${{ matrix.asset_name }} .
+          cd ..
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          files: ./${{ matrix.asset_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
