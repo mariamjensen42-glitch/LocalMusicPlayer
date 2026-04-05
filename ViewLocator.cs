@@ -16,6 +16,7 @@ public class ViewLocator : IDataTemplate
         {
             MainWindowViewModel => new Views.PlayerView(),
             SettingsViewModel => new Views.SettingsView(),
+            StatisticsViewModel => new Views.StatisticsView(),
             _ => CreateByConvention(param)
         };
     }

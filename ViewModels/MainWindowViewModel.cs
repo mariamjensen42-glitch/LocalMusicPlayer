@@ -18,6 +18,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IConfigurationService _configService;
     private readonly IScanService _scanService;
     private readonly ILyricsService _lyricsService;
+    private readonly IStatisticsService _statisticsService;
 
     private ViewModelBase _currentPage = null!;
 
@@ -181,8 +182,17 @@ public partial class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> NavigateToSettingsCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToLibraryCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToPlayerCommand { get; }
+    public ReactiveCommand<Unit, Unit> NavigateToStatisticsCommand { get; }
     public ReactiveCommand<Unit, Unit> ToggleQueuePanelCommand { get; }
     public ReactiveCommand<Unit, Unit> PlayAllCommand { get; }
+
+    private StatisticsViewModel? _statisticsViewModel;
+
+    public StatisticsViewModel? StatisticsViewModel
+    {
+        get => _statisticsViewModel;
+        set => this.RaiseAndSetIfChanged(ref _statisticsViewModel, value);
+    }
 
     private QueueViewModel? _queueViewModel;
 
@@ -201,7 +211,8 @@ public partial class MainWindowViewModel : ViewModelBase
         IWindowProvider windowProvider,
         IScanService scanService,
         IConfigurationService configService,
-        ILyricsService lyricsService)
+        ILyricsService lyricsService,
+        IStatisticsService statisticsService)
     {
         _musicPlayerService = musicPlayerService;
         _playlistService = playlistService;
@@ -210,6 +221,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _scanService = scanService;
         _configService = configService;
         _lyricsService = lyricsService;
+        _statisticsService = statisticsService;
 
         // 加载配置并自动扫描
         InitializeAsync();
@@ -233,9 +245,13 @@ public partial class MainWindowViewModel : ViewModelBase
         QueueViewModel.WhenAnyValue(x => x.IsPanelOpen)
             .Subscribe(_ => this.RaisePropertyChanged(nameof(IsQueuePanelOpen)));
 
+        // 创建 StatisticsViewModel
+        StatisticsViewModel = new StatisticsViewModel(statisticsService, musicLibraryService);
+
         NavigateToSettingsCommand = ReactiveCommand.Create(() => { CurrentPage = settingsViewModel; });
         NavigateToLibraryCommand = ReactiveCommand.Create(() => { CurrentPage = this; });
         NavigateToPlayerCommand = ReactiveCommand.Create(() => { CurrentPage = PlayerPageViewModel!; });
+        NavigateToStatisticsCommand = ReactiveCommand.Create(() => { CurrentPage = StatisticsViewModel!; });
         ToggleQueuePanelCommand = ReactiveCommand.Create(() =>
         {
             if (QueueViewModel != null)
@@ -257,7 +273,10 @@ public partial class MainWindowViewModel : ViewModelBase
             _playlistService.PlayNext();
             CurrentSong = _playlistService.CurrentSong;
             if (CurrentSong != null)
+            {
+                _statisticsService.RecordPlayStart(CurrentSong);
                 _musicPlayerService.Play(CurrentSong);
+            }
         });
 
         PlayCommand = ReactiveCommand.Create(() => _musicPlayerService.Resume());
@@ -269,7 +288,10 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 CurrentSong = _playlistService.CurrentSong;
                 if (CurrentSong != null)
+                {
+                    _statisticsService.RecordPlayStart(CurrentSong);
                     _musicPlayerService.Play(CurrentSong);
+                }
             }
         });
         PreviousCommand = ReactiveCommand.Create(() =>
@@ -278,7 +300,10 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 CurrentSong = _playlistService.CurrentSong;
                 if (CurrentSong != null)
+                {
+                    _statisticsService.RecordPlayStart(CurrentSong);
                     _musicPlayerService.Play(CurrentSong);
+                }
             }
         });
         MuteCommand = ReactiveCommand.Create(() =>
@@ -311,6 +336,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 }
 
                 CurrentSong = song;
+                _statisticsService.RecordPlayStart(song);
                 _musicPlayerService.Play(song);
                 IsPlaying = true;
             }
@@ -328,11 +354,15 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             Dispatcher.UIThread.Post(() =>
             {
+                _statisticsService.RecordPlayEnd();
                 if (_playlistService.PlayNext())
                 {
                     CurrentSong = _playlistService.CurrentSong;
                     if (CurrentSong != null)
+                    {
+                        _statisticsService.RecordPlayStart(CurrentSong);
                         _musicPlayerService.Play(CurrentSong);
+                    }
                 }
             });
         };

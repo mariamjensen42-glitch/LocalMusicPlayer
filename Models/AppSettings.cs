@@ -12,4 +12,19 @@ public class AppSettings
     public DateTime? LastScanTime { get; set; }
     public string Theme { get; set; } = "Dark";
     public string PlaybackMode { get; set; } = "Normal";
+
+    /// <summary>
+    /// 歌曲统计数据，Key 为文件路径
+    /// </summary>
+    public Dictionary<string, SongStatistics> SongStatistics { get; set; } = new();
+
+    /// <summary>
+    /// 总播放时长（毫秒）
+    /// </summary>
+    public long TotalPlayTimeMs { get; set; }
+
+    /// <summary>
+    /// 首次扫描日期，用于计算使用天数
+    /// </summary>
+    public DateTime? FirstScanDate { get; set; }
 }

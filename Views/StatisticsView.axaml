@@ -1,0 +1,388 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1000"
+             x:Class="LocalMusicPlayer.Views.StatisticsView"
+             x:DataType="vm:StatisticsViewModel">
+
+    <Design.DataContext>
+        <vm:StatisticsViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+        <!-- 紫粉渐变 -->
+        <LinearGradientBrush x:Key="PurplePinkGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Offset="0" Color="#FFA855F7" />
+            <GradientStop Offset="1" Color="#FFEC4899" />
+        </LinearGradientBrush>
+    </UserControl.Resources>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="20" Margin="32,0,32,32">
+            <!-- 页面头部 -->
+            <Grid Margin="0,0,0,32">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Statistics"
+                           Grid.Column="0"
+                           FontSize="32"
+                           FontWeight="Bold"
+                           FontFamily="Inter"
+                           Foreground="{StaticResource TextPrimaryBrush}" />
+                <TextBlock Text="Your listening habits and library overview"
+                           Grid.Column="1"
+                           FontSize="14"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           VerticalAlignment="Bottom"
+                           Margin="16,0,0,4" />
+            </Grid>
+
+            <!-- 音乐库统计卡片 -->
+            <Border Background="{StaticResource BgCardBrush}"
+                    CornerRadius="12"
+                    Padding="28"
+                    BorderBrush="{StaticResource BorderSubtleBrush}"
+                    BorderThickness="1">
+                <StackPanel Spacing="24">
+                    <!-- 头部区域 -->
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Border Width="40"
+                                Height="40"
+                                CornerRadius="10"
+                                Background="{StaticResource AccentPurpleBrush}">
+                            <TextBlock Text="&#xE8B7;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       Foreground="White"
+                                       FontSize="20"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Spacing="4" VerticalAlignment="Center">
+                            <TextBlock Text="Library Overview"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock Text="Your music collection at a glance"
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextSecondaryBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- 分隔线 -->
+                    <Border Height="1" Background="{StaticResource BgElement2Brush}" />
+
+                    <!-- 统计数据网格 -->
+                    <Border Background="{StaticResource BgPrimaryBrush}"
+                            CornerRadius="10"
+                            BorderBrush="{StaticResource BorderSubtleBrush}"
+                            BorderThickness="1"
+                            Padding="24,20">
+                        <Grid ColumnDefinitions="*,*,*,*">
+                            <!-- Songs -->
+                            <StackPanel Grid.Column="0" Spacing="6" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding LibraryStatistics.TotalSongs}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           FontFamily="Consolas, monospace"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Songs"
+                                           FontSize="12"
+                                           FontWeight="500"
+                                           Foreground="{StaticResource AccentPurpleBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                            <!-- Albums -->
+                            <StackPanel Grid.Column="1" Spacing="6" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding LibraryStatistics.TotalAlbums}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           FontFamily="Consolas, monospace"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Albums"
+                                           FontSize="12"
+                                           FontWeight="500"
+                                           Foreground="{StaticResource AccentPurpleBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                            <!-- Artists -->
+                            <StackPanel Grid.Column="2" Spacing="6" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding LibraryStatistics.TotalArtists}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           FontFamily="Consolas, monospace"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Artists"
+                                           FontSize="12"
+                                           FontWeight="500"
+                                           Foreground="{StaticResource AccentPurpleBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                            <!-- Duration -->
+                            <StackPanel Grid.Column="3" Spacing="6" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding LibraryStatistics.FormattedDuration}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           FontFamily="Consolas, monospace"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Duration"
+                                           FontSize="12"
+                                           FontWeight="500"
+                                           Foreground="{StaticResource AccentPurpleBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- 播放统计卡片 -->
+            <Border Background="{StaticResource BgCardBrush}"
+                    CornerRadius="12"
+                    Padding="28"
+                    BorderBrush="{StaticResource BorderSubtleBrush}"
+                    BorderThickness="1">
+                <StackPanel Spacing="24">
+                    <!-- 头部区域 -->
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Border Width="40"
+                                Height="40"
+                                CornerRadius="10"
+                                Background="{StaticResource AccentPinkBrush}">
+                            <TextBlock Text="&#xE15D;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       Foreground="White"
+                                       FontSize="20"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Spacing="4" VerticalAlignment="Center">
+                            <TextBlock Text="Playback Statistics"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock Text="Your listening activity"
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextSecondaryBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- 分隔线 -->
+                    <Border Height="1" Background="{StaticResource BgElement2Brush}" />
+
+                    <!-- 统计数据网格 -->
+                    <Border Background="{StaticResource BgPrimaryBrush}"
+                            CornerRadius="10"
+                            BorderBrush="{StaticResource BorderSubtleBrush}"
+                            BorderThickness="1"
+                            Padding="24,20">
+                        <Grid ColumnDefinitions="*,*,*,*">
+                            <!-- Total Plays -->
+                            <StackPanel Grid.Column="0" Spacing="6" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding TotalPlayCount}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           FontFamily="Consolas, monospace"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Total Plays"
+                                           FontSize="12"
+                                           FontWeight="500"
+                                           Foreground="{StaticResource AccentPinkBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                            <!-- Total Time -->
+                            <StackPanel Grid.Column="1" Spacing="6" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding FormattedTotalPlayTime}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           FontFamily="Consolas, monospace"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Time Listened"
+                                           FontSize="12"
+                                           FontWeight="500"
+                                           Foreground="{StaticResource AccentPinkBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                            <!-- Average Per Day -->
+                            <StackPanel Grid.Column="2" Spacing="6" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding AveragePlaysPerDay, StringFormat={}{0:F1}}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           FontFamily="Consolas, monospace"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Avg/Day"
+                                           FontSize="12"
+                                           FontWeight="500"
+                                           Foreground="{StaticResource AccentPinkBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                            <!-- Usage Days -->
+                            <StackPanel Grid.Column="3" Spacing="6" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding UsageDays}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           FontFamily="Consolas, monospace"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Days Used"
+                                           FontSize="12"
+                                           FontWeight="500"
+                                           Foreground="{StaticResource AccentPinkBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- 最常听歌曲排行榜卡片 -->
+            <Border Background="{StaticResource BgCardBrush}"
+                    CornerRadius="12"
+                    Padding="28"
+                    BorderBrush="{StaticResource BorderSubtleBrush}"
+                    BorderThickness="1">
+                <StackPanel Spacing="24">
+                    <!-- 头部区域 -->
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Border Width="40"
+                                Height="40"
+                                CornerRadius="10"
+                                Background="{StaticResource PurplePinkGradientBrush}">
+                            <TextBlock Text="&#xE8FA;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       Foreground="White"
+                                       FontSize="20"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Spacing="4" VerticalAlignment="Center">
+                            <TextBlock Text="Top Played Songs"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock Text="Your favorite tracks"
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextSecondaryBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- 分隔线 -->
+                    <Border Height="1" Background="{StaticResource BgElement2Brush}" />
+
+                    <!-- 排行榜列表 -->
+                    <ItemsControl ItemsSource="{Binding TopPlayedSongs}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource BgPrimaryBrush}"
+                                        CornerRadius="10"
+                                        BorderBrush="{StaticResource BorderSubtleBrush}"
+                                        BorderThickness="1"
+                                        Padding="16,12"
+                                        Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="40,56,*,Auto,Auto">
+                                        <!-- 排名徽章 -->
+                                        <Border Grid.Column="0"
+                                                Width="32"
+                                                Height="32"
+                                                CornerRadius="8"
+                                                Background="{StaticResource PurplePinkGradientBrush}"
+                                                VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Rank}"
+                                                       FontSize="14"
+                                                       FontWeight="Bold"
+                                                       Foreground="White"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" />
+                                        </Border>
+
+                                        <!-- 专辑封面 -->
+                                        <Border Grid.Column="1"
+                                                Width="40"
+                                                Height="40"
+                                                CornerRadius="6"
+                                                Background="{StaticResource BgElementBrush}"
+                                                VerticalAlignment="Center"
+                                                Margin="8,0">
+                                            <Image Source="{Binding Song.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                                   Stretch="UniformToFill" />
+                                        </Border>
+
+                                        <!-- 歌曲信息 -->
+                                        <StackPanel Grid.Column="2" Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Song.Title}"
+                                                       FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Song.Artist}"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+
+                                        <!-- 播放次数 -->
+                                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding PlayCount}"
+                                                       FontSize="16"
+                                                       FontWeight="Bold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       FontFamily="Consolas, monospace" />
+                                            <TextBlock Text="plays"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource TextMutedBrush}"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+
+                                        <!-- 最后播放时间 -->
+                                        <TextBlock Grid.Column="4"
+                                                   Text="{Binding FormattedLastPlayed}"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="16,0,0,0" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- 无数据提示 -->
+                    <Border Background="{StaticResource BgPrimaryBrush}"
+                            CornerRadius="10"
+                            BorderBrush="{StaticResource BorderSubtleBrush}"
+                            BorderThickness="1"
+                            Padding="24,32"
+                            IsVisible="{Binding !HasPlaybackData}">
+                        <StackPanel Spacing="8" HorizontalAlignment="Center">
+                            <TextBlock Text="&#xE15D;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="32"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="No playback data yet"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="Start playing some songs to build your statistics!"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -74,4 +74,20 @@ public class Song : ReactiveObject
         get => _isFavorite;
         set => this.RaiseAndSetIfChanged(ref _isFavorite, value);
     }
+
+    private int _playCount;
+
+    public int PlayCount
+    {
+        get => _playCount;
+        set => this.RaiseAndSetIfChanged(ref _playCount, value);
+    }
+
+    private DateTime? _lastPlayedTime;
+
+    public DateTime? LastPlayedTime
+    {
+        get => _lastPlayedTime;
+        set => this.RaiseAndSetIfChanged(ref _lastPlayedTime, value);
+    }
 }
