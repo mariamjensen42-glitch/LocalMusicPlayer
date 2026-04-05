@@ -1,0 +1,717 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="LocalMusicPlayer.Views.PlayerView"
+             x:DataType="vm:MainWindowViewModel">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <converters:TimeSpanToStringConverter x:Key="TimeSpanConverter" />
+        <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
+        <converters:SongIsPlayingConverter x:Key="SongIsPlayingConverter" />
+        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+
+        <!-- Purple-Pink Gradient Brush for Play Button -->
+        <LinearGradientBrush x:Key="PlayButtonGradient" StartPoint="0%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0" Color="#FFA855F7" />
+            <GradientStop Offset="1" Color="#FFEC4899" />
+        </LinearGradientBrush>
+
+        <!-- Progress Bar Gradient -->
+        <LinearGradientBrush x:Key="ProgressGradient" StartPoint="0%,0%" EndPoint="100%,0%">
+            <GradientStop Offset="0" Color="#FFA855F7" />
+            <GradientStop Offset="1" Color="#FFEC4899" />
+        </LinearGradientBrush>
+
+        <!-- 选中行背景色 -->
+        <SolidColorBrush x:Key="ActiveRowBgBrush" Color="#20A855F7" />
+        <SolidColorBrush x:Key="ActiveRowBorderBrushLocal" Color="#60A855F7" />
+
+        <!-- Slider样式 -->
+        <ControlTheme x:Key="MusicSliderTheme" TargetType="Slider">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Transparent" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Height="20" VerticalAlignment="Center" Background="Transparent">
+                        <Grid VerticalAlignment="Center">
+                            <Border Name="TrackBackground"
+                                    Background="#1AFFFFFF"
+                                    CornerRadius="3"
+                                    Height="5"
+                                    VerticalAlignment="Center" />
+                            <Track Name="PART_Track"
+                                   VerticalAlignment="Center"
+                                   IsDirectionReversed="False"
+                                   Orientation="Horizontal"
+                                   Minimum="{TemplateBinding Minimum}"
+                                   Maximum="{TemplateBinding Maximum}"
+                                   Value="{TemplateBinding Value, Mode=TwoWay}">
+                                <Track.DecreaseButton>
+                                    <RepeatButton Focusable="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate>
+                                                <Border CornerRadius="3"
+                                                        Height="5"
+                                                        VerticalAlignment="Center">
+                                                    <Border.Background>
+                                                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                                                            <GradientStop Offset="0" Color="#FFA855F7" />
+                                                            <GradientStop Offset="1" Color="#FFEC4899" />
+                                                        </LinearGradientBrush>
+                                                    </Border.Background>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.DecreaseButton>
+                                <Track.IncreaseButton>
+                                    <RepeatButton Focusable="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate>
+                                                <Border Background="Transparent"
+                                                        Height="5"
+                                                        VerticalAlignment="Center" />
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.IncreaseButton>
+                                <Track.Thumb>
+                                    <Thumb Width="12" Height="12">
+                                        <Thumb.Template>
+                                            <ControlTemplate>
+                                                <Border Width="12" Height="12"
+                                                        CornerRadius="6"
+                                                        Background="White" />
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </ControlTheme>
+
+        <!-- 音量Slider样式 -->
+        <ControlTheme x:Key="VolumeSliderTheme" TargetType="Slider">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Transparent" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Height="16" VerticalAlignment="Center" Background="Transparent">
+                        <Grid VerticalAlignment="Center">
+                            <Border Name="TrackBackground"
+                                    Background="#1AFFFFFF"
+                                    CornerRadius="3"
+                                    Height="5"
+                                    VerticalAlignment="Center" />
+                            <Track Name="PART_Track"
+                                   VerticalAlignment="Center"
+                                   IsDirectionReversed="False"
+                                   Orientation="Horizontal"
+                                   Minimum="{TemplateBinding Minimum}"
+                                   Maximum="{TemplateBinding Maximum}"
+                                   Value="{TemplateBinding Value, Mode=TwoWay}">
+                                <Track.DecreaseButton>
+                                    <RepeatButton Focusable="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate>
+                                                <Border CornerRadius="3"
+                                                        Height="5"
+                                                        VerticalAlignment="Center">
+                                                    <Border.Background>
+                                                        <SolidColorBrush Color="#FFA855F7" />
+                                                    </Border.Background>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.DecreaseButton>
+                                <Track.IncreaseButton>
+                                    <RepeatButton Focusable="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate>
+                                                <Border Background="Transparent"
+                                                        Height="5"
+                                                        VerticalAlignment="Center" />
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.IncreaseButton>
+                                <Track.Thumb>
+                                    <Thumb Width="10" Height="10">
+                                        <Thumb.Template>
+                                            <ControlTemplate>
+                                                <Border Width="10" Height="10"
+                                                        CornerRadius="5"
+                                                        Background="White" />
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </ControlTheme>
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Main Content Area -->
+        <Grid Grid.Row="0" RowDefinitions="Auto,*">
+            <!-- Header Area -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
+                <!-- Left: Title and Stats -->
+                <StackPanel Grid.Column="0" Spacing="4">
+                    <TextBlock Text="Library"
+                               FontSize="32"
+                               FontWeight="ExtraBold"
+                               FontFamily="Inter"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock Text="{Binding LibraryStats}"
+                               FontSize="14"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+                </StackPanel>
+
+                <!-- Right: Search, Filter, View Buttons -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalAlignment="Top">
+                    <!-- Search Box -->
+                    <Border Width="240"
+                            Height="38"
+                            Background="{StaticResource BgCardBrush}"
+                            CornerRadius="8"
+                            BorderBrush="{StaticResource BgElement2Brush}"
+                            BorderThickness="1">
+                        <Grid ColumnDefinitions="Auto,*" Margin="12,0">
+                            <TextBlock Grid.Column="0"
+                                       Text="&#xE721;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="16"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding SearchText}"
+                                     Watermark="Search..."
+                                     FontSize="13"
+                                     Foreground="{StaticResource TextPrimaryBrush}"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Margin="8,0,0,0"
+                                     VerticalContentAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Filter Button -->
+                    <Button Height="38"
+                            Background="{StaticResource BgCardBrush}"
+                            CornerRadius="8"
+                            BorderBrush="{StaticResource BgElement2Brush}"
+                            BorderThickness="1"
+                            Padding="12,0">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="&#xE71C;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="Filter"
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- View Button -->
+                    <Button Width="38"
+                            Height="38"
+                            Background="{StaticResource BgCardBrush}"
+                            CornerRadius="8"
+                            BorderBrush="{StaticResource BgElement2Brush}"
+                            BorderThickness="1">
+                        <TextBlock Text="&#xE80A;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Song List Table Area -->
+            <Grid Grid.Row="1" Margin="32,24,24,24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Table Header -->
+                <Border Grid.Row="0"
+                        Background="{StaticResource BgTableHeaderBrush}"
+                        CornerRadius="8"
+                        Padding="16,12"
+                        BorderBrush="{StaticResource BorderSubtleBrush}"
+                        BorderThickness="1"
+                        Margin="0,0,0,6">
+                    <Grid ColumnDefinitions="30,*,180,70,60">
+                        <TextBlock Grid.Column="0"
+                                   Text="#"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="1"
+                                   Text="TITLE"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="2"
+                                   Text="ALBUM"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="3"
+                                   Text="DURATION"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="4"
+                                   Text="PLAYS"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                    </Grid>
+                </Border>
+
+                <!-- Song List -->
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Library.FilteredSongs}"
+                         SelectedItem="{Binding CurrentSong}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0,0,0,6" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderThickness" Value="0" />
+                        </Style>
+                        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                            <Setter Property="Background" Value="Transparent" />
+                        </Style>
+                        <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+                            <Setter Property="Background" Value="Transparent" />
+                        </Style>
+                    </ListBox.Styles>
+                    <ListBox.DataTemplates>
+                        <DataTemplate DataType="models:Song">
+                            <Border x:Name="SongRow"
+                                    CornerRadius="8"
+                                    Padding="16,12"
+                                    BorderThickness="1">
+                                <Border.Background>
+                                    <MultiBinding Converter="{StaticResource SongIsPlayingConverter}">
+                                        <Binding Path="." />
+                                        <Binding
+                                            Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).CurrentSong" />
+                                    </MultiBinding>
+                                </Border.Background>
+                                <Border.BorderBrush>
+                                    <MultiBinding Converter="{StaticResource SongIsPlayingConverter}"
+                                                  ConverterParameter="Border">
+                                        <Binding Path="." />
+                                        <Binding
+                                            Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).CurrentSong" />
+                                    </MultiBinding>
+                                </Border.BorderBrush>
+                                <Grid ColumnDefinitions="30,*,180,70,60,Auto,Auto">
+                                    <!-- Row Number -->
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding TrackNumber}"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               FontFamily="Consolas"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Title + Artist -->
+                                    <StackPanel Grid.Column="1"
+                                                Spacing="2"
+                                                VerticalAlignment="Center"
+                                                Margin="0,0,16,0">
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Artist}"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <!-- Album -->
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding Album}"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Duration -->
+                                    <TextBlock Grid.Column="3"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               FontFamily="Consolas"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right">
+                                        <TextBlock.Text>
+                                            <Binding Path="Duration" Converter="{StaticResource TimeSpanConverter}" />
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- Plays -->
+                                    <TextBlock Grid.Column="4"
+                                               Text="-"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               FontFamily="Consolas"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right" />
+
+                                    <!-- Play/Pause Button Panel -->
+                                    <Panel Grid.Column="5" Margin="12,0,0,0">
+                                        <!-- Play Button (visible when NOT playing this song) -->
+                                        <Button Width="34" Height="34" CornerRadius="9999"
+                                                Background="{StaticResource BgCardHoverBrush}"
+                                                BorderBrush="#333333" BorderThickness="1"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).PlaySongCommand}"
+                                                CommandParameter="{Binding FilePath}">
+                                            <Button.IsVisible>
+                                                <MultiBinding Converter="{StaticResource SongIsPlayingConverter}"
+                                                              ConverterParameter="invert">
+                                                    <Binding Path="FilePath" />
+                                                    <Binding
+                                                        Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).CurrentSong.FilePath" />
+                                                    <Binding
+                                                        Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).IsPlaying" />
+                                                </MultiBinding>
+                                            </Button.IsVisible>
+                                            <TextBlock Text="&#xE768;" FontFamily="Segoe Fluent Icons" FontSize="14"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                        <!-- Pause Button (visible when playing this song) -->
+                                        <Button Width="34" Height="34" CornerRadius="9999"
+                                                Background="{StaticResource AccentPurpleBrush}"
+                                                BorderThickness="0"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).PauseCommand}">
+                                            <Button.IsVisible>
+                                                <MultiBinding Converter="{StaticResource SongIsPlayingConverter}">
+                                                    <Binding Path="FilePath" />
+                                                    <Binding
+                                                        Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).CurrentSong.FilePath" />
+                                                    <Binding
+                                                        Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).IsPlaying" />
+                                                </MultiBinding>
+                                            </Button.IsVisible>
+                                            <TextBlock Text="&#xE769;" FontFamily="Segoe Fluent Icons" FontSize="14"
+                                                       Foreground="White"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                    </Panel>
+
+                                    <!-- Heart Icon -->
+                                    <Button Grid.Column="6"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="0"
+                                            Margin="12,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Cursor="Hand"
+                                            Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).ToggleFavoriteCommand}"
+                                            CommandParameter="{Binding FilePath}">
+                                        <Panel>
+                                            <!-- Filled heart when favorite -->
+                                            <TextBlock Text="&#xEB52;"
+                                                       FontFamily="Segoe Fluent Icons"
+                                                       FontSize="16"
+                                                       Foreground="{StaticResource AccentPinkBrush}"
+                                                       IsVisible="{Binding IsFavorite}" />
+                                            <!-- Empty heart when not favorite -->
+                                            <TextBlock Text="&#xEB51;"
+                                                       FontFamily="Segoe Fluent Icons"
+                                                       FontSize="16"
+                                                       Foreground="#555555"
+                                                       IsVisible="{Binding !IsFavorite}" />
+                                        </Panel>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.DataTemplates>
+                </ListBox>
+            </Grid>
+        </Grid>
+
+        <!-- Bottom Player Bar -->
+        <Border Grid.Row="1"
+                Background="{StaticResource PlayerBarBgBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="32,16">
+            <Grid ColumnDefinitions="Auto,280,*,280">
+                <!-- Album Art -->
+                <Border Grid.Column="0"
+                        Width="56"
+                        Height="56"
+                        CornerRadius="8"
+                        Background="{StaticResource BgCardBrush}"
+                        BorderBrush="{StaticResource BorderSubtleBrush}"
+                        BorderThickness="1"
+                        Margin="0,0,12,0">
+                    <Image Source="{Binding CurrentSong.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
+                           Stretch="UniformToFill" />
+                </Border>
+
+                <!-- Song Info -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="12"
+                            VerticalAlignment="Center">
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding CurrentSong.Title}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxWidth="220" />
+                        <TextBlock Text="{Binding CurrentSong.Artist}"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxWidth="220" />
+                    </StackPanel>
+                    <Button Background="Transparent"
+                            BorderThickness="0"
+                            Padding="0"
+                            VerticalAlignment="Center"
+                            Cursor="Hand"
+                            Command="{Binding ToggleFavoriteCommand}"
+                            CommandParameter="{Binding CurrentSong.FilePath}">
+                        <Panel>
+                            <!-- Filled heart when favorite -->
+                            <TextBlock Text="&#xEB52;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="18"
+                                       Foreground="{StaticResource AccentPinkBrush}"
+                                       IsVisible="{Binding CurrentSong.IsFavorite}" />
+                            <!-- Empty heart when not favorite -->
+                            <TextBlock Text="&#xEB51;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="18"
+                                       Foreground="#555555"
+                                       IsVisible="{Binding !CurrentSong.IsFavorite}" />
+                        </Panel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Center: Controls and Progress -->
+                <StackPanel Grid.Column="2"
+                            Spacing="6"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                    <!-- Control Buttons -->
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="20"
+                                HorizontalAlignment="Center">
+                        <!-- Shuffle -->
+                        <Button Command="{Binding ShuffleCommand}"
+                                Background="Transparent"
+                                CornerRadius="50"
+                                Padding="8"
+                                Cursor="Hand"
+                                Foreground="{StaticResource AccentPurpleBrush}">
+                            <TextBlock Text="&#xE81B;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="16" />
+                        </Button>
+
+                        <!-- Previous -->
+                        <Button Command="{Binding PreviousCommand}"
+                                Background="Transparent"
+                                CornerRadius="50"
+                                Padding="8"
+                                Cursor="Hand"
+                                Foreground="{StaticResource TextPrimaryBrush}">
+                            <TextBlock Text="&#xE892;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="22" />
+                        </Button>
+
+                        <!-- Play -->
+                        <Button Command="{Binding PlayCommand}"
+                                IsVisible="{Binding !IsPlaying}"
+                                Width="40"
+                                Height="40"
+                                CornerRadius="50"
+                                Cursor="Hand"
+                                Background="{StaticResource PlayButtonGradient}"
+                                Foreground="{StaticResource TextPrimaryBrush}">
+                            <TextBlock Text="&#xE768;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="20"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Button>
+
+                        <!-- Pause -->
+                        <Button Command="{Binding PauseCommand}"
+                                IsVisible="{Binding IsPlaying}"
+                                Width="40"
+                                Height="40"
+                                CornerRadius="50"
+                                Cursor="Hand"
+                                Background="{StaticResource PlayButtonGradient}"
+                                Foreground="{StaticResource TextPrimaryBrush}">
+                            <TextBlock Text="&#xE769;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="20"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Button>
+
+                        <!-- Next -->
+                        <Button Command="{Binding NextCommand}"
+                                Background="Transparent"
+                                CornerRadius="50"
+                                Padding="8"
+                                Cursor="Hand"
+                                Foreground="{StaticResource TextPrimaryBrush}">
+                            <TextBlock Text="&#xE893;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="22" />
+                        </Button>
+
+                        <!-- Repeat -->
+                        <Button Command="{Binding RepeatCommand}"
+                                Background="Transparent"
+                                CornerRadius="50"
+                                Padding="8"
+                                Cursor="Hand"
+                                Foreground="{StaticResource TextSecondaryBrush}">
+                            <TextBlock Text="&#xE8ED;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="16" />
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Progress Bar -->
+                    <Grid Width="560" ColumnDefinitions="Auto,*,Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Position, Converter={StaticResource TimeSpanConverter}}"
+                                   FontSize="11"
+                                   Foreground="{StaticResource AccentPurpleBrush}"
+                                   FontFamily="Consolas"
+                                   VerticalAlignment="Center" />
+                        <Slider Grid.Column="1"
+                                Theme="{StaticResource MusicSliderTheme}"
+                                Minimum="0"
+                                Maximum="{Binding DurationSeconds}"
+                                Value="{Binding PositionSeconds, Mode=TwoWay}"
+                                Margin="12,0"
+                                IsSnapToTickEnabled="True"
+                                TickFrequency="1" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding Duration, Converter={StaticResource TimeSpanConverter}}"
+                                   FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   FontFamily="Consolas"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+
+                <!-- Right: Queue, Volume, Fullscreen -->
+                <StackPanel Grid.Column="3"
+                            Orientation="Horizontal"
+                            Spacing="16"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right">
+                    <!-- Queue Button -->
+                    <Button Background="Transparent"
+                            CornerRadius="50"
+                            Padding="8"
+                            Cursor="Hand"
+                            Foreground="{StaticResource TextMutedBrush}">
+                        <TextBlock Text="&#xE8FA;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="16" />
+                    </Button>
+
+                    <!-- Volume Control -->
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="8"
+                                Width="120"
+                                VerticalAlignment="Center">
+                        <!-- Volume unmuted -->
+                        <Button Command="{Binding MuteCommand}"
+                                Background="Transparent"
+                                CornerRadius="50"
+                                Padding="4"
+                                Cursor="Hand"
+                                Foreground="{StaticResource TextSecondaryBrush}"
+                                IsVisible="{Binding !IsMuted}">
+                            <TextBlock Text="&#xE15D;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="16" />
+                        </Button>
+                        <!-- Volume muted -->
+                        <Button Command="{Binding MuteCommand}"
+                                Background="Transparent"
+                                CornerRadius="50"
+                                Padding="4"
+                                Cursor="Hand"
+                                Foreground="{StaticResource TextMutedBrush}"
+                                IsVisible="{Binding IsMuted}">
+                            <TextBlock Text="&#xE198;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="16" />
+                        </Button>
+                        <Slider Theme="{StaticResource VolumeSliderTheme}"
+                                Minimum="0"
+                                Maximum="100"
+                                Value="{Binding Volume}"
+                                VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- Fullscreen Button -->
+                    <Button Background="Transparent"
+                            CornerRadius="50"
+                            Padding="8"
+                            Cursor="Hand"
+                            Foreground="{StaticResource TextMutedBrush}">
+                        <TextBlock Text="&#xE740;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="16" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
+

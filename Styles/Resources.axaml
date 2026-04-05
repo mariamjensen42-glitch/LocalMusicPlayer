@@ -1,26 +1,130 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Color x:Key="PrimaryColor">#FF0078D4</Color>
-    <Color x:Key="AccentColor">#FF00BFFF</Color>
-    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
-    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    <Color x:Key="BgPrimary">#FF0A0A0A</Color>
+    <Color x:Key="BgSidebar">#FF0F0F0F</Color>
+    <Color x:Key="BgCard">#FF111111</Color>
+    <Color x:Key="BgCardHover">#FF1A1A1A</Color>
+    <Color x:Key="BgInput">#FF0A0A0A</Color>
+    <Color x:Key="BgElement">#FF2A2A2A</Color>
 
-    <ControlTheme x:Key="PlayButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="CornerRadius" Value="50"/>
-        <Setter Property="Padding" Value="16"/>
+    <Color x:Key="TextPrimary">#FFFFFFFF</Color>
+    <Color x:Key="TextSecondary">#FFA1A1AA</Color>
+    <Color x:Key="TextMuted">#FF71717A</Color>
+
+    <Color x:Key="AccentPurple">#FFA855F7</Color>
+    <Color x:Key="AccentPurpleHover">#FFB06AF8</Color>
+    <Color x:Key="AccentPink">#FFEC4899</Color>
+
+    <Color x:Key="BorderSubtle">#FF1A1A1A</Color>
+    <Color x:Key="BorderFocus">#FFE040FB</Color>
+
+    <!-- 新增颜色 -->
+    <Color x:Key="AccentPurpleTranslucent">#1AA855F7</Color>
+    <Color x:Key="AccentPurpleBorder">#33A855F7</Color>
+    <Color x:Key="BgTableHeader">#FF0A0A0A</Color>
+    <Color x:Key="BgActiveRow">#20A855F7</Color>
+    <Color x:Key="ActiveRowBorder">#60A855F7</Color>
+    <Color x:Key="PlayerBarBg">#FF0F0F0F</Color>
+    <Color x:Key="BgElement2">#FF27273A</Color>
+
+    <!-- 标题栏按钮颜色 -->
+    <Color x:Key="TitleBarButtonHover">#1AA855F7</Color>
+    <Color x:Key="TitleBarCloseHover">#FFE63946</Color>
+
+    <SolidColorBrush x:Key="BgPrimaryBrush" Color="{StaticResource BgPrimary}" />
+    <SolidColorBrush x:Key="BgSidebarBrush" Color="{StaticResource BgSidebar}" />
+    <SolidColorBrush x:Key="BgCardBrush" Color="{StaticResource BgCard}" />
+    <SolidColorBrush x:Key="BgCardHoverBrush" Color="{StaticResource BgCardHover}" />
+    <SolidColorBrush x:Key="BgInputBrush" Color="{StaticResource BgInput}" />
+    <SolidColorBrush x:Key="BgElementBrush" Color="{StaticResource BgElement}" />
+
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
+
+    <SolidColorBrush x:Key="AccentPurpleBrush" Color="{StaticResource AccentPurple}" />
+    <SolidColorBrush x:Key="AccentPurpleHoverBrush" Color="{StaticResource AccentPurpleHover}" />
+    <SolidColorBrush x:Key="AccentPinkBrush" Color="{StaticResource AccentPink}" />
+
+    <SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtle}" />
+    <SolidColorBrush x:Key="BorderFocusBrush" Color="{StaticResource BorderFocus}" />
+
+    <!-- 新增 Brush -->
+    <SolidColorBrush x:Key="AccentPurpleTranslucentBrush" Color="{StaticResource AccentPurpleTranslucent}" />
+    <SolidColorBrush x:Key="AccentPurpleBorderBrush" Color="{StaticResource AccentPurpleBorder}" />
+    <SolidColorBrush x:Key="BgTableHeaderBrush" Color="{StaticResource BgTableHeader}" />
+    <SolidColorBrush x:Key="BgActiveRowBrush" Color="{StaticResource BgActiveRow}" />
+    <SolidColorBrush x:Key="ActiveRowBorderBrush" Color="{StaticResource ActiveRowBorder}" />
+    <SolidColorBrush x:Key="PlayerBarBgBrush" Color="{StaticResource PlayerBarBg}" />
+    <SolidColorBrush x:Key="BgElement2Brush" Color="{StaticResource BgElement2}" />
+
+    <!-- 进度条渐变 -->
+    <LinearGradientBrush x:Key="ProgressGradientBrush" StartPoint="0%,0%" EndPoint="100%,0%">
+        <GradientStop Offset="0" Color="#FFA855F7" />
+        <GradientStop Offset="1" Color="#FFEC4899" />
+    </LinearGradientBrush>
+
+    <!-- Slider轨道背景色 -->
+    <SolidColorBrush x:Key="SliderTrackBgBrush" Color="#FF1A1A1A" />
+    <SolidColorBrush x:Key="SliderVolumeFillBrush" Color="#FFA1A1AA" />
+
+    <ControlTheme x:Key="SidebarButtonTheme" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Background="{TemplateBinding Background}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         Padding="{TemplateBinding Padding}">
                     <ContentPresenter HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"/>
+                                      VerticalAlignment="Center" />
                 </Border>
             </ControlTemplate>
         </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="^:checked /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource AccentPurpleBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- 标题栏按钮样式（最小化/最大化） -->
+    <ControlTheme x:Key="TitleBarButtonTheme" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="{StaticResource TitleBarButtonHover}" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ControlTheme>
+
+    <!-- 标题栏关闭按钮样式 -->
+    <ControlTheme x:Key="TitleBarCloseButtonTheme" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="{StaticResource TitleBarCloseHover}" />
+                </Setter.Value>
+            </Setter>
+        </Style>
     </ControlTheme>
 
 </ResourceDictionary>
+
