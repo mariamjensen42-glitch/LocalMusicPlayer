@@ -13,9 +13,11 @@ public class PlaylistService : IPlaylistService
 
     public event EventHandler<Song?>? CurrentSongChanged;
     public event EventHandler<PlaybackMode>? PlaybackModeChanged;
+    public event EventHandler? CurrentIndexUpdated;
 
     public Playlist? CurrentPlaylist => _currentPlaylist;
     public int CurrentIndex => _currentIndex;
+
     public Song? CurrentSong => _currentPlaylist?.Songs.Count > _currentIndex && _currentIndex >= 0
         ? _currentPlaylist.Songs[_currentIndex]
         : null;
@@ -38,7 +40,7 @@ public class PlaylistService : IPlaylistService
         var playlist = new Playlist
         {
             Name = name,
-            Songs = []
+            Songs = new()
         };
         _currentPlaylist = playlist;
         return playlist;
@@ -52,8 +54,7 @@ public class PlaylistService : IPlaylistService
 
     public void AddSongToPlaylist(Playlist playlist, Song song)
     {
-        var songList = new List<Song>(playlist.Songs) { song };
-        playlist.Songs = songList;
+        playlist.Songs.Add(song);
     }
 
     public void RemoveSongFromPlaylist(Playlist playlist, int songIndex)
@@ -61,9 +62,74 @@ public class PlaylistService : IPlaylistService
         if (songIndex < 0 || songIndex >= playlist.Songs.Count)
             return;
 
-        var songList = new List<Song>(playlist.Songs);
-        songList.RemoveAt(songIndex);
-        playlist.Songs = songList;
+        // Adjust currentIndex when removing
+        if (playlist == _currentPlaylist)
+        {
+            if (songIndex == _currentIndex)
+            {
+                // Current song is being removed
+                if (playlist.Songs.Count > 1)
+                {
+                    // Keep currentIndex, next song will take this position
+                }
+                else
+                {
+                    _currentIndex = -1;
+                    CurrentSongChanged?.Invoke(this, null);
+                }
+            }
+            else if (songIndex < _currentIndex)
+            {
+                _currentIndex--;
+                CurrentIndexUpdated?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        playlist.Songs.RemoveAt(songIndex);
+    }
+
+    public void ClearPlaylist()
+    {
+        if (_currentPlaylist == null)
+            return;
+
+        _currentPlaylist.Songs.Clear();
+        _currentIndex = -1;
+        CurrentSongChanged?.Invoke(this, null);
+    }
+
+    public void MoveSong(int oldIndex, int newIndex)
+    {
+        if (_currentPlaylist == null)
+            return;
+
+        if (oldIndex < 0 || oldIndex >= _currentPlaylist.Songs.Count)
+            return;
+
+        if (newIndex < 0 || newIndex >= _currentPlaylist.Songs.Count)
+            return;
+
+        // Move the song in the collection
+        _currentPlaylist.Songs.Move(oldIndex, newIndex);
+
+        // Adjust currentIndex
+        if (_currentIndex == oldIndex)
+        {
+            // Current playing song was moved
+            _currentIndex = newIndex;
+        }
+        else if (oldIndex < _currentIndex && newIndex >= _currentIndex)
+        {
+            // Song moved from before currentIndex to after or equal
+            _currentIndex--;
+        }
+        else if (oldIndex > _currentIndex && newIndex <= _currentIndex)
+        {
+            // Song moved from after currentIndex to before or equal
+            _currentIndex++;
+        }
+
+        CurrentIndexUpdated?.Invoke(this, EventArgs.Empty);
     }
 
     public bool PlayNext()

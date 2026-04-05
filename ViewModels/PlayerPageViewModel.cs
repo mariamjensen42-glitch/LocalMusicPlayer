@@ -153,6 +153,9 @@ public class PlayerPageViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> NavigateBackCommand { get; }
     public ReactiveCommand<Unit, Unit> ToggleMuteCommand { get; }
 
+    // Expose ToggleQueuePanelCommand from MainWindowViewModel
+    public ReactiveCommand<Unit, Unit> ToggleQueuePanelCommand => _mainWindowViewModel.ToggleQueuePanelCommand;
+
     public PlayerPageViewModel(
         IMusicPlayerService musicPlayerService,
         IPlaylistService playlistService,

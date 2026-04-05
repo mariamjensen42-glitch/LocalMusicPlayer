@@ -10,6 +10,8 @@ public interface IPlaylistService
     void SetCurrentPlaylist(Playlist playlist);
     void AddSongToPlaylist(Playlist playlist, Song song);
     void RemoveSongFromPlaylist(Playlist playlist, int songIndex);
+    void ClearPlaylist();
+    void MoveSong(int oldIndex, int newIndex);
     bool PlayNext();
     bool PlayPrevious();
     PlaybackMode PlaybackMode { get; set; }
@@ -18,4 +20,5 @@ public interface IPlaylistService
     Song? CurrentSong { get; }
     event EventHandler<Song?>? CurrentSongChanged;
     event EventHandler<PlaybackMode>? PlaybackModeChanged;
+    event EventHandler? CurrentIndexUpdated;
 }

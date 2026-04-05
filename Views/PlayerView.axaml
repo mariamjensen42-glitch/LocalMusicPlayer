@@ -656,7 +656,8 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Right">
                     <!-- Queue Button -->
-                    <Button Background="Transparent"
+                    <Button Command="{Binding ToggleQueuePanelCommand}"
+                            Background="Transparent"
                             CornerRadius="50"
                             Padding="8"
                             Cursor="Hand"

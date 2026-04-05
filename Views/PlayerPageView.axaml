@@ -147,7 +147,8 @@
                             BorderBrush="#1A1A1A"
                             BorderThickness="1"
                             CornerRadius="20"
-                            Cursor="Hand">
+                            Cursor="Hand"
+                            Command="{Binding ToggleQueuePanelCommand}">
                         <TextBlock Text="&#xE8FA;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"

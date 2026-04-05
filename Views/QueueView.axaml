@@ -1,0 +1,175 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="600"
+             x:Class="LocalMusicPlayer.Views.QueueView"
+             x:DataType="vm:QueueViewModel">
+
+    <Design.DataContext>
+        <vm:QueueViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <converters:TimeSpanToStringConverter x:Key="TimeSpanConverter" />
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Background="{StaticResource BgSidebarBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="16,12">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <!-- Title -->
+                <TextBlock Grid.Column="0"
+                           Text="Queue"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           VerticalAlignment="Center" />
+
+                <!-- Count -->
+                <TextBlock Grid.Column="1"
+                           Text="{Binding QueueCount}"
+                           FontSize="14"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           VerticalAlignment="Center"
+                           Margin="8,0,16,0" />
+
+                <!-- Close Button -->
+                <Button Grid.Column="2"
+                        Command="{Binding ClosePanelCommand}"
+                        Background="Transparent"
+                        CornerRadius="50"
+                        Padding="8"
+                        Cursor="Hand"
+                        Foreground="{StaticResource TextMutedBrush}">
+                    <TextBlock Text="&#xE8BB;"
+                               FontFamily="Segoe Fluent Icons"
+                               FontSize="14"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Queue List -->
+        <ListBox Grid.Row="1"
+                 x:Name="QueueListBox"
+                 ItemsSource="{Binding QueueSongs}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 DoubleTapped="QueueListBox_DoubleTapped">
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0" />
+                </Style>
+                <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+                </Style>
+                <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background" Value="{StaticResource AccentPurpleTranslucentBrush}" />
+                </Style>
+            </ListBox.Styles>
+            <ListBox.DataTemplates>
+                <DataTemplate DataType="models:Song">
+                    <Border Padding="12,8"
+                            BorderThickness="0">
+                        <Grid ColumnDefinitions="40,*,Auto,40">
+                            <!-- Index -->
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding TrackNumber}"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       FontFamily="Consolas"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" />
+
+                            <!-- Title + Artist -->
+                            <StackPanel Grid.Column="1"
+                                        Spacing="2"
+                                        VerticalAlignment="Center"
+                                        Margin="8,0,0,0">
+                                <TextBlock Text="{Binding Title}"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Artist}"
+                                           FontSize="11"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+
+                            <!-- Duration -->
+                            <TextBlock Grid.Column="2"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       FontFamily="Consolas"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,0,12,0">
+                                <TextBlock.Text>
+                                    <Binding Path="Duration" Converter="{StaticResource TimeSpanConverter}" />
+                                </TextBlock.Text>
+                            </TextBlock>
+
+                            <!-- Remove Button -->
+                            <Button Grid.Column="3"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Padding="4"
+                                    VerticalAlignment="Center"
+                                    Cursor="Hand"
+                                    Click="RemoveButton_Click">
+                                <TextBlock Text="&#xE711;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Button>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.DataTemplates>
+        </ListBox>
+
+        <!-- Footer - Clear Button -->
+        <Border Grid.Row="2"
+                Background="{StaticResource BgSidebarBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,12">
+            <Button Command="{Binding ClearQueueCommand}"
+                    HorizontalAlignment="Stretch"
+                    Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource BorderSubtleBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="12,8"
+                    Cursor="Hand">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="&#xE74D;"
+                               FontFamily="Segoe Fluent Icons"
+                               FontSize="14"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="Clear All"
+                               FontSize="13"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </Border>
+    </Grid>
+</UserControl>

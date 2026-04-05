@@ -181,6 +181,17 @@ public partial class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> NavigateToSettingsCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToLibraryCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToPlayerCommand { get; }
+    public ReactiveCommand<Unit, Unit> ToggleQueuePanelCommand { get; }
+
+    private QueueViewModel? _queueViewModel;
+
+    public QueueViewModel? QueueViewModel
+    {
+        get => _queueViewModel;
+        set => this.RaiseAndSetIfChanged(ref _queueViewModel, value);
+    }
+
+    public bool IsQueuePanelOpen => QueueViewModel?.IsPanelOpen ?? false;
 
     public MainWindowViewModel(
         IMusicPlayerService musicPlayerService,
@@ -216,9 +227,19 @@ public partial class MainWindowViewModel : ViewModelBase
             lyricsService,
             this);
 
+        // 创建 QueueViewModel
+        QueueViewModel = new QueueViewModel(playlistService, musicPlayerService);
+        QueueViewModel.WhenAnyValue(x => x.IsPanelOpen)
+            .Subscribe(_ => this.RaisePropertyChanged(nameof(IsQueuePanelOpen)));
+
         NavigateToSettingsCommand = ReactiveCommand.Create(() => { CurrentPage = settingsViewModel; });
         NavigateToLibraryCommand = ReactiveCommand.Create(() => { CurrentPage = this; });
         NavigateToPlayerCommand = ReactiveCommand.Create(() => { CurrentPage = PlayerPageViewModel!; });
+        ToggleQueuePanelCommand = ReactiveCommand.Create(() =>
+        {
+            if (QueueViewModel != null)
+                QueueViewModel.IsPanelOpen = !QueueViewModel.IsPanelOpen;
+        });
 
         PlayCommand = ReactiveCommand.Create(() => _musicPlayerService.Resume());
         PauseCommand = ReactiveCommand.Create(() => _musicPlayerService.Pause());
