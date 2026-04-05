@@ -477,17 +477,20 @@
                 Padding="32,16">
             <Grid ColumnDefinitions="Auto,280,*,280">
                 <!-- Album Art -->
-                <Border Grid.Column="0"
+                <Button Grid.Column="0"
+                        Command="{Binding NavigateToPlayerCommand}"
                         Width="56"
                         Height="56"
                         CornerRadius="8"
                         Background="{StaticResource BgCardBrush}"
                         BorderBrush="{StaticResource BorderSubtleBrush}"
                         BorderThickness="1"
-                        Margin="0,0,12,0">
+                        Margin="0,0,12,0"
+                        Padding="0"
+                        Cursor="Hand">
                     <Image Source="{Binding CurrentSong.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
                            Stretch="UniformToFill" />
-                </Border>
+                </Button>
 
                 <!-- Song Info -->
                 <StackPanel Grid.Column="1"

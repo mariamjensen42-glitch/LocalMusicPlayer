@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using Avalonia.Threading;
 using ReactiveUI;
 using LocalMusicPlayer.Models;
 using LocalMusicPlayer.Services;
@@ -16,13 +17,30 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IWindowProvider _windowProvider;
     private readonly IConfigurationService _configService;
     private readonly IScanService _scanService;
+    private readonly ILyricsService _lyricsService;
 
     private ViewModelBase _currentPage = null!;
 
     public ViewModelBase CurrentPage
     {
         get => _currentPage;
-        set => this.RaiseAndSetIfChanged(ref _currentPage, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _currentPage, value);
+            this.RaisePropertyChanged(nameof(IsPlayerPageVisible));
+            this.RaisePropertyChanged(nameof(SidebarWidth));
+        }
+    }
+
+    public bool IsPlayerPageVisible => CurrentPage is PlayerPageViewModel;
+    public int SidebarWidth => IsPlayerPageVisible ? 0 : 72;
+
+    private PlayerPageViewModel? _playerPageViewModel;
+
+    public PlayerPageViewModel? PlayerPageViewModel
+    {
+        get => _playerPageViewModel;
+        set => this.RaiseAndSetIfChanged(ref _playerPageViewModel, value);
     }
 
     public IMusicLibraryService Library => _musicLibraryService;
@@ -91,6 +109,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private double _positionSeconds;
     private bool _isUpdatingPosition;
+    private bool _isSeeking;
 
     public double PositionSeconds
     {
@@ -100,7 +119,7 @@ public partial class MainWindowViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref _positionSeconds, value);
             if (!_isUpdatingPosition)
             {
-                _musicPlayerService.Seek(TimeSpan.FromSeconds(value));
+                _isSeeking = true;
             }
         }
     }
@@ -161,6 +180,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<string, Unit> ToggleFavoriteCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToSettingsCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToLibraryCommand { get; }
+    public ReactiveCommand<Unit, Unit> NavigateToPlayerCommand { get; }
 
     public MainWindowViewModel(
         IMusicPlayerService musicPlayerService,
@@ -168,7 +188,8 @@ public partial class MainWindowViewModel : ViewModelBase
         IMusicLibraryService musicLibraryService,
         IWindowProvider windowProvider,
         IScanService scanService,
-        IConfigurationService configService)
+        IConfigurationService configService,
+        ILyricsService lyricsService)
     {
         _musicPlayerService = musicPlayerService;
         _playlistService = playlistService;
@@ -176,6 +197,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _windowProvider = windowProvider;
         _scanService = scanService;
         _configService = configService;
+        _lyricsService = lyricsService;
 
         // 加载配置并自动扫描
         InitializeAsync();
@@ -186,8 +208,17 @@ public partial class MainWindowViewModel : ViewModelBase
         CurrentPlaylist = _playlistService.CreatePlaylist("默认播放列表");
         _playlistService.SetCurrentPlaylist(CurrentPlaylist);
 
+        // 创建 PlayerPageViewModel
+        PlayerPageViewModel = new PlayerPageViewModel(
+            musicPlayerService,
+            playlistService,
+            musicLibraryService,
+            lyricsService,
+            this);
+
         NavigateToSettingsCommand = ReactiveCommand.Create(() => { CurrentPage = settingsViewModel; });
         NavigateToLibraryCommand = ReactiveCommand.Create(() => { CurrentPage = this; });
+        NavigateToPlayerCommand = ReactiveCommand.Create(() => { CurrentPage = PlayerPageViewModel!; });
 
         PlayCommand = ReactiveCommand.Create(() => _musicPlayerService.Resume());
         PauseCommand = ReactiveCommand.Create(() => _musicPlayerService.Pause());
@@ -255,12 +286,15 @@ public partial class MainWindowViewModel : ViewModelBase
 
         _musicPlayerService.PlaybackEnded += (_, _) =>
         {
-            if (_playlistService.PlayNext())
+            Dispatcher.UIThread.Post(() =>
             {
-                CurrentSong = _playlistService.CurrentSong;
-                if (CurrentSong != null)
-                    _musicPlayerService.Play(CurrentSong);
-            }
+                if (_playlistService.PlayNext())
+                {
+                    CurrentSong = _playlistService.CurrentSong;
+                    if (CurrentSong != null)
+                        _musicPlayerService.Play(CurrentSong);
+                }
+            });
         };
 
         _musicPlayerService.PlaybackStateChanged += (_, state) => { IsPlaying = state == PlayState.Playing; };
@@ -269,12 +303,28 @@ public partial class MainWindowViewModel : ViewModelBase
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(_ =>
             {
-                Position = _musicPlayerService.Position;
-                Duration = _musicPlayerService.Duration;
-                _isUpdatingPosition = true;
-                PositionSeconds = _musicPlayerService.Position.TotalSeconds;
-                _isUpdatingPosition = false;
-                DurationSeconds = _musicPlayerService.Duration.TotalSeconds;
+                if (!_isSeeking)
+                {
+                    Position = _musicPlayerService.Position;
+                    Duration = _musicPlayerService.Duration;
+                    _isUpdatingPosition = true;
+                    PositionSeconds = _musicPlayerService.Position.TotalSeconds;
+                    _isUpdatingPosition = false;
+                    DurationSeconds = _musicPlayerService.Duration.TotalSeconds;
+                }
+            });
+
+        // 防抖处理进度条拖动
+        this.WhenAnyValue(x => x.PositionSeconds)
+            .Throttle(TimeSpan.FromMilliseconds(100))
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(pos =>
+            {
+                if (_isSeeking)
+                {
+                    _musicPlayerService.Seek(TimeSpan.FromSeconds(pos));
+                    _isSeeking = false;
+                }
             });
 
         // Subscribe to library changes to update stats

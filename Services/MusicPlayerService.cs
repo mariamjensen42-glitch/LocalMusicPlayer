@@ -19,7 +19,10 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
     public event EventHandler<TimeSpan>? PositionChanged;
 
     public TimeSpan Position => _mediaPlayer?.Time > 0 ? TimeSpan.FromMilliseconds(_mediaPlayer.Time) : TimeSpan.Zero;
-    public TimeSpan Duration => _mediaPlayer?.Length > 0 ? TimeSpan.FromMilliseconds(_mediaPlayer.Length) : TimeSpan.Zero;
+
+    public TimeSpan Duration =>
+        _mediaPlayer?.Length > 0 ? TimeSpan.FromMilliseconds(_mediaPlayer.Length) : TimeSpan.Zero;
+
     public bool IsPlaying => _mediaPlayer?.IsPlaying ?? false;
     public int Volume => _volume;
     public bool IsMuted => _isMuted;
@@ -27,7 +30,7 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
     public MusicPlayerService()
     {
         Core.Initialize();
-        _libVlc = new LibVLC();
+        _libVlc = new LibVLC("--quiet", "--no-video");
         _mediaPlayer = new MediaPlayer(_libVlc);
 
         _mediaPlayer.EndReached += OnEndReached;

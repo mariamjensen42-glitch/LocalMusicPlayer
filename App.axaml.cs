@@ -48,6 +48,7 @@ public partial class App : Application
         services.AddSingleton<IPlaylistService, PlaylistService>();
         services.AddSingleton<IMusicLibraryService, MusicLibraryService>();
         services.AddSingleton<IScanService, ScanService>();
+        services.AddSingleton<ILyricsService, LyricsService>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<MainWindowViewModel>();
     }

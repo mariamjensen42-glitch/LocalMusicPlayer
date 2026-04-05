@@ -1,0 +1,453 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:services="using:LocalMusicPlayer.Services"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="LocalMusicPlayer.Views.PlayerPageView"
+             x:DataType="vm:PlayerPageViewModel">
+
+    <Design.DataContext>
+        <vm:PlayerPageViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <converters:TimeSpanToStringConverter x:Key="TimeSpanConverter" />
+        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+
+        <!-- Purple-Pink Gradient Brush for Play Button -->
+        <LinearGradientBrush x:Key="PlayButtonGradient" StartPoint="0%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0" Color="#FFA855F7" />
+            <GradientStop Offset="1" Color="#FFEC4899" />
+        </LinearGradientBrush>
+
+        <!-- Progress Bar Gradient -->
+        <LinearGradientBrush x:Key="ProgressGradient" StartPoint="0%,0%" EndPoint="100%,0%">
+            <GradientStop Offset="0" Color="#FFA855F7" />
+            <GradientStop Offset="1" Color="#FFEC4899" />
+        </LinearGradientBrush>
+
+        <!-- Player Slider样式 -->
+        <ControlTheme x:Key="PlayerSliderTheme" TargetType="Slider">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Height="20"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Background="Transparent">
+                            <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                                <Border Name="TrackBackground"
+                                        Background="#1A1A1A"
+                                        CornerRadius="4"
+                                        Height="8"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center" />
+                                <Track Name="PART_Track"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Stretch"
+                                       IsDirectionReversed="False"
+                                       Orientation="Horizontal"
+                                       Minimum="{TemplateBinding Minimum}"
+                                       Maximum="{TemplateBinding Maximum}"
+                                       Value="{TemplateBinding Value}">
+                                    <Track.DecreaseButton>
+                                        <RepeatButton Focusable="False" HorizontalAlignment="Stretch">
+                                            <RepeatButton.Template>
+                                                <ControlTemplate>
+                                                    <Border CornerRadius="4"
+                                                            Height="8"
+                                                            HorizontalAlignment="Stretch"
+                                                            VerticalAlignment="Center">
+                                                        <Border.Background>
+                                                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                                                                <GradientStop Offset="0" Color="#FFA855F7" />
+                                                                <GradientStop Offset="1" Color="#FFEC4899" />
+                                                            </LinearGradientBrush>
+                                                        </Border.Background>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </RepeatButton.Template>
+                                        </RepeatButton>
+                                    </Track.DecreaseButton>
+                                    <Track.IncreaseButton>
+                                        <RepeatButton Focusable="False" HorizontalAlignment="Stretch">
+                                            <RepeatButton.Template>
+                                                <ControlTemplate>
+                                                    <Border Background="Transparent"
+                                                            Height="8"
+                                                            HorizontalAlignment="Stretch"
+                                                            VerticalAlignment="Center" />
+                                                </ControlTemplate>
+                                            </RepeatButton.Template>
+                                        </RepeatButton>
+                                    </Track.IncreaseButton>
+                                    <Track.Thumb>
+                                        <Thumb Width="1" Height="1" IsVisible="True" Opacity="0">
+                                            <Thumb.Template>
+                                                <ControlTemplate>
+                                                    <Border Width="1" Height="1" Background="Transparent" />
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </ControlTheme>
+
+
+    </UserControl.Resources>
+
+    <Grid Background="#0A0A0A">
+        <Grid RowDefinitions="Auto,*">
+            <!-- Header -->
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="32,24,32,0">
+                <!-- Left: Back Button + Title -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16">
+                    <!-- Back Button -->
+                    <Button Command="{Binding NavigateBackCommand}"
+                            Width="40"
+                            Height="40"
+                            Background="#111111"
+                            BorderBrush="#1A1A1A"
+                            BorderThickness="1"
+                            CornerRadius="20"
+                            Cursor="Hand">
+                        <TextBlock Text="&#xE74A;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="16"
+                                   Foreground="#A1A1AA"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Button>
+                    <TextBlock Text="Now Playing"
+                               FontSize="16"
+                               FontWeight="500"
+                               FontFamily="Inter"
+                               Foreground="White"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Right: Queue + More Buttons -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16">
+                    <!-- Queue Button -->
+                    <Button Width="40"
+                            Height="40"
+                            Background="#111111"
+                            BorderBrush="#1A1A1A"
+                            BorderThickness="1"
+                            CornerRadius="20"
+                            Cursor="Hand">
+                        <TextBlock Text="&#xE8FA;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="18"
+                                   Foreground="#A1A1AA"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Button>
+                    <!-- More Button -->
+                    <Button Width="40"
+                            Height="40"
+                            Background="#111111"
+                            BorderBrush="#1A1A1A"
+                            BorderThickness="1"
+                            CornerRadius="20"
+                            Cursor="Hand">
+                        <TextBlock Text="&#xE712;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="18"
+                                   Foreground="#A1A1AA"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Content Area -->
+            <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="32,24,32,32">
+                <!-- Left: Cover Area -->
+                <Grid Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Border Width="400"
+                            Height="400"
+                            MaxWidth="480"
+                            MaxHeight="480"
+                            CornerRadius="24"
+                            Background="#111111"
+                            BorderBrush="#1A1A1A"
+                            BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000"
+                                              BlurRadius="64"
+                                              OffsetX="0"
+                                              OffsetY="24"
+                                              Opacity="0.6" />
+                        </Border.Effect>
+                        <Image
+                            Source="{Binding CurrentSong.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
+                            Stretch="Uniform"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </Border>
+                </Grid>
+
+                <!-- Right: Info Area -->
+                <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto,Auto" Margin="32,0,0,0">
+                    <!-- Song Info -->
+                    <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
+                        <TextBlock Text="{Binding CurrentSong.Title, FallbackValue='Unknown Title'}"
+                                   FontSize="36"
+                                   FontWeight="Bold"
+                                   FontFamily="Inter"
+                                   Foreground="White"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap" />
+                        <TextBlock FontSize="18"
+                                   FontFamily="Inter"
+                                   Foreground="#71717A"
+                                   TextTrimming="CharacterEllipsis">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} • {1}">
+                                    <Binding Path="CurrentSong.Artist" />
+                                    <Binding Path="CurrentSong.Album" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!-- Lyrics Area -->
+                    <Border Grid.Row="1"
+                            Background="#0D0D0D"
+                            CornerRadius="12"
+                            Margin="0,0,0,32"
+                            Padding="16">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding Lyrics}"
+                                          HorizontalAlignment="Stretch">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="services:LyricLine">
+                                        <TextBlock Text="{Binding Text}"
+                                                   FontSize="14"
+                                                   FontFamily="Inter"
+                                                   Foreground="#3F3F46"
+                                                   TextAlignment="Center"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,6" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+
+                    <!-- Progress Section -->
+                    <StackPanel Grid.Row="2" Spacing="12" Margin="0,0,0,32">
+                        <!-- Progress Bar -->
+                        <Slider Theme="{StaticResource PlayerSliderTheme}"
+                                HorizontalAlignment="Stretch"
+                                Minimum="0"
+                                Maximum="{Binding DurationSeconds}"
+                                Value="{Binding PositionSeconds, Mode=TwoWay}"
+                                IsSnapToTickEnabled="True"
+                                TickFrequency="1">
+                            <i:Interaction.Behaviors>
+                                <behaviors:SliderClickToSeekBehavior />
+                            </i:Interaction.Behaviors>
+                        </Slider>
+                        <!-- Time Row -->
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding Position, Converter={StaticResource TimeSpanConverter}}"
+                                       FontSize="13"
+                                       FontFamily="Consolas"
+                                       Foreground="#A855F7" />
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding Duration, Converter={StaticResource TimeSpanConverter}}"
+                                       FontSize="13"
+                                       FontFamily="Consolas"
+                                       Foreground="#71717A" />
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Controls Section -->
+                    <StackPanel Grid.Row="3" Spacing="24">
+                        <!-- Control Buttons -->
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Spacing="32">
+                            <!-- Shuffle -->
+                            <Button Command="{Binding ShuffleCommand}"
+                                    Background="Transparent"
+                                    Cursor="Hand">
+                                <Panel>
+                                    <TextBlock Text="&#xE8B1;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="24"
+                                               Foreground="#A855F7"
+                                               IsVisible="{Binding IsShuffle}" />
+                                    <TextBlock Text="&#xE8B1;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="24"
+                                               Foreground="#71717A"
+                                               IsVisible="{Binding !IsShuffle}" />
+                                </Panel>
+                            </Button>
+                            <!-- Previous -->
+                            <Button Command="{Binding PreviousCommand}"
+                                    Background="Transparent"
+                                    Cursor="Hand"
+                                    Foreground="White">
+                                <TextBlock Text="&#xE892;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="32" />
+                            </Button>
+                            <!-- Play/Pause -->
+                            <Button Command="{Binding PlayCommand}"
+                                    IsVisible="{Binding !IsPlaying}"
+                                    Width="72"
+                                    Height="72"
+                                    CornerRadius="36"
+                                    Cursor="Hand"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Background="{StaticResource PlayButtonGradient}">
+                                <Button.Effect>
+                                    <DropShadowEffect Color="#A855F7"
+                                                      BlurRadius="24"
+                                                      OffsetX="0"
+                                                      OffsetY="8"
+                                                      Opacity="0.5" />
+                                </Button.Effect>
+                                <TextBlock Text="&#xE768;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="32"
+                                           Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Button>
+                            <Button Command="{Binding PauseCommand}"
+                                    IsVisible="{Binding IsPlaying}"
+                                    Width="72"
+                                    Height="72"
+                                    CornerRadius="36"
+                                    Cursor="Hand"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Background="{StaticResource PlayButtonGradient}">
+                                <Button.Effect>
+                                    <DropShadowEffect Color="#A855F7"
+                                                      BlurRadius="24"
+                                                      OffsetX="0"
+                                                      OffsetY="8"
+                                                      Opacity="0.5" />
+                                </Button.Effect>
+                                <TextBlock Text="&#xE769;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="32"
+                                           Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Button>
+                            <!-- Next -->
+                            <Button Command="{Binding NextCommand}"
+                                    Background="Transparent"
+                                    Cursor="Hand"
+                                    Foreground="White">
+                                <TextBlock Text="&#xE893;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="32" />
+                            </Button>
+                            <!-- Repeat -->
+                            <Button Command="{Binding RepeatCommand}"
+                                    Background="Transparent"
+                                    Cursor="Hand">
+                                <Panel>
+                                    <TextBlock Text="&#xE8ED;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="24"
+                                               Foreground="#A855F7"
+                                               IsVisible="{Binding IsRepeat}" />
+                                    <TextBlock Text="&#xE8ED;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="24"
+                                               Foreground="#71717A"
+                                               IsVisible="{Binding !IsRepeat}" />
+                                </Panel>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- Bottom Actions -->
+                        <Grid ColumnDefinitions="*,*" Margin="24,0,0,0">
+                            <!-- Left: Like + Share -->
+                            <StackPanel Grid.Column="0"
+                                        Orientation="Horizontal"
+                                        Spacing="20">
+                                <Button Command="{Binding ToggleFavoriteCommand}"
+                                        Background="Transparent"
+                                        Cursor="Hand">
+                                    <Panel>
+                                        <TextBlock Text="&#xEB52;"
+                                                   FontFamily="Segoe Fluent Icons"
+                                                   FontSize="24"
+                                                   Foreground="#EC4899"
+                                                   IsVisible="{Binding CurrentSong.IsFavorite}" />
+                                        <TextBlock Text="&#xEB51;"
+                                                   FontFamily="Segoe Fluent Icons"
+                                                   FontSize="24"
+                                                   Foreground="#71717A"
+                                                   IsVisible="{Binding !CurrentSong.IsFavorite}" />
+                                    </Panel>
+                                </Button>
+                                <Button Background="Transparent"
+                                        Cursor="Hand"
+                                        Foreground="#71717A">
+                                    <TextBlock Text="&#xE72D;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="20" />
+                                </Button>
+                            </StackPanel>
+                            <!-- Right: Cast + Volume -->
+                            <StackPanel Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        Spacing="20"
+                                        HorizontalAlignment="Right">
+                                <Button Background="Transparent"
+                                        Cursor="Hand"
+                                        Foreground="#71717A">
+                                    <TextBlock Text="&#xE8C9;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="20" />
+                                </Button>
+                                <Button Command="{Binding ToggleMuteCommand}"
+                                        Background="Transparent"
+                                        Cursor="Hand"
+                                        Foreground="#71717A">
+                                    <Panel>
+                                        <TextBlock Text="&#xE15D;"
+                                                   FontFamily="Segoe Fluent Icons"
+                                                   FontSize="20"
+                                                   IsVisible="{Binding !IsMuted}" />
+                                        <TextBlock Text="&#xE198;"
+                                                   FontFamily="Segoe Fluent Icons"
+                                                   FontSize="20"
+                                                   IsVisible="{Binding IsMuted}" />
+                                    </Panel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
+

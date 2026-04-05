@@ -115,10 +115,12 @@
         </Border>
 
         <!-- Main Content Area -->
-        <Grid Grid.Row="1" ColumnDefinitions="72,*">
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+            <!-- Sidebar - Hidden when on Player Page -->
             <Border Grid.Column="0"
                     Background="{StaticResource BgSidebarBrush}"
-                    ClipToBounds="True">
+                    ClipToBounds="True"
+                    Width="{Binding SidebarWidth}">
                 <Grid RowDefinitions="Auto,*,Auto">
                     <!-- 顶部 Logo 区域 -->
                     <Border Grid.Row="0"
@@ -201,7 +203,9 @@
                 </Grid>
             </Border>
 
-            <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" />
+            <!-- Content Area -->
+            <ContentControl Grid.Column="1"
+                            Content="{Binding CurrentPage}" />
         </Grid>
     </Grid>
 
