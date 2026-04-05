@@ -1,7 +1,9 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using LocalMusicPlayer.ViewModels;
 
 namespace LocalMusicPlayer.Views;
 
@@ -17,6 +19,32 @@ public partial class MainWindow : Window
         // 监听窗口状态变化以更新最大化/还原图标
         PropertyChanged += OnPropertyChanged;
         UpdateMaximizeRestoreIcons();
+
+        // 监听播放页面切换，调整标题栏区域扩展
+        DataContextChanged += OnDataContextChanged;
+    }
+
+    private void OnDataContextChanged(object? sender, EventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.PropertyChanged += (s, args) =>
+            {
+                if (args.PropertyName == nameof(MainWindowViewModel.IsPlayerPageVisible))
+                {
+                    UpdateTitleBarChrome(vm.IsPlayerPageVisible);
+                }
+            };
+        }
+    }
+
+    private void UpdateTitleBarChrome(bool isPlayerPage)
+    {
+        // 播放页面时完全隐藏标题栏，其他页面显示自定义标题栏
+        ExtendClientAreaChromeHints = isPlayerPage
+            ? Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome
+            : Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
+        ExtendClientAreaToDecorationsHint = true;
     }
 
     private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)

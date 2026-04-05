@@ -4,7 +4,8 @@
         xmlns:converters="using:LocalMusicPlayer.Converters"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="720"
+        mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="900"
+        MinWidth="1100" MinHeight="700"
         x:Class="LocalMusicPlayer.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
@@ -12,7 +13,8 @@
         Background="{StaticResource BgPrimaryBrush}"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
-        ExtendClientAreaTitleBarHeightHint="-1">
+        ExtendClientAreaTitleBarHeightHint="-1"
+        WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
@@ -20,217 +22,263 @@
 
     <Window.Resources>
         <converters:BoolToWidthConverter x:Key="BoolToWidthConverter" />
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
     </Window.Resources>
 
-    <Grid RowDefinitions="Auto,*">
-        <!-- Custom Title Bar -->
-        <Border Grid.Row="0"
-                x:Name="TitleBar"
+    <Grid ColumnDefinitions="Auto,*">
+        <!-- Sidebar - Full height from top to bottom -->
+        <Border Grid.Column="0"
                 Background="{StaticResource BgSidebarBrush}"
-                Height="32"
-                BorderBrush="{StaticResource BorderSubtleBrush}"
-                BorderThickness="0,0,0,1">
-            <Grid ColumnDefinitions="Auto,*,Auto">
-                <!-- Left: App Logo -->
-                <Border Grid.Column="0"
-                        Width="20"
-                        Height="20"
+                ClipToBounds="True"
+                Width="{Binding SidebarWidth}">
+            <Grid RowDefinitions="Auto,*,Auto">
+                <!-- 顶部 Logo 区域 -->
+                <Border Grid.Row="0"
+                        Width="40"
+                        Height="40"
                         Background="{StaticResource AccentPurpleBrush}"
-                        CornerRadius="4"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Margin="12,0,0,0">
-                    <TextBlock Text="&#xE8F1;"
+                        CornerRadius="10"
+                        HorizontalAlignment="Center"
+                        Margin="0,16,0,16">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#A855F7" BlurRadius="12" OffsetX="0" OffsetY="4" Opacity="0.3" />
+                    </Border.Effect>
+                    <TextBlock Text="&#xE80A;"
                                FontFamily="Segoe Fluent Icons"
                                Foreground="White"
-                               FontSize="10"
+                               FontSize="20"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center" />
                 </Border>
 
-                <!-- Center: Title -->
-                <TextBlock Grid.Column="1"
-                           Text="LocalMusicPlayer"
-                           FontSize="12"
-                           FontWeight="Medium"
-                           Foreground="{StaticResource TextSecondaryBrush}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           IsHitTestVisible="False" />
-
-                <!-- Right: Window Controls -->
-                <StackPanel Grid.Column="2"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch">
-                    <!-- Minimize Button -->
-                    <Button x:Name="MinimizeButton"
-                            Width="46"
-                            Height="32"
-                            Theme="{StaticResource TitleBarButtonTheme}"
-                            Click="MinimizeButton_Click">
-                        <TextBlock Text="&#xE921;"
+                <!-- 中部导航按钮区域 - Vertically centered -->
+                <StackPanel Grid.Row="1"
+                            VerticalAlignment="Center"
+                            Spacing="8"
+                            Margin="16,0">
+                    <!-- 播放列表按钮 -->
+                    <Button Command="{Binding NavigateToLibraryCommand}"
+                            Width="40"
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            Background="{StaticResource BgCardBrush}"
+                            BorderBrush="{StaticResource BorderSubtleBrush}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="0"
+                            Cursor="Hand">
+                        <TextBlock Text="&#xE8FA;"
                                    FontFamily="Segoe Fluent Icons"
-                                   FontSize="14"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   FontSize="18"
+                                   Foreground="{StaticResource TextMutedBrush}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
-
-                    <!-- Maximize/Restore Button -->
-                    <Button x:Name="MaximizeButton"
-                            Width="46"
-                            Height="32"
-                            Theme="{StaticResource TitleBarButtonTheme}"
-                            Click="MaximizeButton_Click">
-                        <Panel>
-                            <TextBlock Text="&#xE922;"
-                                       FontFamily="Segoe Fluent Icons"
-                                       FontSize="14"
-                                       Foreground="{StaticResource TextSecondaryBrush}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       x:Name="MaximizeIcon" />
-                            <TextBlock Text="&#xE923;"
-                                       FontFamily="Segoe Fluent Icons"
-                                       FontSize="14"
-                                       Foreground="{StaticResource TextSecondaryBrush}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       x:Name="RestoreIcon"
-                                       IsVisible="False" />
-                        </Panel>
-                    </Button>
-
-                    <!-- Close Button -->
-                    <Button x:Name="CloseButton"
-                            Width="46"
-                            Height="32"
-                            Theme="{StaticResource TitleBarCloseButtonTheme}"
-                            Click="CloseButton_Click">
-                        <TextBlock Text="&#xE8BB;"
+                    <!-- 设置按钮 -->
+                    <Button Command="{Binding NavigateToSettingsCommand}"
+                            Width="40"
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            Background="{StaticResource BgCardBrush}"
+                            BorderBrush="{StaticResource BorderSubtleBrush}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="0"
+                            Cursor="Hand">
+                        <TextBlock Text="&#xE713;"
                                    FontFamily="Segoe Fluent Icons"
-                                   FontSize="14"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   FontSize="18"
+                                   Foreground="{StaticResource TextMutedBrush}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>
+
+                <!-- 底部活跃导航按钮（音乐库） -->
+                <Button Grid.Row="2"
+                        Width="40"
+                        Height="40"
+                        HorizontalAlignment="Center"
+                        Background="{StaticResource AccentPurpleTranslucentBrush}"
+                        BorderBrush="{StaticResource AccentPurpleBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="0"
+                        Cursor="Hand"
+                        Margin="0,0,0,24">
+                    <Button.Effect>
+                        <DropShadowEffect Color="#A855F7" BlurRadius="8" OffsetX="0" OffsetY="2" Opacity="0.2" />
+                    </Button.Effect>
+                    <TextBlock Text="&#xE8F1;"
+                               FontFamily="Segoe Fluent Icons"
+                               FontSize="18"
+                               Foreground="{StaticResource AccentPurpleBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Button>
             </Grid>
         </Border>
 
         <!-- Main Content Area -->
-        <Grid Grid.Row="1">
-            <!-- Base Content Layer -->
-            <Grid ColumnDefinitions="Auto,*">
-                <!-- Sidebar - Hidden when on Player Page -->
-                <Border Grid.Column="0"
-                        Background="{StaticResource BgSidebarBrush}"
-                        ClipToBounds="True"
-                        Width="{Binding SidebarWidth}">
-                    <Grid RowDefinitions="Auto,*,Auto">
-                        <!-- 顶部 Logo 区域 -->
-                        <Border Grid.Row="0"
-                                Width="36"
-                                Height="36"
-                                Background="{StaticResource AccentPurpleBrush}"
-                                CornerRadius="8"
-                                HorizontalAlignment="Center"
-                                Margin="0,24,0,24">
-                            <Border.Effect>
-                                <DropShadowEffect Color="#A855F7" BlurRadius="12" OffsetX="0" OffsetY="4" Opacity="0.3" />
-                            </Border.Effect>
-                            <TextBlock Text="&#xE80A;"
-                                       FontFamily="Segoe Fluent Icons"
-                                       Foreground="White"
-                                       FontSize="18"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
-                        </Border>
+        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+            <!-- Custom Title Bar with Actions -->
+            <Border Grid.Row="0"
+                    x:Name="TitleBar"
+                    Background="Transparent"
+                    Height="48"
+                    BorderThickness="0">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                    <!-- Middle: Empty (for dragging) -->
+                    <Border Grid.Column="0" Background="Transparent" />
 
-                        <!-- 中部导航按钮区域 -->
-                        <StackPanel Grid.Row="1"
-                                    VerticalAlignment="Center"
-                                    Spacing="4"
-                                    Margin="16,0">
-                            <!-- 播放列表按钮 -->
-                            <Button Command="{Binding NavigateToLibraryCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    Background="{StaticResource BgCardBrush}"
-                                    BorderBrush="{StaticResource BorderSubtleBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="10"
-                                    Cursor="Hand">
-                                <TextBlock Text="&#xE8FA;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="18"
-                                           Foreground="{StaticResource TextMutedBrush}"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Button>
-                            <!-- 设置按钮 -->
-                            <Button Command="{Binding NavigateToSettingsCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    Background="{StaticResource BgCardBrush}"
-                                    BorderBrush="{StaticResource BorderSubtleBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="10"
-                                    Cursor="Hand">
-                                <TextBlock Text="&#xE713;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="18"
-                                           Foreground="{StaticResource TextMutedBrush}"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Button>
-                        </StackPanel>
-
-                        <!-- 底部活跃导航按钮（音乐库） -->
-                        <Button Grid.Row="2"
-                                HorizontalAlignment="Stretch"
-                                Background="{StaticResource AccentPurpleTranslucentBrush}"
-                                BorderBrush="{StaticResource AccentPurpleBorderBrush}"
+                    <!-- Left: Action Buttons (Search, Filter, Play All, etc.) -->
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Spacing="8"
+                                Margin="0,0,16,0">
+                        <!-- Search Box -->
+                        <Border Background="{StaticResource BgCardBrush}"
+                                BorderBrush="{StaticResource BorderSubtleBrush}"
                                 BorderThickness="1"
                                 CornerRadius="8"
-                                Padding="10"
-                                Cursor="Hand"
-                                Margin="16,0,16,24">
-                            <Button.Effect>
-                                <DropShadowEffect Color="#A855F7" BlurRadius="8" OffsetX="0" OffsetY="2" Opacity="0.2" />
-                            </Button.Effect>
-                            <TextBlock Text="&#xE8F1;"
+                                Width="280"
+                                Height="36">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <TextBlock Grid.Column="0"
+                                           Text="&#xE71E;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="12,0,8,0" />
+                                <TextBox Grid.Column="1"
+                                         x:Name="SearchTextBox"
+                                         Watermark="Search..."
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         VerticalAlignment="Center"
+                                         Foreground="{StaticResource TextPrimaryBrush}"
+                                         CaretBrush="{StaticResource TextPrimaryBrush}" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Filter Button -->
+                        <Button Width="36"
+                                Height="36"
+                                Background="{StaticResource BgCardBrush}"
+                                BorderBrush="{StaticResource BorderSubtleBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                            <TextBlock Text="&#xE71C;"
                                        FontFamily="Segoe Fluent Icons"
-                                       FontSize="18"
-                                       Foreground="{StaticResource AccentPurpleBrush}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextMutedBrush}"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
                         </Button>
-                    </Grid>
-                </Border>
 
-                <!-- Content Area -->
-                <ContentControl Grid.Column="1"
-                                Content="{Binding CurrentPage}" />
-            </Grid>
+                        <!-- Grid View Toggle -->
+                        <Button Width="36"
+                                Height="36"
+                                Background="{StaticResource BgCardBrush}"
+                                BorderBrush="{StaticResource BorderSubtleBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                            <TextBlock Text="&#xE80A;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Button>
+                    </StackPanel>
 
-            <!-- Queue Panel (Floating Overlay) -->
-            <Border HorizontalAlignment="Right"
-                    Background="{StaticResource BgSidebarBrush}"
-                    BorderBrush="{StaticResource BorderSubtleBrush}"
-                    BorderThickness="1,0,0,0"
-                    Width="320"
-                    ZIndex="100"
-                    ClipToBounds="True"
-                    IsVisible="{Binding IsQueuePanelOpen}">
-                <Border.Transitions>
-                    <Transitions>
-                        <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut" />
-                    </Transitions>
-                </Border.Transitions>
-                <ContentControl Content="{Binding QueueViewModel}" />
+                    <!-- Right: Window Controls -->
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Margin="0,0,8,0">
+                        <!-- Minimize Button -->
+                        <Button x:Name="MinimizeButton"
+                                Width="40"
+                                Height="40"
+                                Theme="{StaticResource TitleBarButtonTheme}"
+                                Click="MinimizeButton_Click">
+                            <TextBlock Text="&#xE921;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Button>
+
+                        <!-- Maximize/Restore Button -->
+                        <Button x:Name="MaximizeButton"
+                                Width="40"
+                                Height="40"
+                                Theme="{StaticResource TitleBarButtonTheme}"
+                                Click="MaximizeButton_Click">
+                            <Panel>
+                                <TextBlock Text="&#xE922;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           x:Name="MaximizeIcon" />
+                                <TextBlock Text="&#xE923;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           x:Name="RestoreIcon"
+                                           IsVisible="False" />
+                            </Panel>
+                        </Button>
+
+                        <!-- Close Button -->
+                        <Button x:Name="CloseButton"
+                                Width="40"
+                                Height="40"
+                                Theme="{StaticResource TitleBarCloseButtonTheme}"
+                                Click="CloseButton_Click">
+                            <TextBlock Text="&#xE8BB;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
             </Border>
+
+            <!-- Content Area -->
+            <Grid Grid.Row="1">
+                <ContentControl Content="{Binding CurrentPage}" />
+
+                <!-- Queue Panel (Floating Overlay) -->
+                <Border HorizontalAlignment="Right"
+                        Background="{StaticResource BgSidebarBrush}"
+                        BorderBrush="{StaticResource BorderSubtleBrush}"
+                        BorderThickness="1,0,0,0"
+                        Width="320"
+                        ZIndex="100"
+                        ClipToBounds="True"
+                        IsVisible="{Binding IsQueuePanelOpen}">
+                    <Border.Transitions>
+                        <Transitions>
+                            <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut" />
+                        </Transitions>
+                    </Border.Transitions>
+                    <ContentControl Content="{Binding QueueViewModel}" />
+                </Border>
+            </Grid>
         </Grid>
     </Grid>
 

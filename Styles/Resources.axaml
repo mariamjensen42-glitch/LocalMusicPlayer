@@ -32,6 +32,11 @@
     <Color x:Key="TitleBarButtonHover">#1AA855F7</Color>
     <Color x:Key="TitleBarCloseHover">#FFE63946</Color>
 
+    <!-- 播放器新增颜色 -->
+    <Color x:Key="HeartInactive">#FF555555</Color>
+    <Color x:Key="SliderTrackOverlay">#1AFFFFFF</Color>
+    <Color x:Key="SongRowBorder">#FF333333</Color>
+
     <SolidColorBrush x:Key="BgPrimaryBrush" Color="{StaticResource BgPrimary}" />
     <SolidColorBrush x:Key="BgSidebarBrush" Color="{StaticResource BgSidebar}" />
     <SolidColorBrush x:Key="BgCardBrush" Color="{StaticResource BgCard}" />
@@ -59,8 +64,25 @@
     <SolidColorBrush x:Key="PlayerBarBgBrush" Color="{StaticResource PlayerBarBg}" />
     <SolidColorBrush x:Key="BgElement2Brush" Color="{StaticResource BgElement2}" />
 
-    <!-- 进度条渐变 -->
+    <!-- 紫粉渐变画刷 -->
+    <LinearGradientBrush x:Key="PurplePinkVerticalGradientBrush" StartPoint="0%,0%" EndPoint="0%,100%">
+        <GradientStop Offset="0" Color="#FFA855F7" />
+        <GradientStop Offset="1" Color="#FFEC4899" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="PurplePinkHorizontalGradientBrush" StartPoint="0%,0%" EndPoint="100%,0%">
+        <GradientStop Offset="0" Color="#FFA855F7" />
+        <GradientStop Offset="1" Color="#FFEC4899" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="PurplePinkDiagonalGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Offset="0" Color="#FFA855F7" />
+        <GradientStop Offset="1" Color="#FFEC4899" />
+    </LinearGradientBrush>
+    <!-- 兼容旧名称 -->
     <LinearGradientBrush x:Key="ProgressGradientBrush" StartPoint="0%,0%" EndPoint="100%,0%">
+        <GradientStop Offset="0" Color="#FFA855F7" />
+        <GradientStop Offset="1" Color="#FFEC4899" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="PlayButtonGradient" StartPoint="0%,0%" EndPoint="0%,100%">
         <GradientStop Offset="0" Color="#FFA855F7" />
         <GradientStop Offset="1" Color="#FFEC4899" />
     </LinearGradientBrush>
@@ -68,6 +90,11 @@
     <!-- Slider轨道背景色 -->
     <SolidColorBrush x:Key="SliderTrackBgBrush" Color="#FF1A1A1A" />
     <SolidColorBrush x:Key="SliderVolumeFillBrush" Color="#FFA1A1AA" />
+    <SolidColorBrush x:Key="SliderTrackOverlayBrush" Color="{StaticResource SliderTrackOverlay}" />
+
+    <!-- 播放器新增画刷 -->
+    <SolidColorBrush x:Key="HeartInactiveBrush" Color="{StaticResource HeartInactive}" />
+    <SolidColorBrush x:Key="SongRowBorderBrush" Color="{StaticResource SongRowBorder}" />
 
     <ControlTheme x:Key="SidebarButtonTheme" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />

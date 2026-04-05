@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:LocalMusicPlayer.ViewModels"
              xmlns:models="using:LocalMusicPlayer.Models"
-             xmlns:converters="using:LocalMusicPlayer.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
@@ -12,160 +11,6 @@
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
-
-    <UserControl.Resources>
-        <converters:TimeSpanToStringConverter x:Key="TimeSpanConverter" />
-        <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
-        <converters:SongIsPlayingConverter x:Key="SongIsPlayingConverter" />
-        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
-
-        <!-- Purple-Pink Gradient Brush for Play Button -->
-        <LinearGradientBrush x:Key="PlayButtonGradient" StartPoint="0%,0%" EndPoint="0%,100%">
-            <GradientStop Offset="0" Color="#FFA855F7" />
-            <GradientStop Offset="1" Color="#FFEC4899" />
-        </LinearGradientBrush>
-
-        <!-- Progress Bar Gradient -->
-        <LinearGradientBrush x:Key="ProgressGradient" StartPoint="0%,0%" EndPoint="100%,0%">
-            <GradientStop Offset="0" Color="#FFA855F7" />
-            <GradientStop Offset="1" Color="#FFEC4899" />
-        </LinearGradientBrush>
-
-        <!-- 选中行背景色 -->
-        <SolidColorBrush x:Key="ActiveRowBgBrush" Color="#20A855F7" />
-        <SolidColorBrush x:Key="ActiveRowBorderBrushLocal" Color="#60A855F7" />
-
-        <!-- Slider样式 -->
-        <ControlTheme x:Key="MusicSliderTheme" TargetType="Slider">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="Transparent" />
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border Height="20" VerticalAlignment="Center" Background="Transparent">
-                        <Grid VerticalAlignment="Center">
-                            <Border Name="TrackBackground"
-                                    Background="#1AFFFFFF"
-                                    CornerRadius="3"
-                                    Height="5"
-                                    VerticalAlignment="Center" />
-                            <Track Name="PART_Track"
-                                   VerticalAlignment="Center"
-                                   IsDirectionReversed="False"
-                                   Orientation="Horizontal"
-                                   Minimum="{TemplateBinding Minimum}"
-                                   Maximum="{TemplateBinding Maximum}"
-                                   Value="{TemplateBinding Value, Mode=TwoWay}">
-                                <Track.DecreaseButton>
-                                    <RepeatButton Focusable="False">
-                                        <RepeatButton.Template>
-                                            <ControlTemplate>
-                                                <Border CornerRadius="3"
-                                                        Height="5"
-                                                        VerticalAlignment="Center">
-                                                    <Border.Background>
-                                                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
-                                                            <GradientStop Offset="0" Color="#FFA855F7" />
-                                                            <GradientStop Offset="1" Color="#FFEC4899" />
-                                                        </LinearGradientBrush>
-                                                    </Border.Background>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </RepeatButton.Template>
-                                    </RepeatButton>
-                                </Track.DecreaseButton>
-                                <Track.IncreaseButton>
-                                    <RepeatButton Focusable="False">
-                                        <RepeatButton.Template>
-                                            <ControlTemplate>
-                                                <Border Background="Transparent"
-                                                        Height="5"
-                                                        VerticalAlignment="Center" />
-                                            </ControlTemplate>
-                                        </RepeatButton.Template>
-                                    </RepeatButton>
-                                </Track.IncreaseButton>
-                                <Track.Thumb>
-                                    <Thumb Width="12" Height="12">
-                                        <Thumb.Template>
-                                            <ControlTemplate>
-                                                <Border Width="12" Height="12"
-                                                        CornerRadius="6"
-                                                        Background="White" />
-                                            </ControlTemplate>
-                                        </Thumb.Template>
-                                    </Thumb>
-                                </Track.Thumb>
-                            </Track>
-                        </Grid>
-                    </Border>
-                </ControlTemplate>
-            </Setter>
-        </ControlTheme>
-
-        <!-- 音量Slider样式 -->
-        <ControlTheme x:Key="VolumeSliderTheme" TargetType="Slider">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="Transparent" />
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border Height="16" VerticalAlignment="Center" Background="Transparent">
-                        <Grid VerticalAlignment="Center">
-                            <Border Name="TrackBackground"
-                                    Background="#1AFFFFFF"
-                                    CornerRadius="3"
-                                    Height="5"
-                                    VerticalAlignment="Center" />
-                            <Track Name="PART_Track"
-                                   VerticalAlignment="Center"
-                                   IsDirectionReversed="False"
-                                   Orientation="Horizontal"
-                                   Minimum="{TemplateBinding Minimum}"
-                                   Maximum="{TemplateBinding Maximum}"
-                                   Value="{TemplateBinding Value, Mode=TwoWay}">
-                                <Track.DecreaseButton>
-                                    <RepeatButton Focusable="False">
-                                        <RepeatButton.Template>
-                                            <ControlTemplate>
-                                                <Border CornerRadius="3"
-                                                        Height="5"
-                                                        VerticalAlignment="Center">
-                                                    <Border.Background>
-                                                        <SolidColorBrush Color="#FFA855F7" />
-                                                    </Border.Background>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </RepeatButton.Template>
-                                    </RepeatButton>
-                                </Track.DecreaseButton>
-                                <Track.IncreaseButton>
-                                    <RepeatButton Focusable="False">
-                                        <RepeatButton.Template>
-                                            <ControlTemplate>
-                                                <Border Background="Transparent"
-                                                        Height="5"
-                                                        VerticalAlignment="Center" />
-                                            </ControlTemplate>
-                                        </RepeatButton.Template>
-                                    </RepeatButton>
-                                </Track.IncreaseButton>
-                                <Track.Thumb>
-                                    <Thumb Width="10" Height="10">
-                                        <Thumb.Template>
-                                            <ControlTemplate>
-                                                <Border Width="10" Height="10"
-                                                        CornerRadius="5"
-                                                        Background="White" />
-                                            </ControlTemplate>
-                                        </Thumb.Template>
-                                    </Thumb>
-                                </Track.Thumb>
-                            </Track>
-                        </Grid>
-                    </Border>
-                </ControlTemplate>
-            </Setter>
-        </ControlTheme>
-    </UserControl.Resources>
 
     <Grid RowDefinitions="*,Auto">
         <!-- Main Content Area -->
@@ -184,72 +29,28 @@
                                Foreground="{StaticResource TextSecondaryBrush}" />
                 </StackPanel>
 
-                <!-- Right: Search, Filter, View Buttons -->
-                <StackPanel Grid.Column="1"
-                            Orientation="Horizontal"
-                            Spacing="10"
-                            VerticalAlignment="Top">
-                    <!-- Search Box -->
-                    <Border Width="240"
-                            Height="38"
-                            Background="{StaticResource BgCardBrush}"
-                            CornerRadius="8"
-                            BorderBrush="{StaticResource BgElement2Brush}"
-                            BorderThickness="1">
-                        <Grid ColumnDefinitions="Auto,*" Margin="12,0">
-                            <TextBlock Grid.Column="0"
-                                       Text="&#xE721;"
-                                       FontFamily="Segoe Fluent Icons"
-                                       FontSize="16"
-                                       Foreground="{StaticResource TextSecondaryBrush}"
-                                       VerticalAlignment="Center" />
-                            <TextBox Grid.Column="1"
-                                     Text="{Binding SearchText}"
-                                     Watermark="Search..."
-                                     FontSize="13"
-                                     Foreground="{StaticResource TextPrimaryBrush}"
-                                     Background="Transparent"
-                                     BorderThickness="0"
-                                     Margin="8,0,0,0"
-                                     VerticalContentAlignment="Center" />
-                        </Grid>
-                    </Border>
-
-                    <!-- Filter Button -->
-                    <Button Height="38"
-                            Background="{StaticResource BgCardBrush}"
-                            CornerRadius="8"
-                            BorderBrush="{StaticResource BgElement2Brush}"
-                            BorderThickness="1"
-                            Padding="12,0">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <TextBlock Text="&#xE71C;"
-                                       FontFamily="Segoe Fluent Icons"
-                                       FontSize="14"
-                                       Foreground="{StaticResource TextSecondaryBrush}"
-                                       VerticalAlignment="Center" />
-                            <TextBlock Text="Filter"
-                                       FontSize="13"
-                                       Foreground="{StaticResource TextSecondaryBrush}"
-                                       VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-
-                    <!-- View Button -->
-                    <Button Width="38"
-                            Height="38"
-                            Background="{StaticResource BgCardBrush}"
-                            CornerRadius="8"
-                            BorderBrush="{StaticResource BgElement2Brush}"
-                            BorderThickness="1">
-                        <TextBlock Text="&#xE80A;"
+                <!-- Right: Play All Button -->
+                <Button Grid.Column="1"
+                        Height="38"
+                        Command="{Binding PlayAllCommand}"
+                        CornerRadius="8"
+                        Padding="12,0"
+                        Cursor="Hand"
+                        VerticalAlignment="Top"
+                        Background="{StaticResource PurplePinkVerticalGradientBrush}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="&#xE768;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="14"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   HorizontalAlignment="Center"
+                                   Foreground="White"
                                    VerticalAlignment="Center" />
-                    </Button>
-                </StackPanel>
+                        <TextBlock Text="Play All"
+                                   FontSize="13"
+                                   FontWeight="Medium"
+                                   Foreground="White"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
             </Grid>
 
             <!-- Song List Table Area -->
@@ -302,21 +103,8 @@
                          SelectedItem="{Binding CurrentSong}"
                          Background="Transparent"
                          BorderThickness="0"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                    <ListBox.Styles>
-                        <Style Selector="ListBoxItem">
-                            <Setter Property="Padding" Value="0" />
-                            <Setter Property="Margin" Value="0,0,0,6" />
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="BorderThickness" Value="0" />
-                        </Style>
-                        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                            <Setter Property="Background" Value="Transparent" />
-                        </Style>
-                        <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-                            <Setter Property="Background" Value="Transparent" />
-                        </Style>
-                    </ListBox.Styles>
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ItemContainerTheme="{StaticResource SongListItemTheme}">
                     <ListBox.DataTemplates>
                         <DataTemplate DataType="models:Song">
                             <Border x:Name="SongRow"
@@ -397,7 +185,7 @@
                                         <!-- Play Button (visible when NOT playing this song) -->
                                         <Button Width="34" Height="34" CornerRadius="9999"
                                                 Background="{StaticResource BgCardHoverBrush}"
-                                                BorderBrush="#333333" BorderThickness="1"
+                                                BorderBrush="{StaticResource SongRowBorderBrush}" BorderThickness="1"
                                                 VerticalAlignment="Center"
                                                 Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).PlaySongCommand}"
                                                 CommandParameter="{Binding FilePath}">
@@ -457,7 +245,7 @@
                                             <TextBlock Text="&#xEB51;"
                                                        FontFamily="Segoe Fluent Icons"
                                                        FontSize="16"
-                                                       Foreground="#555555"
+                                                       Foreground="{StaticResource HeartInactiveBrush}"
                                                        IsVisible="{Binding !IsFavorite}" />
                                         </Panel>
                                     </Button>
@@ -528,7 +316,7 @@
                             <TextBlock Text="&#xEB51;"
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="18"
-                                       Foreground="#555555"
+                                       Foreground="{StaticResource HeartInactiveBrush}"
                                        IsVisible="{Binding !CurrentSong.IsFavorite}" />
                         </Panel>
                     </Button>
@@ -633,7 +421,7 @@
                                    FontFamily="Consolas"
                                    VerticalAlignment="Center" />
                         <Slider Grid.Column="1"
-                                Theme="{StaticResource MusicSliderTheme}"
+                                Theme="{StaticResource MusicProgressSliderTheme}"
                                 Minimum="0"
                                 Maximum="{Binding DurationSeconds}"
                                 Value="{Binding PositionSeconds, Mode=TwoWay}"
@@ -696,7 +484,7 @@
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="16" />
                         </Button>
-                        <Slider Theme="{StaticResource VolumeSliderTheme}"
+                        <Slider Theme="{StaticResource VolumeControlSliderTheme}"
                                 Minimum="0"
                                 Maximum="100"
                                 Value="{Binding Volume}"

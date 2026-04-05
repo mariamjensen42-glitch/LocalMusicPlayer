@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="LocalMusicPlayer.App"
              xmlns:local="using:LocalMusicPlayer"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -17,7 +18,14 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://LocalMusicPlayer/Styles/Resources.axaml" />
+                <ResourceInclude Source="avares://LocalMusicPlayer/Styles/PlayerStyles.axaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- 全局转换器 -->
+            <converters:TimeSpanToStringConverter x:Key="TimeSpanConverter" />
+            <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
+            <converters:SongIsPlayingConverter x:Key="SongIsPlayingConverter" />
+            <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

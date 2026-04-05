@@ -182,6 +182,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> NavigateToLibraryCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToPlayerCommand { get; }
     public ReactiveCommand<Unit, Unit> ToggleQueuePanelCommand { get; }
+    public ReactiveCommand<Unit, Unit> PlayAllCommand { get; }
 
     private QueueViewModel? _queueViewModel;
 
@@ -239,6 +240,24 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             if (QueueViewModel != null)
                 QueueViewModel.IsPanelOpen = !QueueViewModel.IsPanelOpen;
+        });
+        PlayAllCommand = ReactiveCommand.Create(() =>
+        {
+            if (Library.FilteredSongs.Count == 0 || CurrentPlaylist == null)
+                return;
+
+            // Clear current playlist and add all filtered songs
+            _playlistService.ClearPlaylist();
+            foreach (var song in Library.FilteredSongs)
+            {
+                _playlistService.AddSongToPlaylist(CurrentPlaylist, song);
+            }
+
+            // Start playing from the first song
+            _playlistService.PlayNext();
+            CurrentSong = _playlistService.CurrentSong;
+            if (CurrentSong != null)
+                _musicPlayerService.Play(CurrentSong);
         });
 
         PlayCommand = ReactiveCommand.Create(() => _musicPlayerService.Resume());
