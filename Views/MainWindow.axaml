@@ -74,6 +74,24 @@
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
+                    <!-- 分类浏览按钮 -->
+                    <Button Command="{Binding NavigateToCategoryCommand}"
+                            Width="40"
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            Background="{StaticResource BgCardBrush}"
+                            BorderBrush="{StaticResource BorderSubtleBrush}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="0"
+                            Cursor="Hand">
+                        <TextBlock Text="&#xE8FD;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="18"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Button>
                     <!-- 统计按钮 -->
                     <Button Command="{Binding NavigateToStatisticsCommand}"
                             Width="40"

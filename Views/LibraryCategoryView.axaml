@@ -16,6 +16,8 @@
     <UserControl.Resources>
         <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
         <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
+        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
         <LinearGradientBrush x:Key="PurplePinkGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
             <GradientStop Offset="0" Color="#FFA855F7" />
             <GradientStop Offset="1" Color="#FFEC4899" />
@@ -30,47 +32,141 @@
                 BorderThickness="0,0,0,1"
                 Padding="24,12">
             <StackPanel Orientation="Horizontal" Spacing="4">
-                <Button Content="Songs"
-                        Command="{Binding SwitchCategoryCommand}"
-                        CommandParameter="Songs"
-                        Background="{StaticResource BgCardHoverBrush}"
-                        CornerRadius="8"
-                        Padding="16,8"
-                        FontSize="13"
-                        FontWeight="Medium"
-                        Foreground="{StaticResource TextPrimaryBrush}" />
-                <Button Content="Artists"
-                        Command="{Binding SwitchCategoryCommand}"
-                        CommandParameter="Artists"
-                        Background="Transparent"
-                        CornerRadius="8"
-                        Padding="16,8"
-                        FontSize="13"
-                        Foreground="{StaticResource TextMutedBrush}" />
-                <Button Content="Albums"
-                        Command="{Binding SwitchCategoryCommand}"
-                        CommandParameter="Albums"
-                        Background="Transparent"
-                        CornerRadius="8"
-                        Padding="16,8"
-                        FontSize="13"
-                        Foreground="{StaticResource TextMutedBrush}" />
-                <Button Content="Folders"
-                        Command="{Binding SwitchCategoryCommand}"
-                        CommandParameter="Folders"
-                        Background="Transparent"
-                        CornerRadius="8"
-                        Padding="16,8"
-                        FontSize="13"
-                        Foreground="{StaticResource TextMutedBrush}" />
-                <Button Content="Favorites"
-                        Command="{Binding SwitchCategoryCommand}"
-                        CommandParameter="Favorites"
-                        Background="Transparent"
-                        CornerRadius="8"
-                        Padding="16,8"
-                        FontSize="13"
-                        Foreground="{StaticResource TextMutedBrush}" />
+                <!-- Songs Tab -->
+                <RadioButton Content="Songs"
+                             IsChecked="{Binding CurrentCategory, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static models:LibraryCategory.Songs}}"
+                             Command="{Binding SwitchCategoryCommand}"
+                             CommandParameter="{x:Static models:LibraryCategory.Songs}"
+                             CornerRadius="8"
+                             Padding="16,8"
+                             FontSize="13"
+                             FontWeight="Medium">
+                    <RadioButton.Styles>
+                        <Style Selector="RadioButton">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter Property="BorderThickness" Value="0" />
+                        </Style>
+                        <Style Selector="RadioButton:checked">
+                            <Setter Property="Background" Value="{StaticResource AccentPurpleBrush}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                        <Style Selector="RadioButton:checked /template/ Ellipse#CheckMark">
+                            <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                        <Style Selector="RadioButton:pointerover">
+                            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+                        </Style>
+                    </RadioButton.Styles>
+                </RadioButton>
+                <!-- Artists Tab -->
+                <RadioButton Content="Artists"
+                             IsChecked="{Binding CurrentCategory, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static models:LibraryCategory.Artists}}"
+                             Command="{Binding SwitchCategoryCommand}"
+                             CommandParameter="{x:Static models:LibraryCategory.Artists}"
+                             CornerRadius="8"
+                             Padding="16,8"
+                             FontSize="13"
+                             FontWeight="Medium">
+                    <RadioButton.Styles>
+                        <Style Selector="RadioButton">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter Property="BorderThickness" Value="0" />
+                        </Style>
+                        <Style Selector="RadioButton:checked">
+                            <Setter Property="Background" Value="{StaticResource AccentPurpleBrush}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                        <Style Selector="RadioButton:checked /template/ Ellipse#CheckMark">
+                            <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                        <Style Selector="RadioButton:pointerover">
+                            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+                        </Style>
+                    </RadioButton.Styles>
+                </RadioButton>
+                <!-- Albums Tab -->
+                <RadioButton Content="Albums"
+                             IsChecked="{Binding CurrentCategory, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static models:LibraryCategory.Albums}}"
+                             Command="{Binding SwitchCategoryCommand}"
+                             CommandParameter="{x:Static models:LibraryCategory.Albums}"
+                             CornerRadius="8"
+                             Padding="16,8"
+                             FontSize="13"
+                             FontWeight="Medium">
+                    <RadioButton.Styles>
+                        <Style Selector="RadioButton">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter Property="BorderThickness" Value="0" />
+                        </Style>
+                        <Style Selector="RadioButton:checked">
+                            <Setter Property="Background" Value="{StaticResource AccentPurpleBrush}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                        <Style Selector="RadioButton:checked /template/ Ellipse#CheckMark">
+                            <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                        <Style Selector="RadioButton:pointerover">
+                            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+                        </Style>
+                    </RadioButton.Styles>
+                </RadioButton>
+                <!-- Folders Tab -->
+                <RadioButton Content="Folders"
+                             IsChecked="{Binding CurrentCategory, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static models:LibraryCategory.Folders}}"
+                             Command="{Binding SwitchCategoryCommand}"
+                             CommandParameter="{x:Static models:LibraryCategory.Folders}"
+                             CornerRadius="8"
+                             Padding="16,8"
+                             FontSize="13"
+                             FontWeight="Medium">
+                    <RadioButton.Styles>
+                        <Style Selector="RadioButton">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter Property="BorderThickness" Value="0" />
+                        </Style>
+                        <Style Selector="RadioButton:checked">
+                            <Setter Property="Background" Value="{StaticResource AccentPurpleBrush}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                        <Style Selector="RadioButton:checked /template/ Ellipse#CheckMark">
+                            <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                        <Style Selector="RadioButton:pointerover">
+                            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+                        </Style>
+                    </RadioButton.Styles>
+                </RadioButton>
+                <!-- Favorites Tab -->
+                <RadioButton Content="Favorites"
+                             IsChecked="{Binding CurrentCategory, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static models:LibraryCategory.Favorites}}"
+                             Command="{Binding SwitchCategoryCommand}"
+                             CommandParameter="{x:Static models:LibraryCategory.Favorites}"
+                             CornerRadius="8"
+                             Padding="16,8"
+                             FontSize="13"
+                             FontWeight="Medium">
+                    <RadioButton.Styles>
+                        <Style Selector="RadioButton">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter Property="BorderThickness" Value="0" />
+                        </Style>
+                        <Style Selector="RadioButton:checked">
+                            <Setter Property="Background" Value="{StaticResource AccentPurpleBrush}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                        <Style Selector="RadioButton:checked /template/ Ellipse#CheckMark">
+                            <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                        <Style Selector="RadioButton:pointerover">
+                            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+                        </Style>
+                    </RadioButton.Styles>
+                </RadioButton>
             </StackPanel>
         </Border>
 
@@ -94,8 +190,9 @@
                                                 Height="120"
                                                 CornerRadius="60"
                                                 Background="{StaticResource BgElement2Brush}">
-                                            <Image Source="{Binding CoverArtPath}"
-                                                   Stretch="UniformToFill" />
+                                            <Image
+                                                Source="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                                Stretch="UniformToFill" />
                                         </Border>
                                         <TextBlock Text="{Binding ArtistName}"
                                                    FontSize="14"
@@ -133,8 +230,9 @@
                                                 Height="136"
                                                 CornerRadius="8"
                                                 Background="{StaticResource BgElement2Brush}">
-                                            <Image Source="{Binding CoverArtPath}"
-                                                   Stretch="UniformToFill" />
+                                            <Image
+                                                Source="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                                Stretch="UniformToFill" />
                                         </Border>
                                         <TextBlock Text="{Binding AlbumName}"
                                                    FontSize="14"
@@ -211,8 +309,9 @@
                                                 Height="48"
                                                 CornerRadius="8"
                                                 Background="{StaticResource BgElement2Brush}">
-                                            <Image Source="{Binding AlbumArtPath}"
-                                                   Stretch="UniformToFill" />
+                                            <Image
+                                                Source="{Binding AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                                Stretch="UniformToFill" />
                                         </Border>
                                         <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Title}"

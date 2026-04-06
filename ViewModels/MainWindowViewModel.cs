@@ -185,6 +185,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> NavigateToPlayerCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToStatisticsCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToPlaylistCommand { get; }
+    public ReactiveCommand<Unit, Unit> NavigateToCategoryCommand { get; }
     public ReactiveCommand<Unit, Unit> ToggleQueuePanelCommand { get; }
     public ReactiveCommand<Unit, Unit> PlayAllCommand { get; }
 
@@ -202,6 +203,14 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         get => _playlistManagementViewModel;
         set => this.RaiseAndSetIfChanged(ref _playlistManagementViewModel, value);
+    }
+
+    private LibraryCategoryViewModel? _libraryCategoryViewModel;
+
+    public LibraryCategoryViewModel? LibraryCategoryViewModel
+    {
+        get => _libraryCategoryViewModel;
+        set => this.RaiseAndSetIfChanged(ref _libraryCategoryViewModel, value);
     }
 
     private QueueViewModel? _queueViewModel;
@@ -223,7 +232,8 @@ public partial class MainWindowViewModel : ViewModelBase
         IConfigurationService configService,
         ILyricsService lyricsService,
         IStatisticsService statisticsService,
-        IUserPlaylistService userPlaylistService)
+        IUserPlaylistService userPlaylistService,
+        ILibraryCategoryService libraryCategoryService)
     {
         _musicPlayerService = musicPlayerService;
         _playlistService = playlistService;
@@ -268,11 +278,19 @@ public partial class MainWindowViewModel : ViewModelBase
             statisticsService,
             musicLibraryService);
 
+        // 创建 LibraryCategoryViewModel
+        LibraryCategoryViewModel = new LibraryCategoryViewModel(
+            libraryCategoryService,
+            musicPlayerService,
+            playlistService,
+            statisticsService);
+
         NavigateToSettingsCommand = ReactiveCommand.Create(() => { CurrentPage = settingsViewModel; });
         NavigateToLibraryCommand = ReactiveCommand.Create(() => { CurrentPage = this; });
         NavigateToPlayerCommand = ReactiveCommand.Create(() => { CurrentPage = PlayerPageViewModel!; });
         NavigateToStatisticsCommand = ReactiveCommand.Create(() => { CurrentPage = StatisticsViewModel!; });
         NavigateToPlaylistCommand = ReactiveCommand.Create(() => { CurrentPage = PlaylistManagementViewModel!; });
+        NavigateToCategoryCommand = ReactiveCommand.Create(() => { CurrentPage = LibraryCategoryViewModel!; });
         ToggleQueuePanelCommand = ReactiveCommand.Create(() =>
         {
             if (QueueViewModel != null)

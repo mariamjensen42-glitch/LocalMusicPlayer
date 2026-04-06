@@ -32,14 +32,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Windows x64 - 生成安装包
           - os: windows-latest
             target: win-x64
             artifact_name: LocalMusicPlayer-win-x64
             asset_name: LocalMusicPlayer-win-x64.zip
+            setup_arch: x64
+            setup_target: win-x64
+          # Windows x86 - 生成安装包
           - os: windows-latest
             target: win-x86
             artifact_name: LocalMusicPlayer-win-x86
             asset_name: LocalMusicPlayer-win-x86.zip
+            setup_arch: x86
+            setup_target: win-x86
+          # Linux 和 macOS 保持压缩包格式
           - os: ubuntu-latest
             target: linux-x64
             artifact_name: LocalMusicPlayer-linux-x64
@@ -77,20 +84,49 @@ jobs:
 
       - name: Publish
         run: |
-          dotnet publish -c Release -r ${{ matrix.target }} --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o ./publish
+          dotnet publish -c Release -r ${{ matrix.target }} --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/${{ matrix.target }}
 
-      - name: Create Windows archive
+      # Windows: 生成安装包
+      - name: Install Inno Setup
         if: matrix.os == 'windows-latest'
-        run: Compress-Archive -Path ./publish/* -DestinationPath ./${{ matrix.asset_name }}
+        run: |
+          choco install innosetup -y
 
+      - name: Build Windows Installer
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $version = "${{ needs.release-please.outputs.tag_name }}".Replace('v', '')
+          if ([string]::IsNullOrEmpty($version)) { $version = "1.0.0" }
+          
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" `
+            /DMyAppVersion=$version `
+            /DMyAppArch=${{ matrix.setup_arch }} `
+            /DMyAppTarget=${{ matrix.setup_target }} `
+            "installer\LocalMusicPlayer.iss"
+
+      # Linux/macOS: 生成压缩包
       - name: Create Unix archive
         if: matrix.os != 'windows-latest'
         run: |
-          cd ./publish
-          tar -czf ../${{ matrix.asset_name }} .
-          cd ..
+          cd ./publish/${{ matrix.target }}
+          tar -czf ../../${{ matrix.asset_name }} .
+          cd ../..
 
-      - name: Upload Release Asset
+      # Windows: 上传安装包和压缩包
+      - name: Upload Windows Release Assets
+        if: matrix.os == 'windows-latest'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          files: |
+            ./installer-output/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Linux/macOS: 上传压缩包
+      - name: Upload Unix Release Assets
+        if: matrix.os != 'windows-latest'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ needs.release-please.outputs.tag_name }}
