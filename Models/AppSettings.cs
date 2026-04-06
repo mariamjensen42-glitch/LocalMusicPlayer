@@ -27,4 +27,14 @@ public class AppSettings
     /// 首次扫描日期，用于计算使用天数
     /// </summary>
     public DateTime? FirstScanDate { get; set; }
+
+    /// <summary>
+    /// 用户自定义播放列表
+    /// </summary>
+    public List<UserPlaylist> UserPlaylists { get; set; } = new();
+
+    /// <summary>
+    /// 收藏歌曲文件路径列表
+    /// </summary>
+    public List<string> FavoriteFilePaths { get; set; } = new();
 }

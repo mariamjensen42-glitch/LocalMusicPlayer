@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -10,6 +11,8 @@ namespace LocalMusicPlayer;
 
 public partial class App : Application
 {
+    public IServiceProvider? Services { get; private set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -21,16 +24,16 @@ public partial class App : Application
         {
             var services = new ServiceCollection();
             ConfigureServices(services);
-            var serviceProvider = services.BuildServiceProvider();
+            Services = services.BuildServiceProvider();
 
-            var windowProvider = serviceProvider.GetRequiredService<IWindowProvider>();
+            var windowProvider = Services.GetRequiredService<IWindowProvider>();
 
             desktop.MainWindow = new MainWindow();
             windowProvider.CurrentWindow = desktop.MainWindow;
 
             desktop.MainWindow.Loaded += (_, _) =>
             {
-                var mainWindowViewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
+                var mainWindowViewModel = Services.GetRequiredService<MainWindowViewModel>();
                 desktop.MainWindow!.DataContext = mainWindowViewModel;
             };
         }
@@ -50,6 +53,9 @@ public partial class App : Application
         services.AddSingleton<IScanService, ScanService>();
         services.AddSingleton<ILyricsService, LyricsService>();
         services.AddSingleton<IStatisticsService, StatisticsService>();
+        services.AddSingleton<IUserPlaylistService, UserPlaylistService>();
+        services.AddSingleton<IKeyboardShortcutService, KeyboardShortcutService>();
+        services.AddSingleton<ILibraryCategoryService, LibraryCategoryService>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<StatisticsViewModel>();
         services.AddTransient<MainWindowViewModel>();

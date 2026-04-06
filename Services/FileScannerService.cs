@@ -13,7 +13,17 @@ public class FileScannerService : IFileScannerService
 {
     private readonly IAlbumArtService _albumArtService;
 
-    public IReadOnlyList<string> SupportedExtensions { get; } = [".mp3", ".flac", ".wav", ".aac", ".ogg", ".m4a"];
+    public IReadOnlyList<string> SupportedExtensions { get; } =
+    [
+        // 常用格式
+        ".mp3", ".flac", ".wav", ".aac", ".ogg", ".m4a",
+        // DSD 格式
+        ".dsf", ".dff",
+        // 无损格式
+        ".ape", ".aiff", ".aif",
+        // 其他常用格式
+        ".wma", ".opus", ".webm", ".ac3", ".dts"
+    ];
 
     public FileScannerService(IAlbumArtService albumArtService)
     {

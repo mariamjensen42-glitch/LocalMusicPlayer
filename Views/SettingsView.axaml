@@ -75,40 +75,78 @@
                     <!-- 分隔线 -->
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
-                    <!-- 路径区域 -->
+                    <!-- 文件夹列表区域 -->
                     <StackPanel Spacing="12">
-                        <TextBlock Text="MUSIC FOLDER PATH"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"
-                                   Foreground="{StaticResource TextMutedBrush}"
-                                   LetterSpacing="4" />
-                        <Border Height="48"
-                                Background="{StaticResource BgInputBrush}"
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="MUSIC FOLDERS"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       LetterSpacing="4"
+                                       VerticalAlignment="Center" />
+                            <Button Grid.Column="1"
+                                    Height="28"
+                                    Background="{StaticResource AccentPurpleBrush}"
+                                    CornerRadius="6"
+                                    Padding="12,0"
+                                    Foreground="White"
+                                    FontSize="11"
+                                    FontWeight="Medium"
+                                    Command="{Binding AddFolderCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="&#xE710;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="12"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Text="Add" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- 文件夹列表 -->
+                        <Border Background="{StaticResource BgInputBrush}"
                                 CornerRadius="10"
-                                BorderBrush="{StaticResource AccentPurpleBorderBrush}"
+                                BorderBrush="{StaticResource BorderSubtleBrush}"
                                 BorderThickness="1"
-                                Padding="16,0">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Grid.Column="0"
-                                           Text="{Binding MusicFolderPath}"
-                                           FontSize="13"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           VerticalAlignment="Center"
-                                           FontFamily="Consolas, monospace"
-                                           TextTrimming="CharacterEllipsis" />
-                                <Button Grid.Column="1"
-                                        Height="32"
-                                        Background="{StaticResource BgCardHoverBrush}"
-                                        CornerRadius="8"
-                                        Padding="16,0"
-                                        Foreground="{StaticResource TextPrimaryBrush}"
-                                        FontSize="12"
-                                        FontWeight="500"
-                                        Command="{Binding BrowseFolderCommand}"
-                                        VerticalAlignment="Center">
-                                    <TextBlock Text="Browse" VerticalAlignment="Center" />
-                                </Button>
-                            </Grid>
+                                MinHeight="80"
+                                MaxHeight="200">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding ScanFolders}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="x:String">
+                                            <Border Background="Transparent"
+                                                    BorderBrush="{StaticResource BorderSubtleBrush}"
+                                                    BorderThickness="0,0,0,1"
+                                                    Padding="12,10">
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="{Binding}"
+                                                               FontSize="13"
+                                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                                               VerticalAlignment="Center"
+                                                               FontFamily="Consolas, monospace"
+                                                               TextTrimming="CharacterEllipsis" />
+                                                    <Button Grid.Column="1"
+                                                            Width="28"
+                                                            Height="28"
+                                                            Background="Transparent"
+                                                            CornerRadius="6"
+                                                            Command="{Binding $parent[ItemsControl].DataContext.RemoveFolderCommand}"
+                                                            CommandParameter="{Binding}">
+                                                        <TextBlock Text="&#xE74D;"
+                                                                   FontFamily="Segoe Fluent Icons"
+                                                                   FontSize="12"
+                                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center" />
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
                         </Border>
                     </StackPanel>
 
@@ -190,14 +228,14 @@
                                 Foreground="White"
                                 FontSize="14"
                                 FontWeight="SemiBold"
-                                Command="{Binding ScanNowCommand}"
+                                Command="{Binding ScanAllCommand}"
                                 IsEnabled="{Binding !IsScanning}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="&#xE72C;"
                                            FontFamily="Segoe Fluent Icons"
                                            FontSize="16"
                                            VerticalAlignment="Center" />
-                                <TextBlock Text="Scan Now" VerticalAlignment="Center" />
+                                <TextBlock Text="Scan All" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                     </StackPanel>

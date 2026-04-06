@@ -19,6 +19,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IScanService _scanService;
     private readonly ILyricsService _lyricsService;
     private readonly IStatisticsService _statisticsService;
+    private readonly IUserPlaylistService _userPlaylistService;
 
     private ViewModelBase _currentPage = null!;
 
@@ -183,6 +184,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> NavigateToLibraryCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToPlayerCommand { get; }
     public ReactiveCommand<Unit, Unit> NavigateToStatisticsCommand { get; }
+    public ReactiveCommand<Unit, Unit> NavigateToPlaylistCommand { get; }
     public ReactiveCommand<Unit, Unit> ToggleQueuePanelCommand { get; }
     public ReactiveCommand<Unit, Unit> PlayAllCommand { get; }
 
@@ -192,6 +194,14 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         get => _statisticsViewModel;
         set => this.RaiseAndSetIfChanged(ref _statisticsViewModel, value);
+    }
+
+    private PlaylistManagementViewModel? _playlistManagementViewModel;
+
+    public PlaylistManagementViewModel? PlaylistManagementViewModel
+    {
+        get => _playlistManagementViewModel;
+        set => this.RaiseAndSetIfChanged(ref _playlistManagementViewModel, value);
     }
 
     private QueueViewModel? _queueViewModel;
@@ -212,7 +222,8 @@ public partial class MainWindowViewModel : ViewModelBase
         IScanService scanService,
         IConfigurationService configService,
         ILyricsService lyricsService,
-        IStatisticsService statisticsService)
+        IStatisticsService statisticsService,
+        IUserPlaylistService userPlaylistService)
     {
         _musicPlayerService = musicPlayerService;
         _playlistService = playlistService;
@@ -222,6 +233,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _configService = configService;
         _lyricsService = lyricsService;
         _statisticsService = statisticsService;
+        _userPlaylistService = userPlaylistService;
 
         // 加载配置并自动扫描
         InitializeAsync();
@@ -248,10 +260,19 @@ public partial class MainWindowViewModel : ViewModelBase
         // 创建 StatisticsViewModel
         StatisticsViewModel = new StatisticsViewModel(statisticsService, musicLibraryService);
 
+        // 创建 PlaylistManagementViewModel
+        PlaylistManagementViewModel = new PlaylistManagementViewModel(
+            userPlaylistService,
+            musicPlayerService,
+            playlistService,
+            statisticsService,
+            musicLibraryService);
+
         NavigateToSettingsCommand = ReactiveCommand.Create(() => { CurrentPage = settingsViewModel; });
         NavigateToLibraryCommand = ReactiveCommand.Create(() => { CurrentPage = this; });
         NavigateToPlayerCommand = ReactiveCommand.Create(() => { CurrentPage = PlayerPageViewModel!; });
         NavigateToStatisticsCommand = ReactiveCommand.Create(() => { CurrentPage = StatisticsViewModel!; });
+        NavigateToPlaylistCommand = ReactiveCommand.Create(() => { CurrentPage = PlaylistManagementViewModel!; });
         ToggleQueuePanelCommand = ReactiveCommand.Create(() =>
         {
             if (QueueViewModel != null)
@@ -346,7 +367,14 @@ public partial class MainWindowViewModel : ViewModelBase
             var song = Library.Songs.FirstOrDefault(s => s.FilePath == path);
             if (song != null)
             {
-                song.IsFavorite = !song.IsFavorite;
+                if (song.IsFavorite)
+                {
+                    _userPlaylistService.RemoveFromFavorites(song);
+                }
+                else
+                {
+                    _userPlaylistService.AddToFavorites(song);
+                }
             }
         });
 
@@ -428,16 +456,21 @@ public partial class MainWindowViewModel : ViewModelBase
         _musicPlayerService.SetVolume(Volume);
         if (IsMuted) _musicPlayerService.Mute();
 
-        // 如果有保存的文件夹路径，自动扫描
+        // 如果有保存的文件夹路径，扫描所有文件夹
         var folders = _configService.GetScanFolders();
         if (folders.Count > 0)
         {
-            var firstFolder = folders[0];
-            if (!string.IsNullOrEmpty(firstFolder))
+            // 首次启动全量扫描，之后使用增量扫描
+            if (_musicLibraryService.Songs.Count == 0)
             {
-                await _scanService.ScanAsync(firstFolder, _configService.CurrentSettings.IncludeSubfolders);
-                UpdateLibraryStats();
+                await _scanService.ScanAllFoldersAsync();
             }
+            else
+            {
+                await _scanService.RescanLibraryAsync();
+            }
+
+            UpdateLibraryStats();
         }
     }
 }

@@ -4,11 +4,16 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using LocalMusicPlayer.ViewModels;
+using LocalMusicPlayer.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LocalMusicPlayer.Views;
 
 public partial class MainWindow : Window
 {
+    private IKeyboardShortcutService? _keyboardShortcutService;
+    private MainWindowViewModel? _mainWindowViewModel;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -22,12 +27,16 @@ public partial class MainWindow : Window
 
         // 监听播放页面切换，调整标题栏区域扩展
         DataContextChanged += OnDataContextChanged;
+
+        // 监听键盘事件
+        KeyDown += OnKeyDown;
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
         if (DataContext is MainWindowViewModel vm)
         {
+            _mainWindowViewModel = vm;
             vm.PropertyChanged += (s, args) =>
             {
                 if (args.PropertyName == nameof(MainWindowViewModel.IsPlayerPageVisible))
@@ -35,6 +44,64 @@ public partial class MainWindow : Window
                     UpdateTitleBarChrome(vm.IsPlayerPageVisible);
                 }
             };
+        }
+    }
+
+    private void OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        // 如果焦点在输入控件上，不处理快捷键
+        if (e.Source is TextBox)
+            return;
+
+        _keyboardShortcutService ??= ((App.Current as App)?.Services?.GetService<IKeyboardShortcutService>());
+
+        if (_keyboardShortcutService == null || _mainWindowViewModel == null)
+            return;
+
+        // 设置导航返回动作
+        _keyboardShortcutService.SetNavigateBackAction(() =>
+        {
+            _mainWindowViewModel.NavigateToLibraryCommand.Execute().Subscribe();
+        });
+
+        switch (e.Key)
+        {
+            case Key.Space:
+                _keyboardShortcutService.PlayPause();
+                e.Handled = true;
+                break;
+            case Key.Left:
+                _keyboardShortcutService.SeekBackward(5);
+                e.Handled = true;
+                break;
+            case Key.Right:
+                _keyboardShortcutService.SeekForward(5);
+                e.Handled = true;
+                break;
+            case Key.Up:
+                _keyboardShortcutService.VolumeUp(5);
+                e.Handled = true;
+                break;
+            case Key.Down:
+                _keyboardShortcutService.VolumeDown(5);
+                e.Handled = true;
+                break;
+            case Key.Escape:
+                _keyboardShortcutService.NavigateBack();
+                e.Handled = true;
+                break;
+            case Key.M:
+                _keyboardShortcutService.ToggleMute();
+                e.Handled = true;
+                break;
+            case Key.N:
+                _keyboardShortcutService.NextTrack();
+                e.Handled = true;
+                break;
+            case Key.P:
+                _keyboardShortcutService.PreviousTrack();
+                e.Handled = true;
+                break;
         }
     }
 
