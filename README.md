@@ -8,7 +8,7 @@
 [![LibVLC](https://img.shields.io/badge/LibVLC-3.9.6-orange.svg)](https://www.videolan.org/)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
 
-一款基于 Avalonia UI 的跨平台本地音乐播放器，支持 Windows、Linux 和 macOS。
+一款基于 Avalonia UI 的跨平台本地音乐播放器，支持 Windows、Linux 和 macOS。111
 
 ## ✨ 功能特性
 
