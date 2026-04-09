@@ -35,6 +35,9 @@ public partial class App : Application
             {
                 var mainWindowViewModel = Services.GetRequiredService<MainWindowViewModel>();
                 desktop.MainWindow!.DataContext = mainWindowViewModel;
+                
+                var systemTrayService = Services.GetRequiredService<ISystemTrayService>();
+                systemTrayService.Initialize();
             };
         }
 
@@ -60,6 +63,7 @@ public partial class App : Application
         services.AddSingleton<ILibraryCategoryService, LibraryCategoryService>();
         services.AddSingleton<IPlaybackStateService, PlaybackStateService>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<ISystemTrayService, SystemTrayService>();
         services.AddSingleton<IViewModelFactory, ViewModelFactory>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<StatisticsViewModel>();

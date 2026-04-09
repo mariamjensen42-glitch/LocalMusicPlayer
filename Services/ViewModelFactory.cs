@@ -100,4 +100,22 @@ public class ViewModelFactory : IViewModelFactory
             _playbackStateService,
             _navigationService);
     }
+
+    public RecentlyPlayedViewModel CreateRecentlyPlayedViewModel()
+    {
+        return new RecentlyPlayedViewModel(
+            _musicLibraryService,
+            _statisticsService,
+            _playlistService,
+            _playbackStateService);
+    }
+
+    public PlayHistoryViewModel CreatePlayHistoryViewModel()
+    {
+        return new PlayHistoryViewModel(
+            _musicLibraryService,
+            _statisticsService,
+            _playlistService,
+            _playbackStateService);
+    }
 }

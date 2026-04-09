@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -19,6 +20,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private readonly IStatisticsService _statisticsService;
     private readonly IConfigurationService _configService;
     private readonly IUserPlaylistService _userPlaylistService;
+    private readonly ISystemTrayService _systemTrayService;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsPlayerPageVisible))]
@@ -65,6 +67,39 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     [ObservableProperty] private bool _isMuted;
 
     public bool IsQueuePanelOpen => _navigationService.IsQueuePanelOpen;
+
+    [ObservableProperty] private ObservableCollection<Song> _selectedSongs = new();
+    [ObservableProperty] private bool _isSelectAll;
+
+    partial void OnIsSelectAllChanged(bool value)
+    {
+        if (value)
+        {
+            SelectedSongs.Clear();
+            foreach (var song in Library.FilteredSongs)
+            {
+                SelectedSongs.Add(song);
+            }
+        }
+        else
+        {
+            SelectedSongs.Clear();
+        }
+    }
+
+    [RelayCommand]
+    private void ToggleSongSelection(Song song)
+    {
+        if (SelectedSongs.Contains(song))
+        {
+            SelectedSongs.Remove(song);
+        }
+        else
+        {
+            SelectedSongs.Add(song);
+        }
+        IsSelectAll = SelectedSongs.Count == Library.FilteredSongs.Count;
+    }
 
     [RelayCommand]
     private void Play() => _playbackStateService.Resume();
@@ -196,6 +231,32 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         _navigationService.NavigateTo<LibraryCategoryViewModel>();
     }
 
+    [RelayCommand]
+    private void NavigateToRecentlyPlayed()
+    {
+        IsLibrarySelected = false;
+        IsCategorySelected = false;
+        IsStatisticsSelected = false;
+        IsSettingsSelected = false;
+        RecentlyPlayedViewModel = _viewModelFactory.CreateRecentlyPlayedViewModel();
+        RecentlyPlayedViewModel.OnNavigateBack = () => CurrentPage = this;
+        CurrentPage = RecentlyPlayedViewModel;
+        _navigationService.NavigateTo<RecentlyPlayedViewModel>();
+    }
+
+    [RelayCommand]
+    private void NavigateToPlayHistory()
+    {
+        IsLibrarySelected = false;
+        IsCategorySelected = false;
+        IsStatisticsSelected = false;
+        IsSettingsSelected = false;
+        PlayHistoryViewModel = _viewModelFactory.CreatePlayHistoryViewModel();
+        PlayHistoryViewModel.OnNavigateBack = () => CurrentPage = this;
+        CurrentPage = PlayHistoryViewModel;
+        _navigationService.NavigateTo<PlayHistoryViewModel>();
+    }
+
     public void NavigateToArtistDetail(ArtistGroup artistGroup)
     {
         ArtistDetailViewModel = new ArtistDetailViewModel(
@@ -246,6 +307,52 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         }
     }
 
+    [RelayCommand]
+    private void PlaySelected()
+    {
+        if (SelectedSongs.Count == 0 || CurrentPlaylist == null)
+            return;
+
+        _playlistService.ClearPlaylist();
+        foreach (var song in SelectedSongs)
+        {
+            _playlistService.AddSongToPlaylist(CurrentPlaylist, song);
+        }
+
+        if (_playlistService.PlayNext())
+        {
+            var song = _playlistService.CurrentSong;
+            if (song != null)
+            {
+                _statisticsService.RecordPlayStart(song);
+                _playbackStateService.Play(song);
+            }
+        }
+    }
+
+    [RelayCommand]
+    private void AddSelectedToPlaylist()
+    {
+        if (SelectedSongs.Count == 0 || CurrentPlaylist == null)
+            return;
+
+        foreach (var song in SelectedSongs)
+        {
+            _playlistService.AddSongToPlaylist(CurrentPlaylist, song);
+        }
+    }
+
+    [RelayCommand]
+    private void RemoveSelectedFromLibrary()
+    {
+        foreach (var song in SelectedSongs.ToList())
+        {
+            _musicLibraryService.RemoveSong(song);
+        }
+        SelectedSongs.Clear();
+        IsSelectAll = false;
+    }
+
     public PlayerPageViewModel PlayerPageViewModel { get; }
     public QueueViewModel QueueViewModel { get; }
     public SettingsViewModel? SettingsViewModel { get; private set; }
@@ -254,6 +361,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     public StatisticsViewModel? StatisticsViewModel { get; private set; }
     public ArtistDetailViewModel? ArtistDetailViewModel { get; private set; }
     public AlbumDetailViewModel? AlbumDetailViewModel { get; private set; }
+    public RecentlyPlayedViewModel? RecentlyPlayedViewModel { get; private set; }
+    public PlayHistoryViewModel? PlayHistoryViewModel { get; private set; }
 
     private readonly DispatcherTimer _positionTimer;
 
@@ -267,7 +376,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         IStatisticsService statisticsService,
         IConfigurationService configService,
         IUserPlaylistService userPlaylistService,
-        IScanService scanService)
+        IScanService scanService,
+        ISystemTrayService systemTrayService)
     {
         _playbackStateService = playbackStateService;
         _navigationService = navigationService;
@@ -278,6 +388,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         _statisticsService = statisticsService;
         _configService = configService;
         _userPlaylistService = userPlaylistService;
+        _systemTrayService = systemTrayService;
 
         CurrentPlaylist = _playlistService.CreatePlaylist("默认播放列表");
         _playlistService.SetCurrentPlaylist(CurrentPlaylist);
@@ -287,9 +398,20 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         PlayerPageViewModel.OnNavigateBack = () => CurrentPage = this;
         CurrentPage = this;
 
-        _playbackStateService.PlaybackStateChanged += (_, _) => OnPropertyChanged(nameof(IsPlaying));
+        _playbackStateService.PlaybackStateChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(IsPlaying));
+            _systemTrayService.UpdateTrayIcon(IsPlaying);
+        };
 
-        _playbackStateService.CurrentSongChanged += (_, _) => OnPropertyChanged(nameof(CurrentSong));
+        _playbackStateService.CurrentSongChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(CurrentSong));
+            if (CurrentSong != null)
+            {
+                _systemTrayService.ShowNotification("正在播放", $"{CurrentSong.Title} - {CurrentSong.Artist}");
+            }
+        };
 
         _navigationService.QueuePanelChanged += (_, _) => OnPropertyChanged(nameof(IsQueuePanelOpen));
 
@@ -311,6 +433,10 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
                 CurrentPage = ArtistDetailViewModel;
             else if (pageType == typeof(AlbumDetailViewModel) && AlbumDetailViewModel != null)
                 CurrentPage = AlbumDetailViewModel;
+            else if (pageType == typeof(RecentlyPlayedViewModel) && RecentlyPlayedViewModel != null)
+                CurrentPage = RecentlyPlayedViewModel;
+            else if (pageType == typeof(PlayHistoryViewModel) && PlayHistoryViewModel != null)
+                CurrentPage = PlayHistoryViewModel;
         };
 
         _positionTimer = new DispatcherTimer
@@ -368,7 +494,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             ? Library.Songs
             : Library.Songs.Where(s =>
                 s.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                s.Artist.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+                s.Artist.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                s.Album.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
 
         var trackNumber = 1;
         foreach (var song in filtered)

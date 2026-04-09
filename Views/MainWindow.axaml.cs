@@ -25,6 +25,15 @@ public partial class MainWindow : Window
         UpdateMaximizeRestoreIcons();
         DataContextChanged += OnDataContextChanged;
         KeyDown += OnKeyDown;
+        
+        // 绑定搜索框
+        SearchTextBox.TextChanged += (_, e) =>
+        {
+            if (DataContext is ViewModels.MainWindowViewModel vm)
+            {
+                vm.SearchText = SearchTextBox.Text;
+            }
+        };
 
         AddHandler(DragDrop.DragOverEvent, OnDragOver);
         AddHandler(DragDrop.DropEvent, OnDrop);
@@ -238,6 +247,36 @@ public partial class MainWindow : Window
 
     private void CloseButton_Click(object? sender, RoutedEventArgs e)
     {
-        Close();
+        Hide();
+    }
+
+    public void PlayPause()
+    {
+        var vm = DataContext as ViewModels.MainWindowViewModel;
+        if (vm != null)
+        {
+            if (vm.IsPlaying)
+                vm.PauseCommand.Execute(null);
+            else
+                vm.PlayCommand.Execute(null);
+        }
+    }
+
+    public void NextTrack()
+    {
+        var vm = DataContext as ViewModels.MainWindowViewModel;
+        if (vm != null)
+        {
+            vm.NextCommand.Execute(null);
+        }
+    }
+
+    public void PreviousTrack()
+    {
+        var vm = DataContext as ViewModels.MainWindowViewModel;
+        if (vm != null)
+        {
+            vm.PreviousCommand.Execute(null);
+        }
     }
 }

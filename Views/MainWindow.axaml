@@ -84,6 +84,26 @@
                                    VerticalAlignment="Center" />
                     </Button>
                     <Button Theme="{StaticResource SidebarIconButtonTheme}"
+                            Command="{Binding NavigateToRecentlyPlayedCommand}"
+                            HorizontalAlignment="Center">
+                        <TextBlock Text="&#xE722;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="18"
+                                   Foreground="{Binding IsSettingsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Button>
+                    <Button Theme="{StaticResource SidebarIconButtonTheme}"
+                            Command="{Binding NavigateToPlayHistoryCommand}"
+                            HorizontalAlignment="Center">
+                        <TextBlock Text="&#xE739;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="18"
+                                   Foreground="{Binding IsSettingsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Button>
+                    <Button Theme="{StaticResource SidebarIconButtonTheme}"
                             Command="{Binding NavigateToSettingsCommand}"
                             HorizontalAlignment="Center">
                         <TextBlock Text="&#xE713;"
