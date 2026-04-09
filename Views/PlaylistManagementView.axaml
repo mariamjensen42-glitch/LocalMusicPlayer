@@ -112,10 +112,31 @@
                         <Button Theme="{StaticResource SecondaryButtonTheme}"
                                 Height="32"
                                 FontSize="12"
-                                Command="{Binding RenamePlaylistCommand}"
+                                Command="{Binding RenamePlaylistAsyncCommand}"
                                 IsEnabled="{Binding CanRenamePlaylist}"
                                 Margin="0,0,8,0">
                             <TextBlock Text="&#xE8AC;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       VerticalAlignment="Center" />
+                        </Button>
+                        <Button Theme="{StaticResource SecondaryButtonTheme}"
+                                Height="32"
+                                FontSize="12"
+                                Command="{Binding ExportPlaylistAsyncCommand}"
+                                IsEnabled="{Binding SelectedPlaylist}"
+                                Margin="0,0,8,0">
+                            <TextBlock Text="&#xE792;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       VerticalAlignment="Center" />
+                        </Button>
+                        <Button Theme="{StaticResource SecondaryButtonTheme}"
+                                Height="32"
+                                FontSize="12"
+                                Command="{Binding ImportPlaylistAsyncCommand}"
+                                Margin="0,0,8,0">
+                            <TextBlock Text="&#xE78F;"
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="14"
                                        VerticalAlignment="Center" />

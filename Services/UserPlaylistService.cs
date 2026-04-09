@@ -200,4 +200,52 @@ public class UserPlaylistService : IUserPlaylistService
             _favoriteFilePaths.Remove(path);
         }
     }
+
+    public async Task ExportPlaylistAsync(string playlistId, string filePath)
+    {
+        var playlist = _userPlaylists.FirstOrDefault(p => p.Id == playlistId);
+        if (playlist == null) return;
+
+        var playlistData = new
+        {
+            playlist.Name,
+            playlist.SongFilePaths,
+            playlist.CreatedTime,
+            playlist.ModifiedTime
+        };
+
+        var json = System.Text.Json.JsonSerializer.Serialize(playlistData, new System.Text.Json.JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+
+        await System.IO.File.WriteAllTextAsync(filePath, json);
+    }
+
+    public async Task ImportPlaylistAsync(string filePath)
+    {
+        if (!System.IO.File.Exists(filePath)) return;
+
+        var json = await System.IO.File.ReadAllTextAsync(filePath);
+        var playlistData = System.Text.Json.JsonSerializer.Deserialize<dynamic>(json);
+
+        if (playlistData == null || playlistData.Name == null)
+            return;
+
+        var playlist = CreatePlaylist(playlistData.Name.ToString());
+        playlist.CreatedTime = playlistData.CreatedTime ?? DateTime.Now;
+        playlist.ModifiedTime = playlistData.ModifiedTime ?? DateTime.Now;
+
+        if (playlistData.SongFilePaths != null)
+        {
+            foreach (var path in playlistData.SongFilePaths)
+            {
+                var song = _libraryService.Songs.FirstOrDefault(s => s.FilePath == path.ToString());
+                if (song != null)
+                {
+                    AddSongToPlaylist(playlist.Id, song);
+                }
+            }
+        }
+    }
 }

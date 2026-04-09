@@ -27,6 +27,8 @@ public interface IUserPlaylistService
 
     Task SavePlaylistsAsync();
     Task LoadPlaylistsAsync();
+    Task ExportPlaylistAsync(string playlistId, string filePath);
+    Task ImportPlaylistAsync(string filePath);
 
     event EventHandler? PlaylistsChanged;
     event EventHandler? FavoritesChanged;

@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="using:LocalMusicPlayer.ViewModels" x:Class="LocalMusicPlayer.Views.RecentlyPlayedView" x:DataType="vm:RecentlyPlayedViewModel">
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <!-- 标题栏 -->
+        <Grid Grid.Row="0" Background="{StaticResource PrimaryBrush}" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" Margin="20,0" VerticalAlignment="Center">
+                <Button Command="{Binding NavigateBackCommand}" Background="Transparent" Foreground="White" Width="32" Height="32">
+                    <PathIcon Data="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                </Button>
+                <TextBlock Text="最近播放" FontSize="18" FontWeight="SemiBold" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+        
+        <!-- 最近播放列表 -->
+        <ListBox Grid.Row="1" ItemsSource="{Binding RecentlyPlayedSongs}" Background="Transparent" BorderThickness="0" Padding="0">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:SongPlayRecord">
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderBrush}" Padding="20">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Rank}" Width="40" FontSize="14" Foreground="{StaticResource TextBrush}" />
+                            <StackPanel Margin="10,0" Width="*">
+                                <TextBlock Text="{Binding Song.Title}" FontSize="14" FontWeight="Medium" Foreground="{StaticResource TextBrush}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Song.Artist} - {Binding Song.Album}" FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding LastPlayedTime, StringFormat='yyyy-MM-dd HH:mm'}" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,2,0,0" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding PlayCount} 次" FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" Margin="10,0" />
+                            <Button Command="{Binding $parent[RecentlyPlayedViewModel].PlaySongCommand}" CommandParameter="{Binding Song}" Background="Transparent" Foreground="{StaticResource PrimaryBrush}" Width="32" Height="32">
+                                <PathIcon Data="M8 5v14l11-7z" />
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>
