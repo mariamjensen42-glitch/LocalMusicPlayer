@@ -183,4 +183,17 @@ public class PlaylistService : IPlaylistService
         CurrentSongChanged?.Invoke(this, CurrentSong);
         return true;
     }
+
+    public void PlaySong(Song song)
+    {
+        if (_currentPlaylist == null)
+            return;
+
+        var index = _currentPlaylist.Songs.IndexOf(song);
+        if (index >= 0)
+        {
+            _currentIndex = index;
+            CurrentSongChanged?.Invoke(this, CurrentSong);
+        }
+    }
 }

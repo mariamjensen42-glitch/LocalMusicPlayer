@@ -20,27 +20,21 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        // 设置标题栏可拖动移动窗口
         TitleBar.PointerPressed += OnTitleBarPointerPressed;
-
-        // 监听窗口状态变化以更新最大化/还原图标
         PropertyChanged += OnPropertyChanged;
         UpdateMaximizeRestoreIcons();
-
-        // 监听播放页面切换，调整标题栏区域扩展
         DataContextChanged += OnDataContextChanged;
-
-        // 监听键盘事件
         KeyDown += OnKeyDown;
 
-        // 拖拽文件支持
         AddHandler(DragDrop.DragOverEvent, OnDragOver);
         AddHandler(DragDrop.DropEvent, OnDrop);
     }
 
     private void OnDragOver(object? sender, DragEventArgs e)
     {
-        if (e.Data.Contains(DataFormats.Files))
+#pragma warning disable CS0618 // DataFormats is obsolete
+        if (e.Data.Contains(DataFormats.FileNames))
+#pragma warning restore CS0618
         {
             e.DragEffects = DragDropEffects.Copy;
         }
@@ -48,15 +42,18 @@ public partial class MainWindow : Window
         {
             e.DragEffects = DragDropEffects.None;
         }
+
         e.Handled = true;
     }
 
     private async void OnDrop(object? sender, DragEventArgs e)
     {
-        if (!e.Data.Contains(DataFormats.Files))
+#pragma warning disable CS0618 // DataFormats and GetFileNames are obsolete
+        if (!e.Data.Contains(DataFormats.FileNames))
             return;
 
-        var files = e.Data.GetFiles();
+        var files = e.Data.GetFileNames();
+#pragma warning restore CS0618
         if (files == null || !files.Any())
             return;
 
@@ -70,14 +67,13 @@ public partial class MainWindow : Window
         if (fileScannerService == null || musicLibraryService == null)
             return;
 
-        foreach (var file in files)
+        foreach (var path in files)
         {
-            var path = file?.Path?.LocalPath;
             if (string.IsNullOrEmpty(path))
                 continue;
 
             if (File.Exists(path) && fileScannerService.SupportedExtensions.Contains(
-                Path.GetExtension(path).ToLowerInvariant()))
+                    Path.GetExtension(path).ToLowerInvariant()))
             {
                 await AddSingleFileAsync(path, fileScannerService, musicLibraryService);
             }
@@ -88,7 +84,8 @@ public partial class MainWindow : Window
         }
     }
 
-    private async System.Threading.Tasks.Task AddSingleFileAsync(string filePath, IFileScannerService fileScannerService, IMusicLibraryService musicLibraryService)
+    private async System.Threading.Tasks.Task AddSingleFileAsync(string filePath,
+        IFileScannerService fileScannerService, IMusicLibraryService musicLibraryService)
     {
         try
         {
@@ -107,7 +104,8 @@ public partial class MainWindow : Window
         }
     }
 
-    private async System.Threading.Tasks.Task AddFolderAsync(string folderPath, IFileScannerService fileScannerService, IMusicLibraryService musicLibraryService)
+    private async System.Threading.Tasks.Task AddFolderAsync(string folderPath, IFileScannerService fileScannerService,
+        IMusicLibraryService musicLibraryService)
     {
         try
         {
@@ -142,7 +140,6 @@ public partial class MainWindow : Window
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
     {
-        // 如果焦点在输入控件上，不处理快捷键
         if (e.Source is TextBox)
             return;
 
@@ -151,10 +148,9 @@ public partial class MainWindow : Window
         if (_keyboardShortcutService == null || _mainWindowViewModel == null)
             return;
 
-        // 设置导航返回动作
         _keyboardShortcutService.SetNavigateBackAction(() =>
         {
-            _mainWindowViewModel.NavigateToLibraryCommand.Execute().Subscribe();
+            _mainWindowViewModel.NavigateToLibraryCommand.Execute(null);
         });
 
         switch (e.Key)
@@ -200,7 +196,6 @@ public partial class MainWindow : Window
 
     private void UpdateTitleBarChrome(bool isPlayerPage)
     {
-        // 播放页面时完全隐藏标题栏，其他页面显示自定义标题栏
         ExtendClientAreaChromeHints = isPlayerPage
             ? Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome
             : Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;

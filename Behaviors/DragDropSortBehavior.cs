@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -54,7 +53,6 @@ public class DragDropSortBehavior : Behavior<ListBox>
 
     private void OnPointerMoved(object? sender, PointerEventArgs e)
     {
-        // Could add visual feedback here if needed
     }
 
     private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
@@ -78,7 +76,7 @@ public class DragDropSortBehavior : Behavior<ListBox>
             }
             else if (AssociatedObject.DataContext is PlaylistManagementViewModel playlistVm)
             {
-                playlistVm.MoveSongCommand.Execute((_dragStartIndex, targetIndex)).Subscribe();
+                playlistVm.MoveSongCommand.Execute((_dragStartIndex, targetIndex));
             }
             else
             {
@@ -110,11 +108,9 @@ public class DragDropSortBehavior : Behavior<ListBox>
             }
         }
 
-        // Try to find item through visual tree traversal
         var result = AssociatedObject.InputHitTest(point);
         if (result != null)
         {
-            // Walk up the visual tree to find ListBoxItem
             var current = result as Visual;
             while (current != null)
             {
@@ -136,7 +132,6 @@ public class DragDropSortBehavior : Behavior<ListBox>
         if (items == null || items.Count == 0)
             return -1;
 
-        // Calculate target index based on Y position
         var scrollViewer = AssociatedObject.FindDescendantOfType<ScrollViewer>();
         if (scrollViewer == null)
             return -1;
@@ -146,7 +141,6 @@ public class DragDropSortBehavior : Behavior<ListBox>
         var adjustedY = point.Y + scrollOffset;
         var targetIndex = (int)(adjustedY / itemHeight);
 
-        // Clamp to valid range
         if (targetIndex < 0)
             targetIndex = 0;
         if (targetIndex >= items.Count)

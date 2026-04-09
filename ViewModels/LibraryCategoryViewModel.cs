@@ -1,14 +1,14 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
-using ReactiveUI;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
 using LocalMusicPlayer.Services;
 
 namespace LocalMusicPlayer.ViewModels;
 
-public class LibraryCategoryViewModel : ViewModelBase
+public partial class LibraryCategoryViewModel : ViewModelBase
 {
     private readonly ILibraryCategoryService _categoryService;
     private readonly IMusicPlayerService _musicPlayerService;
@@ -18,17 +18,22 @@ public class LibraryCategoryViewModel : ViewModelBase
     private LibraryCategory _currentCategory = LibraryCategory.Songs;
     private object? _selectedItem;
 
+    public Action<ArtistGroup>? OnNavigateToArtistDetail { get; set; }
+    public Action<AlbumGroup>? OnNavigateToAlbumDetail { get; set; }
+
     public LibraryCategory CurrentCategory
     {
         get => _currentCategory;
         set
         {
-            this.RaiseAndSetIfChanged(ref _currentCategory, value);
-            this.RaisePropertyChanged(nameof(ShowArtistGroups));
-            this.RaisePropertyChanged(nameof(ShowAlbumGroups));
-            this.RaisePropertyChanged(nameof(ShowFolderGroups));
-            this.RaisePropertyChanged(nameof(ShowFavorites));
-            RefreshItems();
+            if (SetProperty(ref _currentCategory, value))
+            {
+                OnPropertyChanged(nameof(ShowArtistGroups));
+                OnPropertyChanged(nameof(ShowAlbumGroups));
+                OnPropertyChanged(nameof(ShowFolderGroups));
+                OnPropertyChanged(nameof(ShowFavorites));
+                RefreshItems();
+            }
         }
     }
 
@@ -48,14 +53,49 @@ public class LibraryCategoryViewModel : ViewModelBase
         get => _selectedItem;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedItem, value);
-            UpdateSelectedGroupSongs();
+            if (SetProperty(ref _selectedItem, value))
+            {
+                UpdateSelectedGroupSongs();
+            }
         }
     }
 
-    public ReactiveCommand<LibraryCategory, Unit> SwitchCategoryCommand { get; }
-    public ReactiveCommand<string, Unit> PlaySongCommand { get; }
-    public ReactiveCommand<Unit, Unit> PlayAllSelectedCommand { get; }
+    [RelayCommand]
+    private void SwitchCategory(LibraryCategory category)
+    {
+        CurrentCategory = category;
+        _categoryService.CurrentCategory = category;
+    }
+
+    [RelayCommand]
+    private void PlaySong(string path)
+    {
+        var song = SelectedGroupSongs.FirstOrDefault(s => s.FilePath == path);
+        if (song != null)
+        {
+            PlaySongInternal(song);
+        }
+    }
+
+    [RelayCommand]
+    private void PlayAllSelected()
+    {
+        if (SelectedGroupSongs.Count == 0) return;
+
+        var playlist = _playlistService.CreatePlaylist("临时播放");
+        _playlistService.SetCurrentPlaylist(playlist);
+
+        foreach (var song in SelectedGroupSongs)
+        {
+            _playlistService.AddSongToPlaylist(playlist, song);
+        }
+
+        _playlistService.PlayNext();
+        if (_playlistService.CurrentSong != null)
+        {
+            PlaySongInternal(_playlistService.CurrentSong);
+        }
+    }
 
     public LibraryCategoryViewModel(
         ILibraryCategoryService categoryService,
@@ -68,41 +108,6 @@ public class LibraryCategoryViewModel : ViewModelBase
         _playlistService = playlistService;
         _statisticsService = statisticsService;
 
-        SwitchCategoryCommand = ReactiveCommand.Create<LibraryCategory>(category =>
-        {
-            CurrentCategory = category;
-            _categoryService.CurrentCategory = category;
-        });
-
-        PlaySongCommand = ReactiveCommand.Create<string>(path =>
-        {
-            var song = SelectedGroupSongs.FirstOrDefault(s => s.FilePath == path);
-            if (song != null)
-            {
-                PlaySong(song);
-            }
-        });
-
-        PlayAllSelectedCommand = ReactiveCommand.Create(() =>
-        {
-            if (SelectedGroupSongs.Count == 0) return;
-
-            var playlist = _playlistService.CreatePlaylist("临时播放");
-            _playlistService.SetCurrentPlaylist(playlist);
-
-            foreach (var song in SelectedGroupSongs)
-            {
-                _playlistService.AddSongToPlaylist(playlist, song);
-            }
-
-            _playlistService.PlayNext();
-            if (_playlistService.CurrentSong != null)
-            {
-                PlaySong(_playlistService.CurrentSong);
-            }
-        });
-
-        // 监听分类变更
         _categoryService.CategoryChanged += (_, category) =>
         {
             if (CurrentCategory != category)
@@ -111,7 +116,6 @@ public class LibraryCategoryViewModel : ViewModelBase
             }
         };
 
-        // 初始加载数据
         RefreshItems();
     }
 
@@ -172,7 +176,7 @@ public class LibraryCategoryViewModel : ViewModelBase
         }
     }
 
-    private void PlaySong(Song song)
+    private void PlaySongInternal(Song song)
     {
         _statisticsService.RecordPlayStart(song);
         _musicPlayerService.Play(song);

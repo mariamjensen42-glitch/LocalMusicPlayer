@@ -1,294 +1,161 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Windows.Input;
-using ReactiveUI;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
 using LocalMusicPlayer.Services;
 
 namespace LocalMusicPlayer.ViewModels;
 
-public class PlayerPageViewModel : ViewModelBase
+public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
 {
-    private readonly IMusicPlayerService _musicPlayerService;
-    private readonly IPlaylistService _playlistService;
-    private readonly IMusicLibraryService _musicLibraryService;
+    private readonly IPlaybackStateService _playbackStateService;
+    private readonly INavigationService _navigationService;
     private readonly ILyricsService _lyricsService;
-    private readonly MainWindowViewModel _mainWindowViewModel;
+    private readonly IMusicLibraryService _musicLibraryService;
+    private readonly DispatcherTimer _timer;
 
-    private Song? _currentSong;
+    public Action? OnNavigateBack { get; set; }
+    public Action<int>? OnScrollToLyric { get; set; }
 
-    public Song? CurrentSong
-    {
-        get => _currentSong;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _currentSong, value);
-            LoadLyrics();
-        }
-    }
+    [ObservableProperty] private ObservableCollection<LyricLine> _lyrics = new();
 
-    private bool _isPlaying;
+    [ObservableProperty] private int _currentLyricIndex = -1;
 
-    public bool IsPlaying
-    {
-        get => _isPlaying;
-        set => this.RaiseAndSetIfChanged(ref _isPlaying, value);
-    }
+    [ObservableProperty] private bool _hasLyrics;
 
-    private TimeSpan _position;
-
-    public TimeSpan Position
-    {
-        get => _position;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _position, value);
-            UpdateCurrentLyricIndex();
-        }
-    }
-
-    private TimeSpan _duration;
-
-    public TimeSpan Duration
-    {
-        get => _duration;
-        set => this.RaiseAndSetIfChanged(ref _duration, value);
-    }
-
-    private double _positionSeconds;
-    private bool _isUpdatingPosition;
-    private bool _isSeeking;
+    public Song? CurrentSong => _playbackStateService.CurrentSong;
+    public bool IsPlaying => _playbackStateService.IsPlaying;
+    public TimeSpan Position => _playbackStateService.Position;
+    public TimeSpan Duration => _playbackStateService.Duration;
 
     public double PositionSeconds
     {
-        get => _positionSeconds;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _positionSeconds, value);
-            if (!_isUpdatingPosition)
-            {
-                _isSeeking = true;
-            }
-        }
+        get => _playbackStateService.PositionSeconds;
+        set => _playbackStateService.PositionSeconds = value;
     }
 
-    private double _durationSeconds;
-
-    public double DurationSeconds
-    {
-        get => _durationSeconds;
-        set => this.RaiseAndSetIfChanged(ref _durationSeconds, value);
-    }
-
-    private int _volume;
-
-    public int Volume
-    {
-        get => _volume;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _volume, value);
-            _musicPlayerService.SetVolume(value);
-        }
-    }
-
-    private bool _isMuted;
-
-    public bool IsMuted
-    {
-        get => _isMuted;
-        set => this.RaiseAndSetIfChanged(ref _isMuted, value);
-    }
-
-    private bool _isShuffle;
-
-    public bool IsShuffle
-    {
-        get => _isShuffle;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _isShuffle, value);
-            _playlistService.PlaybackMode = value ? PlaybackMode.Shuffle : PlaybackMode.Normal;
-        }
-    }
-
-    private bool _isRepeat;
-
-    public bool IsRepeat
-    {
-        get => _isRepeat;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _isRepeat, value);
-            _playlistService.PlaybackMode = value ? PlaybackMode.Loop : PlaybackMode.Normal;
-        }
-    }
-
-    private ObservableCollection<LyricLine> _lyrics = new();
-
-    public ObservableCollection<LyricLine> Lyrics
-    {
-        get => _lyrics;
-        set => this.RaiseAndSetIfChanged(ref _lyrics, value);
-    }
-
-    private int _currentLyricIndex = -1;
-
-    public int CurrentLyricIndex
-    {
-        get => _currentLyricIndex;
-        set => this.RaiseAndSetIfChanged(ref _currentLyricIndex, value);
-    }
-
-    private bool _hasLyrics;
-
-    public bool HasLyrics
-    {
-        get => _hasLyrics;
-        set => this.RaiseAndSetIfChanged(ref _hasLyrics, value);
-    }
-
-    public ReactiveCommand<Unit, Unit> PlayCommand { get; }
-    public ReactiveCommand<Unit, Unit> PauseCommand { get; }
-    public ReactiveCommand<Unit, Unit> NextCommand { get; }
-    public ReactiveCommand<Unit, Unit> PreviousCommand { get; }
-    public ReactiveCommand<Unit, Unit> ShuffleCommand { get; }
-    public ReactiveCommand<Unit, Unit> RepeatCommand { get; }
-    public ReactiveCommand<Unit, Unit> ToggleFavoriteCommand { get; }
-    public ReactiveCommand<Unit, Unit> NavigateBackCommand { get; }
-    public ReactiveCommand<Unit, Unit> ToggleMuteCommand { get; }
-
-    // Expose ToggleQueuePanelCommand from MainWindowViewModel
-    public ReactiveCommand<Unit, Unit> ToggleQueuePanelCommand => _mainWindowViewModel.ToggleQueuePanelCommand;
+    public double DurationSeconds => _playbackStateService.DurationSeconds;
+    public int Volume => _playbackStateService.Volume;
+    public bool IsMuted => _playbackStateService.IsMuted;
+    public bool IsShuffle => _playbackStateService.PlaybackMode == PlaybackMode.Shuffle;
+    public bool IsRepeat => _playbackStateService.PlaybackMode == PlaybackMode.Loop;
 
     public PlayerPageViewModel(
-        IMusicPlayerService musicPlayerService,
-        IPlaylistService playlistService,
-        IMusicLibraryService musicLibraryService,
+        IPlaybackStateService playbackStateService,
+        INavigationService navigationService,
         ILyricsService lyricsService,
-        MainWindowViewModel mainWindowViewModel)
+        IMusicLibraryService musicLibraryService)
     {
-        _musicPlayerService = musicPlayerService;
-        _playlistService = playlistService;
-        _musicLibraryService = musicLibraryService;
+        _playbackStateService = playbackStateService;
+        _navigationService = navigationService;
         _lyricsService = lyricsService;
-        _mainWindowViewModel = mainWindowViewModel;
+        _musicLibraryService = musicLibraryService;
 
-        // 初始化状态
-        CurrentSong = _playlistService.CurrentSong;
-        IsPlaying = _musicPlayerService.IsPlaying;
-        Position = _musicPlayerService.Position;
-        Duration = _musicPlayerService.Duration;
-        PositionSeconds = Position.TotalSeconds;
-        DurationSeconds = Duration.TotalSeconds;
-        IsShuffle = _playlistService.PlaybackMode == PlaybackMode.Shuffle;
-        IsRepeat = _playlistService.PlaybackMode == PlaybackMode.Loop;
+        _timer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(250)
+        };
+        _timer.Tick += Timer_Tick;
 
-        // 命令
-        PlayCommand = ReactiveCommand.Create(() => _musicPlayerService.Resume());
-        PauseCommand = ReactiveCommand.Create(() => _musicPlayerService.Pause());
-        NextCommand = ReactiveCommand.Create(() =>
+        _playbackStateService.CurrentSongChanged += (_, _) =>
         {
-            if (_playlistService.PlayNext())
-            {
-                CurrentSong = _playlistService.CurrentSong;
-                if (CurrentSong != null)
-                    _musicPlayerService.Play(CurrentSong);
-            }
-        });
-        PreviousCommand = ReactiveCommand.Create(() =>
-        {
-            if (_playlistService.PlayPrevious())
-            {
-                CurrentSong = _playlistService.CurrentSong;
-                if (CurrentSong != null)
-                    _musicPlayerService.Play(CurrentSong);
-            }
-        });
-        ShuffleCommand = ReactiveCommand.Create(() =>
-        {
-            IsShuffle = !IsShuffle;
-            if (IsShuffle)
-                IsRepeat = false;
-        });
-        RepeatCommand = ReactiveCommand.Create(() =>
-        {
-            IsRepeat = !IsRepeat;
-            if (IsRepeat)
-                IsShuffle = false;
-        });
-        ToggleFavoriteCommand = ReactiveCommand.Create(() =>
-        {
-            if (CurrentSong != null)
-            {
-                CurrentSong.IsFavorite = !CurrentSong.IsFavorite;
-            }
-        });
-        NavigateBackCommand = ReactiveCommand.Create(() =>
-        {
-            _mainWindowViewModel.NavigateToLibraryCommand.Execute(System.Reactive.Unit.Default);
-        });
-        ToggleMuteCommand = ReactiveCommand.Create(() =>
-        {
-            _musicPlayerService.Mute();
-            IsMuted = _musicPlayerService.IsMuted;
-        });
-
-        // 订阅播放器事件
-        _musicPlayerService.PlaybackStateChanged += (_, state) => { IsPlaying = state == PlayState.Playing; };
-
-        _playlistService.CurrentSongChanged += (_, song) =>
-        {
-            CurrentSong = song;
+            OnPropertyChanged(nameof(CurrentSong));
             LoadLyrics();
         };
 
-        // 同步 MainWindowViewModel 的 CurrentSong 变化
-        _mainWindowViewModel.PropertyChanged += (_, e) =>
+        _playbackStateService.PlaybackStateChanged += (_, _) => { OnPropertyChanged(nameof(IsPlaying)); };
+
+        _playbackStateService.PlaybackModeChanged += (_, _) =>
         {
-            if (e.PropertyName == nameof(MainWindowViewModel.CurrentSong))
-            {
-                if (_mainWindowViewModel.CurrentSong != CurrentSong)
-                {
-                    CurrentSong = _mainWindowViewModel.CurrentSong;
-                    LoadLyrics();
-                }
-            }
+            OnPropertyChanged(nameof(IsShuffle));
+            OnPropertyChanged(nameof(IsRepeat));
         };
 
-        // 定时更新位置
-        Observable.Interval(TimeSpan.FromMilliseconds(500))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ =>
-            {
-                if (!_isSeeking)
-                {
-                    Position = _musicPlayerService.Position;
-                    Duration = _musicPlayerService.Duration;
-                    _isUpdatingPosition = true;
-                    PositionSeconds = Position.TotalSeconds;
-                    _isUpdatingPosition = false;
-                    DurationSeconds = Duration.TotalSeconds;
-                }
-            });
-
-        // 防抖处理进度条拖动
-        this.WhenAnyValue(x => x.PositionSeconds)
-            .Throttle(TimeSpan.FromMilliseconds(100))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(pos =>
-            {
-                if (_isSeeking)
-                {
-                    _musicPlayerService.Seek(TimeSpan.FromSeconds(pos));
-                    _isSeeking = false;
-                }
-            });
-
+        _timer.Start();
         LoadLyrics();
+    }
+
+    private void Timer_Tick(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(Position));
+        OnPropertyChanged(nameof(Duration));
+        OnPropertyChanged(nameof(PositionSeconds));
+        OnPropertyChanged(nameof(DurationSeconds));
+        UpdateCurrentLyricIndex();
+    }
+
+    [RelayCommand]
+    private void Play()
+    {
+        _playbackStateService.Resume();
+    }
+
+    [RelayCommand]
+    private void Pause()
+    {
+        _playbackStateService.Pause();
+    }
+
+    [RelayCommand]
+    private void Next()
+    {
+        _playbackStateService.PlayNext();
+    }
+
+    [RelayCommand]
+    private void Previous()
+    {
+        _playbackStateService.PlayPrevious();
+    }
+
+    [RelayCommand]
+    private void Shuffle()
+    {
+        _playbackStateService.PlaybackMode = _playbackStateService.PlaybackMode == PlaybackMode.Shuffle
+            ? PlaybackMode.Normal
+            : PlaybackMode.Shuffle;
+        OnPropertyChanged(nameof(IsShuffle));
+        OnPropertyChanged(nameof(IsRepeat));
+    }
+
+    [RelayCommand]
+    private void Repeat()
+    {
+        _playbackStateService.PlaybackMode = _playbackStateService.PlaybackMode == PlaybackMode.Loop
+            ? PlaybackMode.Normal
+            : PlaybackMode.Loop;
+        OnPropertyChanged(nameof(IsShuffle));
+        OnPropertyChanged(nameof(IsRepeat));
+    }
+
+    [RelayCommand]
+    private void ToggleFavorite()
+    {
+        if (CurrentSong != null)
+        {
+            CurrentSong.IsFavorite = !CurrentSong.IsFavorite;
+        }
+    }
+
+    [RelayCommand]
+    private void NavigateBack()
+    {
+        OnNavigateBack?.Invoke();
+    }
+
+    [RelayCommand]
+    private void ToggleMute()
+    {
+        _playbackStateService.Mute();
+    }
+
+    [RelayCommand]
+    private void ToggleQueuePanel()
+    {
+        _navigationService.ToggleQueuePanel();
     }
 
     private void LoadLyrics()
@@ -315,19 +182,18 @@ public class PlayerPageViewModel : ViewModelBase
         {
             var newIndex = _lyricsService.GetCurrentLyricIndex(Lyrics.ToList(), Position);
 
-            // 清除之前的活动状态
             if (CurrentLyricIndex >= 0 && CurrentLyricIndex < Lyrics.Count)
             {
                 Lyrics[CurrentLyricIndex].IsActive = false;
             }
 
-            // 设置新的活动状态
             if (newIndex >= 0 && newIndex < Lyrics.Count)
             {
                 Lyrics[newIndex].IsActive = true;
             }
 
             CurrentLyricIndex = newIndex;
+            OnScrollToLyric?.Invoke(newIndex);
         }
     }
 }

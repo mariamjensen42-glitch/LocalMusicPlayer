@@ -7,10 +7,18 @@ namespace LocalMusicPlayer.Converters;
 
 public class BoolToColorConverter : IValueConverter
 {
+    private static readonly SolidColorBrush AccentBrush = new SolidColorBrush(Color.Parse("#A855F7"));
+    private static readonly SolidColorBrush MutedBrush = new SolidColorBrush(Color.Parse("#808080"));
+
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool isTrue && parameter is string param)
         {
+            if (param == "accent")
+            {
+                return isTrue ? AccentBrush : MutedBrush;
+            }
+
             var colors = param.Split('|');
             if (colors.Length == 2)
             {

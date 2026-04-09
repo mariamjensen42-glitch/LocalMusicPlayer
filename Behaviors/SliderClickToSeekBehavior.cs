@@ -15,6 +15,7 @@ public class SliderClickToSeekBehavior : Behavior<Slider>
         if (AssociatedObject != null)
         {
             AssociatedObject.AddHandler(InputElement.PointerPressedEvent, OnPointerPressed, RoutingStrategies.Bubble);
+            AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, OnPointerReleased, RoutingStrategies.Bubble);
         }
     }
 
@@ -24,6 +25,7 @@ public class SliderClickToSeekBehavior : Behavior<Slider>
         if (AssociatedObject != null)
         {
             AssociatedObject.RemoveHandler(InputElement.PointerPressedEvent, OnPointerPressed);
+            AssociatedObject.RemoveHandler(InputElement.PointerReleasedEvent, OnPointerReleased);
         }
     }
 
@@ -32,15 +34,24 @@ public class SliderClickToSeekBehavior : Behavior<Slider>
         if (AssociatedObject == null) return;
 
         var point = e.GetPosition(AssociatedObject);
+        CalculateAndSeek(point);
+    }
+
+    private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+    }
+
+    private void CalculateAndSeek(Point point)
+    {
+        if (AssociatedObject == null) return;
+
         var bounds = AssociatedObject.Bounds;
 
         if (bounds.Width <= 0) return;
 
-        // 计算点击位置对应的值
         var ratio = point.X / bounds.Width;
         var value = AssociatedObject.Minimum + ratio * (AssociatedObject.Maximum - AssociatedObject.Minimum);
 
-        // 限制在有效范围内
         value = Math.Clamp(value, AssociatedObject.Minimum, AssociatedObject.Maximum);
 
         AssociatedObject.Value = value;

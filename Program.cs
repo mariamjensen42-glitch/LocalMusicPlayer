@@ -1,6 +1,5 @@
 ﻿using Avalonia;
-using ReactiveUI;
-using ReactiveUI.Avalonia;
+using CommunityToolkit.Mvvm;
 using System;
 
 namespace LocalMusicPlayer;
@@ -15,6 +14,5 @@ sealed class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
-            .UseReactiveUI()
             .LogToTrace();
 }

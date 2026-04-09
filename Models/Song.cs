@@ -1,93 +1,29 @@
-using ReactiveUI;
 using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LocalMusicPlayer.Models;
 
-public class Song : ReactiveObject
+public partial class Song : ObservableObject
 {
-    private string _title = string.Empty;
+    [ObservableProperty] private string _title = string.Empty;
 
-    public string Title
-    {
-        get => _title;
-        set => this.RaiseAndSetIfChanged(ref _title, value);
-    }
+    [ObservableProperty] private string _artist = string.Empty;
 
-    private string _artist = string.Empty;
+    [ObservableProperty] private string _album = string.Empty;
 
-    public string Artist
-    {
-        get => _artist;
-        set => this.RaiseAndSetIfChanged(ref _artist, value);
-    }
+    [ObservableProperty] private string _filePath = string.Empty;
 
-    private string _album = string.Empty;
+    [ObservableProperty] private TimeSpan _duration;
 
-    public string Album
-    {
-        get => _album;
-        set => this.RaiseAndSetIfChanged(ref _album, value);
-    }
+    [ObservableProperty] private int _trackNumber;
 
-    private string _filePath = string.Empty;
+    [ObservableProperty] private string? _albumArtPath;
 
-    public string FilePath
-    {
-        get => _filePath;
-        set => this.RaiseAndSetIfChanged(ref _filePath, value);
-    }
+    public bool HasAlbumArt => !string.IsNullOrEmpty(AlbumArtPath);
 
-    private TimeSpan _duration;
+    [ObservableProperty] private bool _isFavorite;
 
-    public TimeSpan Duration
-    {
-        get => _duration;
-        set => this.RaiseAndSetIfChanged(ref _duration, value);
-    }
+    [ObservableProperty] private int _playCount;
 
-    private int _trackNumber;
-
-    public int TrackNumber
-    {
-        get => _trackNumber;
-        set => this.RaiseAndSetIfChanged(ref _trackNumber, value);
-    }
-
-    private string? _albumArtPath;
-
-    public string? AlbumArtPath
-    {
-        get => _albumArtPath;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _albumArtPath, value);
-            this.RaisePropertyChanged(nameof(HasAlbumArt));
-        }
-    }
-
-    public bool HasAlbumArt => !string.IsNullOrEmpty(_albumArtPath);
-
-    private bool _isFavorite;
-
-    public bool IsFavorite
-    {
-        get => _isFavorite;
-        set => this.RaiseAndSetIfChanged(ref _isFavorite, value);
-    }
-
-    private int _playCount;
-
-    public int PlayCount
-    {
-        get => _playCount;
-        set => this.RaiseAndSetIfChanged(ref _playCount, value);
-    }
-
-    private DateTime? _lastPlayedTime;
-
-    public DateTime? LastPlayedTime
-    {
-        get => _lastPlayedTime;
-        set => this.RaiseAndSetIfChanged(ref _lastPlayedTime, value);
-    }
+    [ObservableProperty] private DateTime? _lastPlayedTime;
 }

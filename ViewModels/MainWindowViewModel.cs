@@ -1,59 +1,40 @@
 ﻿using System;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
 using Avalonia.Threading;
-using ReactiveUI;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
 using LocalMusicPlayer.Services;
 
 namespace LocalMusicPlayer.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
 {
-    private readonly IMusicPlayerService _musicPlayerService;
+    private readonly IPlaybackStateService _playbackStateService;
+    private readonly INavigationService _navigationService;
+    private readonly IViewModelFactory _viewModelFactory;
     private readonly IPlaylistService _playlistService;
     private readonly IMusicLibraryService _musicLibraryService;
-    private readonly IWindowProvider _windowProvider;
-    private readonly IConfigurationService _configService;
-    private readonly IScanService _scanService;
-    private readonly ILyricsService _lyricsService;
     private readonly IStatisticsService _statisticsService;
+    private readonly IConfigurationService _configService;
     private readonly IUserPlaylistService _userPlaylistService;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsPlayerPageVisible))]
+    [NotifyPropertyChangedFor(nameof(SidebarWidth))]
     private ViewModelBase _currentPage = null!;
-
-    public ViewModelBase CurrentPage
-    {
-        get => _currentPage;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _currentPage, value);
-            this.RaisePropertyChanged(nameof(IsPlayerPageVisible));
-            this.RaisePropertyChanged(nameof(SidebarWidth));
-        }
-    }
 
     public bool IsPlayerPageVisible => CurrentPage is PlayerPageViewModel;
     public int SidebarWidth => IsPlayerPageVisible ? 0 : 72;
 
-    private PlayerPageViewModel? _playerPageViewModel;
-
-    public PlayerPageViewModel? PlayerPageViewModel
-    {
-        get => _playerPageViewModel;
-        set => this.RaiseAndSetIfChanged(ref _playerPageViewModel, value);
-    }
+    [ObservableProperty] private bool _isLibrarySelected = true;
+    [ObservableProperty] private bool _isCategorySelected;
+    [ObservableProperty] private bool _isStatisticsSelected;
+    [ObservableProperty] private bool _isSettingsSelected;
 
     public IMusicLibraryService Library => _musicLibraryService;
 
-    private string _libraryStats = "0 songs · 0 albums · 0h 0m";
-
-    public string LibraryStats
-    {
-        get => _libraryStats;
-        set => this.RaiseAndSetIfChanged(ref _libraryStats, value);
-    }
+    [ObservableProperty] private string _libraryStats = "0 songs · 0 albums · 0h 0m";
 
     private void UpdateLibraryStats()
     {
@@ -65,432 +46,332 @@ public partial class MainWindowViewModel : ViewModelBase
         LibraryStats = $"{songCount} songs · {albumCount} albums · {hours}h {minutes}m";
     }
 
-    private Playlist? _currentPlaylist;
+    [ObservableProperty] private Playlist? _currentPlaylist;
 
-    public Playlist? CurrentPlaylist
+    public Song? CurrentSong => _playbackStateService.CurrentSong;
+
+    [ObservableProperty] private string _searchText = string.Empty;
+
+    public TimeSpan Position => _playbackStateService.Position;
+    public TimeSpan Duration => _playbackStateService.Duration;
+    public double PositionSeconds => _playbackStateService.PositionSeconds;
+    public double DurationSeconds => _playbackStateService.DurationSeconds;
+
+    [ObservableProperty] private int _volume;
+
+    public bool IsPlaying => _playbackStateService.IsPlaying;
+
+    [ObservableProperty] private bool _isMuted;
+
+    public bool IsQueuePanelOpen => _navigationService.IsQueuePanelOpen;
+
+    [RelayCommand]
+    private void Play() => _playbackStateService.Resume();
+
+    [RelayCommand]
+    private void Pause() => _playbackStateService.Pause();
+
+    [RelayCommand]
+    private void Stop() => _playbackStateService.Stop();
+
+    [RelayCommand]
+    private void Next() => _playbackStateService.PlayNext();
+
+    [RelayCommand]
+    private void Previous() => _playbackStateService.PlayPrevious();
+
+    [RelayCommand]
+    private void Mute()
     {
-        get => _currentPlaylist;
-        set => this.RaiseAndSetIfChanged(ref _currentPlaylist, value);
+        _playbackStateService.Mute();
+        IsMuted = _playbackStateService.IsMuted;
     }
 
-    private Song? _currentSong;
-
-    public Song? CurrentSong
+    [RelayCommand]
+    private void Shuffle()
     {
-        get => _currentSong;
-        set => this.RaiseAndSetIfChanged(ref _currentSong, value);
+        _playbackStateService.PlaybackMode = _playbackStateService.PlaybackMode == PlaybackMode.Shuffle
+            ? PlaybackMode.Normal
+            : PlaybackMode.Shuffle;
     }
 
-    private string _searchText = string.Empty;
-
-    public string SearchText
+    [RelayCommand]
+    private void Repeat()
     {
-        get => _searchText;
-        set
+        _playbackStateService.PlaybackMode = _playbackStateService.PlaybackMode == PlaybackMode.Loop
+            ? PlaybackMode.Normal
+            : PlaybackMode.Loop;
+    }
+
+    [RelayCommand]
+    private void PlaySong(string path)
+    {
+        var song = Library.FilteredSongs.FirstOrDefault(s => s.FilePath == path);
+        if (song != null && CurrentPlaylist != null)
         {
-            this.RaiseAndSetIfChanged(ref _searchText, value);
-            FilterSongs();
+            _playlistService.ClearPlaylist();
+            _playlistService.AddSongToPlaylist(CurrentPlaylist, song);
+            _playlistService.SetCurrentPlaylist(CurrentPlaylist);
+            _playlistService.PlaySong(song);
+            _statisticsService.RecordPlayStart(song);
+            _playbackStateService.Play(song);
         }
     }
 
-    private TimeSpan _position;
-
-    public TimeSpan Position
+    [RelayCommand]
+    private void ToggleFavorite(string path)
     {
-        get => _position;
-        set => this.RaiseAndSetIfChanged(ref _position, value);
-    }
-
-    private TimeSpan _duration;
-
-    public TimeSpan Duration
-    {
-        get => _duration;
-        set => this.RaiseAndSetIfChanged(ref _duration, value);
-    }
-
-    private double _positionSeconds;
-    private bool _isUpdatingPosition;
-    private bool _isSeeking;
-
-    public double PositionSeconds
-    {
-        get => _positionSeconds;
-        set
+        var song = Library.Songs.FirstOrDefault(s => s.FilePath == path);
+        if (song != null)
         {
-            this.RaiseAndSetIfChanged(ref _positionSeconds, value);
-            if (!_isUpdatingPosition)
+            if (song.IsFavorite)
+                _userPlaylistService.RemoveFromFavorites(song);
+            else
+                _userPlaylistService.AddToFavorites(song);
+        }
+    }
+
+    [RelayCommand]
+    private void NavigateToSettings()
+    {
+        IsLibrarySelected = false;
+        IsCategorySelected = false;
+        IsStatisticsSelected = false;
+        IsSettingsSelected = true;
+        SettingsViewModel = _viewModelFactory.CreateSettingsViewModel();
+        CurrentPage = SettingsViewModel;
+        _navigationService.NavigateTo<SettingsViewModel>();
+    }
+
+    [RelayCommand]
+    private void NavigateToLibrary()
+    {
+        IsLibrarySelected = true;
+        IsCategorySelected = false;
+        IsStatisticsSelected = false;
+        IsSettingsSelected = false;
+        CurrentPage = this;
+        _navigationService.NavigateTo<MainWindowViewModel>();
+    }
+
+    [RelayCommand]
+    private void NavigateToPlayer()
+    {
+        CurrentPage = PlayerPageViewModel;
+        _navigationService.NavigateTo<PlayerPageViewModel>();
+    }
+
+    [RelayCommand]
+    private void NavigateToStatistics()
+    {
+        IsLibrarySelected = false;
+        IsCategorySelected = false;
+        IsStatisticsSelected = true;
+        IsSettingsSelected = false;
+        StatisticsViewModel = _viewModelFactory.CreateStatisticsViewModel();
+        CurrentPage = StatisticsViewModel;
+        _navigationService.NavigateTo<StatisticsViewModel>();
+    }
+
+    [RelayCommand]
+    private void NavigateToPlaylist()
+    {
+        PlaylistManagementViewModel = _viewModelFactory.CreatePlaylistManagementViewModel();
+        CurrentPage = PlaylistManagementViewModel;
+        _navigationService.NavigateTo<PlaylistManagementViewModel>();
+    }
+
+    [RelayCommand]
+    private void NavigateToCategory()
+    {
+        IsLibrarySelected = false;
+        IsCategorySelected = true;
+        IsStatisticsSelected = false;
+        IsSettingsSelected = false;
+        LibraryCategoryViewModel = _viewModelFactory.CreateLibraryCategoryViewModel();
+        LibraryCategoryViewModel.OnNavigateToArtistDetail = NavigateToArtistDetail;
+        LibraryCategoryViewModel.OnNavigateToAlbumDetail = NavigateToAlbumDetail;
+        CurrentPage = LibraryCategoryViewModel;
+        _navigationService.NavigateTo<LibraryCategoryViewModel>();
+    }
+
+    public void NavigateToArtistDetail(ArtistGroup artistGroup)
+    {
+        ArtistDetailViewModel = new ArtistDetailViewModel(
+            artistGroup,
+            _musicLibraryService as IMusicPlayerService ?? throw new InvalidOperationException(),
+            _playlistService,
+            _statisticsService);
+        ArtistDetailViewModel.OnNavigateBack = () => CurrentPage = LibraryCategoryViewModel!;
+        CurrentPage = ArtistDetailViewModel;
+        _navigationService.NavigateTo<ArtistDetailViewModel>();
+    }
+
+    public void NavigateToAlbumDetail(AlbumGroup albumGroup)
+    {
+        AlbumDetailViewModel = new AlbumDetailViewModel(
+            albumGroup,
+            _musicLibraryService as IMusicPlayerService ?? throw new InvalidOperationException(),
+            _playlistService,
+            _statisticsService);
+        AlbumDetailViewModel.OnNavigateBack = () => CurrentPage = LibraryCategoryViewModel!;
+        CurrentPage = AlbumDetailViewModel;
+        _navigationService.NavigateTo<AlbumDetailViewModel>();
+    }
+
+    [RelayCommand]
+    private void ToggleQueuePanel() => _navigationService.ToggleQueuePanel();
+
+    [RelayCommand]
+    private void PlayAll()
+    {
+        if (Library.FilteredSongs.Count == 0 || CurrentPlaylist == null)
+            return;
+
+        _playlistService.ClearPlaylist();
+        foreach (var song in Library.FilteredSongs)
+        {
+            _playlistService.AddSongToPlaylist(CurrentPlaylist, song);
+        }
+
+        if (_playlistService.PlayNext())
+        {
+            var song = _playlistService.CurrentSong;
+            if (song != null)
             {
-                _isSeeking = true;
+                _statisticsService.RecordPlayStart(song);
+                _playbackStateService.Play(song);
             }
         }
     }
 
-    private double _durationSeconds;
+    public PlayerPageViewModel PlayerPageViewModel { get; }
+    public QueueViewModel QueueViewModel { get; }
+    public SettingsViewModel? SettingsViewModel { get; private set; }
+    public PlaylistManagementViewModel? PlaylistManagementViewModel { get; private set; }
+    public LibraryCategoryViewModel? LibraryCategoryViewModel { get; private set; }
+    public StatisticsViewModel? StatisticsViewModel { get; private set; }
+    public ArtistDetailViewModel? ArtistDetailViewModel { get; private set; }
+    public AlbumDetailViewModel? AlbumDetailViewModel { get; private set; }
 
-    public double DurationSeconds
-    {
-        get => _durationSeconds;
-        set => this.RaiseAndSetIfChanged(ref _durationSeconds, value);
-    }
-
-    private int _volume = 100;
-
-    public int Volume
-    {
-        get => _volume;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _volume, value);
-            _musicPlayerService.SetVolume(value);
-        }
-    }
-
-    private bool _isPlaying;
-
-    public bool IsPlaying
-    {
-        get => _isPlaying;
-        set => this.RaiseAndSetIfChanged(ref _isPlaying, value);
-    }
-
-    private bool _isMuted;
-
-    public bool IsMuted
-    {
-        get => _isMuted;
-        set => this.RaiseAndSetIfChanged(ref _isMuted, value);
-    }
-
-    private bool _isScanning;
-
-    public bool IsScanning
-    {
-        get => _isScanning;
-        set => this.RaiseAndSetIfChanged(ref _isScanning, value);
-    }
-
-    public ReactiveCommand<Unit, Unit> PlayCommand { get; }
-    public ReactiveCommand<Unit, Unit> PauseCommand { get; }
-    public ReactiveCommand<Unit, Unit> StopCommand { get; }
-    public ReactiveCommand<Unit, Unit> NextCommand { get; }
-    public ReactiveCommand<Unit, Unit> PreviousCommand { get; }
-    public ReactiveCommand<Unit, Unit> MuteCommand { get; }
-    public ReactiveCommand<Unit, Unit> ShuffleCommand { get; }
-    public ReactiveCommand<Unit, Unit> RepeatCommand { get; }
-    public ReactiveCommand<string, Unit> PlaySongCommand { get; }
-    public ReactiveCommand<string, Unit> ToggleFavoriteCommand { get; }
-    public ReactiveCommand<Unit, Unit> NavigateToSettingsCommand { get; }
-    public ReactiveCommand<Unit, Unit> NavigateToLibraryCommand { get; }
-    public ReactiveCommand<Unit, Unit> NavigateToPlayerCommand { get; }
-    public ReactiveCommand<Unit, Unit> NavigateToStatisticsCommand { get; }
-    public ReactiveCommand<Unit, Unit> NavigateToPlaylistCommand { get; }
-    public ReactiveCommand<Unit, Unit> NavigateToCategoryCommand { get; }
-    public ReactiveCommand<Unit, Unit> ToggleQueuePanelCommand { get; }
-    public ReactiveCommand<Unit, Unit> PlayAllCommand { get; }
-
-    private StatisticsViewModel? _statisticsViewModel;
-
-    public StatisticsViewModel? StatisticsViewModel
-    {
-        get => _statisticsViewModel;
-        set => this.RaiseAndSetIfChanged(ref _statisticsViewModel, value);
-    }
-
-    private PlaylistManagementViewModel? _playlistManagementViewModel;
-
-    public PlaylistManagementViewModel? PlaylistManagementViewModel
-    {
-        get => _playlistManagementViewModel;
-        set => this.RaiseAndSetIfChanged(ref _playlistManagementViewModel, value);
-    }
-
-    private LibraryCategoryViewModel? _libraryCategoryViewModel;
-
-    public LibraryCategoryViewModel? LibraryCategoryViewModel
-    {
-        get => _libraryCategoryViewModel;
-        set => this.RaiseAndSetIfChanged(ref _libraryCategoryViewModel, value);
-    }
-
-    private QueueViewModel? _queueViewModel;
-
-    public QueueViewModel? QueueViewModel
-    {
-        get => _queueViewModel;
-        set => this.RaiseAndSetIfChanged(ref _queueViewModel, value);
-    }
-
-    public bool IsQueuePanelOpen => QueueViewModel?.IsPanelOpen ?? false;
+    private readonly DispatcherTimer _positionTimer;
 
     public MainWindowViewModel(
-        IMusicPlayerService musicPlayerService,
+        IPlaybackStateService playbackStateService,
+        INavigationService navigationService,
+        IViewModelFactory viewModelFactory,
         IPlaylistService playlistService,
         IMusicLibraryService musicLibraryService,
-        IWindowProvider windowProvider,
-        IScanService scanService,
-        IConfigurationService configService,
-        ILyricsService lyricsService,
         IStatisticsService statisticsService,
+        IConfigurationService configService,
         IUserPlaylistService userPlaylistService,
-        ILibraryCategoryService libraryCategoryService,
-        IDialogService dialogService)
+        IScanService scanService)
     {
-        _musicPlayerService = musicPlayerService;
+        _playbackStateService = playbackStateService;
+        _navigationService = navigationService;
+        _viewModelFactory = viewModelFactory;
         _playlistService = playlistService;
         _musicLibraryService = musicLibraryService;
-        _windowProvider = windowProvider;
-        _scanService = scanService;
-        _configService = configService;
-        _lyricsService = lyricsService;
         _statisticsService = statisticsService;
+        _configService = configService;
         _userPlaylistService = userPlaylistService;
-
-        // 加载配置并自动扫描
-        InitializeAsync();
-
-        var settingsViewModel = new SettingsViewModel(windowProvider, scanService, musicLibraryService, configService);
-        CurrentPage = this;
 
         CurrentPlaylist = _playlistService.CreatePlaylist("默认播放列表");
         _playlistService.SetCurrentPlaylist(CurrentPlaylist);
 
-        // 创建 PlayerPageViewModel
-        PlayerPageViewModel = new PlayerPageViewModel(
-            musicPlayerService,
-            playlistService,
-            musicLibraryService,
-            lyricsService,
-            this);
+        QueueViewModel = _viewModelFactory.CreateQueueViewModel();
+        PlayerPageViewModel = _viewModelFactory.CreatePlayerPageViewModel();
+        PlayerPageViewModel.OnNavigateBack = () => CurrentPage = this;
+        CurrentPage = this;
 
-        // 创建 QueueViewModel
-        QueueViewModel = new QueueViewModel(playlistService, musicPlayerService);
-        QueueViewModel.WhenAnyValue(x => x.IsPanelOpen)
-            .Subscribe(_ => this.RaisePropertyChanged(nameof(IsQueuePanelOpen)));
+        _playbackStateService.PlaybackStateChanged += (_, _) => OnPropertyChanged(nameof(IsPlaying));
 
-        // 创建 StatisticsViewModel
-        StatisticsViewModel = new StatisticsViewModel(statisticsService, musicLibraryService);
+        _playbackStateService.CurrentSongChanged += (_, _) => OnPropertyChanged(nameof(CurrentSong));
 
-        // 创建 PlaylistManagementViewModel
-        PlaylistManagementViewModel = new PlaylistManagementViewModel(
-            userPlaylistService,
-            musicPlayerService,
-            playlistService,
-            statisticsService,
-            musicLibraryService,
-            dialogService);
+        _navigationService.QueuePanelChanged += (_, _) => OnPropertyChanged(nameof(IsQueuePanelOpen));
 
-        // 创建 LibraryCategoryViewModel
-        LibraryCategoryViewModel = new LibraryCategoryViewModel(
-            libraryCategoryService,
-            musicPlayerService,
-            playlistService,
-            statisticsService);
-
-        NavigateToSettingsCommand = ReactiveCommand.Create(() => { CurrentPage = settingsViewModel; });
-        NavigateToLibraryCommand = ReactiveCommand.Create(() => { CurrentPage = this; });
-        NavigateToPlayerCommand = ReactiveCommand.Create(() => { CurrentPage = PlayerPageViewModel!; });
-        NavigateToStatisticsCommand = ReactiveCommand.Create(() => { CurrentPage = StatisticsViewModel!; });
-        NavigateToPlaylistCommand = ReactiveCommand.Create(() => { CurrentPage = PlaylistManagementViewModel!; });
-        NavigateToCategoryCommand = ReactiveCommand.Create(() => { CurrentPage = LibraryCategoryViewModel!; });
-        ToggleQueuePanelCommand = ReactiveCommand.Create(() =>
+        _navigationService.CurrentPageChanged += (_, pageType) =>
         {
-            if (QueueViewModel != null)
-                QueueViewModel.IsPanelOpen = !QueueViewModel.IsPanelOpen;
-        });
-        PlayAllCommand = ReactiveCommand.Create(() =>
-        {
-            if (Library.FilteredSongs.Count == 0 || CurrentPlaylist == null)
-                return;
-
-            // Clear current playlist and add all filtered songs
-            _playlistService.ClearPlaylist();
-            foreach (var song in Library.FilteredSongs)
-            {
-                _playlistService.AddSongToPlaylist(CurrentPlaylist, song);
-            }
-
-            // Start playing from the first song
-            _playlistService.PlayNext();
-            CurrentSong = _playlistService.CurrentSong;
-            if (CurrentSong != null)
-            {
-                _statisticsService.RecordPlayStart(CurrentSong);
-                _musicPlayerService.Play(CurrentSong);
-            }
-        });
-
-        PlayCommand = ReactiveCommand.Create(() => _musicPlayerService.Resume());
-        PauseCommand = ReactiveCommand.Create(() => _musicPlayerService.Pause());
-        StopCommand = ReactiveCommand.Create(() => _musicPlayerService.Stop());
-        NextCommand = ReactiveCommand.Create(() =>
-        {
-            if (_playlistService.PlayNext())
-            {
-                CurrentSong = _playlistService.CurrentSong;
-                if (CurrentSong != null)
-                {
-                    _statisticsService.RecordPlayStart(CurrentSong);
-                    _musicPlayerService.Play(CurrentSong);
-                }
-            }
-        });
-        PreviousCommand = ReactiveCommand.Create(() =>
-        {
-            if (_playlistService.PlayPrevious())
-            {
-                CurrentSong = _playlistService.CurrentSong;
-                if (CurrentSong != null)
-                {
-                    _statisticsService.RecordPlayStart(CurrentSong);
-                    _musicPlayerService.Play(CurrentSong);
-                }
-            }
-        });
-        MuteCommand = ReactiveCommand.Create(() =>
-        {
-            _musicPlayerService.Mute();
-            IsMuted = _musicPlayerService.IsMuted;
-        });
-        ShuffleCommand = ReactiveCommand.Create(() =>
-        {
-            _playlistService.PlaybackMode = _playlistService.PlaybackMode == PlaybackMode.Shuffle
-                ? PlaybackMode.Normal
-                : PlaybackMode.Shuffle;
-        });
-        RepeatCommand = ReactiveCommand.Create(() =>
-        {
-            _playlistService.PlaybackMode = _playlistService.PlaybackMode == PlaybackMode.Loop
-                ? PlaybackMode.Normal
-                : PlaybackMode.Loop;
-        });
-        PlaySongCommand = ReactiveCommand.Create<string>(path =>
-        {
-            var song = Library.FilteredSongs.FirstOrDefault(s => s.FilePath == path);
-            if (song != null)
-            {
-                var index = Library.FilteredSongs.IndexOf(song);
-                if (CurrentPlaylist != null)
-                {
-                    _playlistService.RemoveSongFromPlaylist(CurrentPlaylist, index);
-                    _playlistService.AddSongToPlaylist(CurrentPlaylist, song);
-                }
-
-                CurrentSong = song;
-                _statisticsService.RecordPlayStart(song);
-                _musicPlayerService.Play(song);
-                IsPlaying = true;
-            }
-        });
-        ToggleFavoriteCommand = ReactiveCommand.Create<string>(path =>
-        {
-            var song = Library.Songs.FirstOrDefault(s => s.FilePath == path);
-            if (song != null)
-            {
-                if (song.IsFavorite)
-                {
-                    _userPlaylistService.RemoveFromFavorites(song);
-                }
-                else
-                {
-                    _userPlaylistService.AddToFavorites(song);
-                }
-            }
-        });
-
-        _musicPlayerService.PlaybackEnded += (_, _) =>
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                _statisticsService.RecordPlayEnd();
-                if (_playlistService.PlayNext())
-                {
-                    CurrentSong = _playlistService.CurrentSong;
-                    if (CurrentSong != null)
-                    {
-                        _statisticsService.RecordPlayStart(CurrentSong);
-                        _musicPlayerService.Play(CurrentSong);
-                    }
-                }
-            });
+            if (pageType == typeof(MainWindowViewModel))
+                CurrentPage = this;
+            else if (pageType == typeof(PlayerPageViewModel))
+                CurrentPage = PlayerPageViewModel;
+            else if (pageType == typeof(SettingsViewModel) && SettingsViewModel != null)
+                CurrentPage = SettingsViewModel;
+            else if (pageType == typeof(StatisticsViewModel) && StatisticsViewModel != null)
+                CurrentPage = StatisticsViewModel;
+            else if (pageType == typeof(PlaylistManagementViewModel) && PlaylistManagementViewModel != null)
+                CurrentPage = PlaylistManagementViewModel;
+            else if (pageType == typeof(LibraryCategoryViewModel) && LibraryCategoryViewModel != null)
+                CurrentPage = LibraryCategoryViewModel;
+            else if (pageType == typeof(ArtistDetailViewModel) && ArtistDetailViewModel != null)
+                CurrentPage = ArtistDetailViewModel;
+            else if (pageType == typeof(AlbumDetailViewModel) && AlbumDetailViewModel != null)
+                CurrentPage = AlbumDetailViewModel;
         };
 
-        _musicPlayerService.PlaybackStateChanged += (_, state) => { IsPlaying = state == PlayState.Playing; };
+        _positionTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(250)
+        };
+        _positionTimer.Tick += (_, _) =>
+        {
+            OnPropertyChanged(nameof(Position));
+            OnPropertyChanged(nameof(Duration));
+            OnPropertyChanged(nameof(PositionSeconds));
+            OnPropertyChanged(nameof(DurationSeconds));
+            OnPropertyChanged(nameof(IsPlaying));
+        };
+        _positionTimer.Start();
 
-        Observable.Interval(TimeSpan.FromMilliseconds(500))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ =>
-            {
-                if (!_isSeeking)
-                {
-                    Position = _musicPlayerService.Position;
-                    Duration = _musicPlayerService.Duration;
-                    _isUpdatingPosition = true;
-                    PositionSeconds = _musicPlayerService.Position.TotalSeconds;
-                    _isUpdatingPosition = false;
-                    DurationSeconds = _musicPlayerService.Duration.TotalSeconds;
-                }
-            });
-
-        // 防抖处理进度条拖动
-        this.WhenAnyValue(x => x.PositionSeconds)
-            .Throttle(TimeSpan.FromMilliseconds(100))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(pos =>
-            {
-                if (_isSeeking)
-                {
-                    _musicPlayerService.Seek(TimeSpan.FromSeconds(pos));
-                    _isSeeking = false;
-                }
-            });
-
-        // Subscribe to library changes to update stats
         Library.Songs.CollectionChanged += (_, _) => UpdateLibraryStats();
+
+        InitializeAsync(scanService);
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        FilterSongs();
+    }
+
+    partial void OnVolumeChanged(int value)
+    {
+        _playbackStateService.SetVolume(value);
+    }
+
+    private async void InitializeAsync(IScanService scanService)
+    {
+        await _configService.LoadSettingsAsync();
+        Volume = _configService.CurrentSettings.Volume;
+        IsMuted = _configService.CurrentSettings.IsMuted;
+        _playbackStateService.SetVolume(Volume);
+        if (IsMuted) _playbackStateService.Mute();
+
+        var folders = _configService.GetScanFolders();
+        if (folders.Count > 0)
+        {
+            if (_musicLibraryService.Songs.Count == 0)
+                await scanService.ScanAllFoldersAsync();
+            else
+                await scanService.RescanLibraryAsync();
+            UpdateLibraryStats();
+        }
     }
 
     private void FilterSongs()
     {
         Library.FilteredSongs.Clear();
-        var filtered = string.IsNullOrWhiteSpace(_searchText)
+        var filtered = string.IsNullOrWhiteSpace(SearchText)
             ? Library.Songs
             : Library.Songs.Where(s =>
-                s.Title.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ||
-                s.Artist.Contains(_searchText, StringComparison.OrdinalIgnoreCase));
+                s.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                s.Artist.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
 
         var trackNumber = 1;
         foreach (var song in filtered)
         {
             song.TrackNumber = trackNumber++;
             Library.FilteredSongs.Add(song);
-        }
-    }
-
-    private async void InitializeAsync()
-    {
-        await _configService.LoadSettingsAsync();
-
-        // 设置音量
-        Volume = _configService.CurrentSettings.Volume;
-        IsMuted = _configService.CurrentSettings.IsMuted;
-        _musicPlayerService.SetVolume(Volume);
-        if (IsMuted) _musicPlayerService.Mute();
-
-        // 如果有保存的文件夹路径，扫描所有文件夹
-        var folders = _configService.GetScanFolders();
-        if (folders.Count > 0)
-        {
-            // 首次启动全量扫描，之后使用增量扫描
-            if (_musicLibraryService.Songs.Count == 0)
-            {
-                await _scanService.ScanAllFoldersAsync();
-            }
-            else
-            {
-                await _scanService.RescanLibraryAsync();
-            }
-
-            UpdateLibraryStats();
         }
     }
 }

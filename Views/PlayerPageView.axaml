@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:LocalMusicPlayer.ViewModels"
              xmlns:services="using:LocalMusicPlayer.Services"
+             xmlns:views="using:LocalMusicPlayer.Views"
              xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -21,14 +22,8 @@
                 <!-- Left: Back Button + Title -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16">
                     <!-- Back Button -->
-                    <Button Command="{Binding NavigateBackCommand}"
-                            Width="40"
-                            Height="40"
-                            Background="#111111"
-                            BorderBrush="#1A1A1A"
-                            BorderThickness="1"
-                            CornerRadius="20"
-                            Cursor="Hand">
+                    <Button Theme="{StaticResource CircleIconButtonTheme}"
+                            Command="{Binding NavigateBackCommand}">
                         <TextBlock Text="&#xE74A;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="16"
@@ -36,24 +31,15 @@
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
-                    <TextBlock Text="Now Playing"
-                               FontSize="16"
-                               FontWeight="500"
-                               FontFamily="Inter"
-                               Foreground="White"
+                    <TextBlock Text="{StaticResource String_NowPlaying}"
+                               Theme="{StaticResource TitleTextStyle}"
                                VerticalAlignment="Center" />
                 </StackPanel>
 
                 <!-- Right: Queue + More Buttons -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16">
                     <!-- Queue Button -->
-                    <Button Width="40"
-                            Height="40"
-                            Background="#111111"
-                            BorderBrush="#1A1A1A"
-                            BorderThickness="1"
-                            CornerRadius="20"
-                            Cursor="Hand"
+                    <Button Theme="{StaticResource CircleIconButtonTheme}"
                             Command="{Binding ToggleQueuePanelCommand}">
                         <TextBlock Text="&#xE8FA;"
                                    FontFamily="Segoe Fluent Icons"
@@ -63,13 +49,7 @@
                                    VerticalAlignment="Center" />
                     </Button>
                     <!-- More Button -->
-                    <Button Width="40"
-                            Height="40"
-                            Background="#111111"
-                            BorderBrush="#1A1A1A"
-                            BorderThickness="1"
-                            CornerRadius="20"
-                            Cursor="Hand">
+                    <Button Theme="{StaticResource CircleIconButtonTheme}">
                         <TextBlock Text="&#xE712;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
@@ -110,30 +90,7 @@
                     <!-- Progress Section -->
                     <StackPanel Grid.Row="1" Spacing="12" Margin="0,24,0,24">
                         <!-- Progress Bar -->
-                        <Slider Theme="{StaticResource CompactProgressSliderTheme}"
-                                HorizontalAlignment="Stretch"
-                                Minimum="0"
-                                Maximum="{Binding DurationSeconds}"
-                                Value="{Binding PositionSeconds, Mode=TwoWay}"
-                                IsSnapToTickEnabled="True"
-                                TickFrequency="1">
-                            <i:Interaction.Behaviors>
-                                <behaviors:SliderClickToSeekBehavior />
-                            </i:Interaction.Behaviors>
-                        </Slider>
-                        <!-- Time Row -->
-                        <Grid ColumnDefinitions="Auto,*,Auto">
-                            <TextBlock Grid.Column="0"
-                                       Text="{Binding Position, Converter={StaticResource TimeSpanConverter}}"
-                                       FontSize="13"
-                                       FontFamily="Consolas"
-                                       Foreground="{StaticResource AccentPurpleBrush}" />
-                            <TextBlock Grid.Column="2"
-                                       Text="{Binding Duration, Converter={StaticResource TimeSpanConverter}}"
-                                       FontSize="13"
-                                       FontFamily="Consolas"
-                                       Foreground="{StaticResource TextMutedBrush}" />
-                        </Grid>
+                        <views:MusicProgressBar />
                     </StackPanel>
 
                     <!-- Controls Section -->
@@ -143,9 +100,8 @@
                                     HorizontalAlignment="Center"
                                     Spacing="32">
                             <!-- Shuffle -->
-                            <Button Command="{Binding ShuffleCommand}"
-                                    Background="Transparent"
-                                    Cursor="Hand">
+                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
+                                    Command="{Binding ShuffleCommand}">
                                 <Panel>
                                     <TextBlock Text="&#xE8B1;"
                                                FontFamily="Segoe Fluent Icons"
@@ -160,31 +116,17 @@
                                 </Panel>
                             </Button>
                             <!-- Previous -->
-                            <Button Command="{Binding PreviousCommand}"
-                                    Background="Transparent"
-                                    Cursor="Hand"
-                                    Foreground="White">
+                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
+                                    Command="{Binding PreviousCommand}">
                                 <TextBlock Text="&#xE892;"
                                            FontFamily="Segoe Fluent Icons"
-                                           FontSize="32" />
+                                           FontSize="32"
+                                           Foreground="White" />
                             </Button>
                             <!-- Play/Pause -->
-                            <Button Command="{Binding PlayCommand}"
-                                    IsVisible="{Binding !IsPlaying}"
-                                    Width="72"
-                                    Height="72"
-                                    CornerRadius="36"
-                                    Cursor="Hand"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Background="{StaticResource PlayButtonGradient}">
-                                <Button.Effect>
-                                    <DropShadowEffect Color="#A855F7"
-                                                      BlurRadius="24"
-                                                      OffsetX="0"
-                                                      OffsetY="8"
-                                                      Opacity="0.5" />
-                                </Button.Effect>
+                            <Button Theme="{StaticResource CircleIconButtonLargeTheme}"
+                                    Command="{Binding PlayCommand}"
+                                    IsVisible="{Binding !IsPlaying}">
                                 <TextBlock Text="&#xE768;"
                                            FontFamily="Segoe Fluent Icons"
                                            FontSize="32"
@@ -192,22 +134,9 @@
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center" />
                             </Button>
-                            <Button Command="{Binding PauseCommand}"
-                                    IsVisible="{Binding IsPlaying}"
-                                    Width="72"
-                                    Height="72"
-                                    CornerRadius="36"
-                                    Cursor="Hand"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Background="{StaticResource PlayButtonGradient}">
-                                <Button.Effect>
-                                    <DropShadowEffect Color="#A855F7"
-                                                      BlurRadius="24"
-                                                      OffsetX="0"
-                                                      OffsetY="8"
-                                                      Opacity="0.5" />
-                                </Button.Effect>
+                            <Button Theme="{StaticResource CircleIconButtonLargeTheme}"
+                                    Command="{Binding PauseCommand}"
+                                    IsVisible="{Binding IsPlaying}">
                                 <TextBlock Text="&#xE769;"
                                            FontFamily="Segoe Fluent Icons"
                                            FontSize="32"
@@ -216,18 +145,16 @@
                                            VerticalAlignment="Center" />
                             </Button>
                             <!-- Next -->
-                            <Button Command="{Binding NextCommand}"
-                                    Background="Transparent"
-                                    Cursor="Hand"
-                                    Foreground="White">
+                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
+                                    Command="{Binding NextCommand}">
                                 <TextBlock Text="&#xE893;"
                                            FontFamily="Segoe Fluent Icons"
-                                           FontSize="32" />
+                                           FontSize="32"
+                                           Foreground="White" />
                             </Button>
                             <!-- Repeat -->
-                            <Button Command="{Binding RepeatCommand}"
-                                    Background="Transparent"
-                                    Cursor="Hand">
+                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
+                                    Command="{Binding RepeatCommand}">
                                 <Panel>
                                     <TextBlock Text="&#xE8ED;"
                                                FontFamily="Segoe Fluent Icons"
@@ -249,9 +176,8 @@
                             <StackPanel Grid.Column="0"
                                         Orientation="Horizontal"
                                         Spacing="20">
-                                <Button Command="{Binding ToggleFavoriteCommand}"
-                                        Background="Transparent"
-                                        Cursor="Hand">
+                                <Button Theme="{StaticResource TransparentIconButtonTheme}"
+                                        Command="{Binding ToggleFavoriteCommand}">
                                     <Panel>
                                         <TextBlock Text="&#xEB52;"
                                                    FontFamily="Segoe Fluent Icons"
@@ -265,8 +191,7 @@
                                                    IsVisible="{Binding !CurrentSong.IsFavorite}" />
                                     </Panel>
                                 </Button>
-                                <Button Background="Transparent"
-                                        Cursor="Hand"
+                                <Button Theme="{StaticResource TransparentIconButtonTheme}"
                                         Foreground="{StaticResource TextMutedBrush}">
                                     <TextBlock Text="&#xE72D;"
                                                FontFamily="Segoe Fluent Icons"
@@ -278,16 +203,14 @@
                                         Orientation="Horizontal"
                                         Spacing="20"
                                         HorizontalAlignment="Right">
-                                <Button Background="Transparent"
-                                        Cursor="Hand"
+                                <Button Theme="{StaticResource TransparentIconButtonTheme}"
                                         Foreground="{StaticResource TextMutedBrush}">
                                     <TextBlock Text="&#xE8C9;"
                                                FontFamily="Segoe Fluent Icons"
                                                FontSize="20" />
                                 </Button>
-                                <Button Command="{Binding ToggleMuteCommand}"
-                                        Background="Transparent"
-                                        Cursor="Hand"
+                                <Button Theme="{StaticResource TransparentIconButtonTheme}"
+                                        Command="{Binding ToggleMuteCommand}"
                                         Foreground="{StaticResource TextMutedBrush}">
                                     <Panel>
                                         <TextBlock Text="&#xE15D;"
@@ -345,7 +268,7 @@
 
                     <!-- No Lyrics Message -->
                     <TextBlock IsVisible="{Binding !HasLyrics}"
-                               Text="No lyrics available"
+                               Text="{StaticResource String_NoLyrics}"
                                FontSize="16"
                                FontFamily="Inter"
                                Foreground="{StaticResource TextMutedBrush}"

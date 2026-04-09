@@ -18,7 +18,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://LocalMusicPlayer/Styles/Resources.axaml" />
-                <ResourceInclude Source="avares://LocalMusicPlayer/Styles/PlayerStyles.axaml" />
+                <ResourceInclude Source="avares://LocalMusicPlayer/Styles/Strings.axaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!-- 全局转换器 -->
@@ -28,6 +28,8 @@
             <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
             <converters:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
             <converters:BoolToLyricColorConverter x:Key="BoolToLyricColorConverter" />
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+            <converters:EnumBooleanConverter x:Key="EnumBooleanConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,4 +1,3 @@
-using System.Reactive;
 using Avalonia.Controls;
 using Avalonia.Input;
 using LocalMusicPlayer.Models;

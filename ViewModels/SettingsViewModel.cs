@@ -1,9 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
+using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
-using ReactiveUI;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Services;
 
 namespace LocalMusicPlayer.ViewModels;
@@ -17,95 +18,88 @@ public partial class SettingsViewModel : ViewModelBase
 
     public ObservableCollection<string> ScanFolders { get; } = new();
 
-    private bool _includeSubfolders = true;
+    [ObservableProperty] private bool _includeSubfolders = true;
 
-    public bool IncludeSubfolders
+    [ObservableProperty] private bool _downloadAlbumArtwork = true;
+
+    [ObservableProperty] private bool _autoDetectMetadata;
+
+    [ObservableProperty] private int _songCount;
+
+    [ObservableProperty] private int _albumCount;
+
+    [ObservableProperty] private string _totalSize = "0 GB";
+
+    [ObservableProperty] private string _lastScanTime = "Never";
+
+    [ObservableProperty] private string _audioQuality = "Standard";
+
+    [ObservableProperty] private string _themeMode = "Dark";
+
+    [ObservableProperty] private bool _isScanning;
+
+    [RelayCommand]
+    private async Task AddFolder()
     {
-        get => _includeSubfolders;
-        set
+        var window = _windowProvider.CurrentWindow;
+        if (window == null) return;
+
+        var folders = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            this.RaiseAndSetIfChanged(ref _includeSubfolders, value);
-            SaveSettingsAsync().ConfigureAwait(false);
+            Title = "Select Music Folder",
+            AllowMultiple = true
+        });
+
+        foreach (var folder in folders)
+        {
+            var path = folder.Path.LocalPath;
+            if (!ScanFolders.Contains(path))
+            {
+                ScanFolders.Add(path);
+                await _configService.AddScanFolderAsync(path);
+            }
         }
     }
 
-    private bool _downloadAlbumArtwork = true;
-
-    public bool DownloadAlbumArtwork
+    [RelayCommand]
+    private async Task RemoveFolder(string path)
     {
-        get => _downloadAlbumArtwork;
-        set => this.RaiseAndSetIfChanged(ref _downloadAlbumArtwork, value);
+        ScanFolders.Remove(path);
+        await _configService.RemoveScanFolderAsync(path);
     }
 
-    private bool _autoDetectMetadata;
-
-    public bool AutoDetectMetadata
+    [RelayCommand]
+    private async Task ScanAll()
     {
-        get => _autoDetectMetadata;
-        set => this.RaiseAndSetIfChanged(ref _autoDetectMetadata, value);
+        if (ScanFolders.Count == 0) return;
+
+        IsScanning = true;
+
+        await _scanService.ScanAllFoldersAsync();
+
+        IsScanning = false;
+        LastScanTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+        SongCount = _musicLibraryService.Songs.Count;
+        AlbumCount = _musicLibraryService.Songs.Select(s => s.Album).Distinct().Count();
+
+        _configService.CurrentSettings.IncludeSubfolders = IncludeSubfolders;
+        _configService.CurrentSettings.LastScanTime = DateTime.Now;
+        await _configService.SaveSettingsAsync();
     }
 
-    private int _songCount;
-
-    public int SongCount
+    [RelayCommand]
+    private void SelectAudioQuality(string quality)
     {
-        get => _songCount;
-        set => this.RaiseAndSetIfChanged(ref _songCount, value);
+        AudioQuality = quality;
     }
 
-    private int _albumCount;
-
-    public int AlbumCount
+    [RelayCommand]
+    private async Task SelectTheme(string theme)
     {
-        get => _albumCount;
-        set => this.RaiseAndSetIfChanged(ref _albumCount, value);
+        ThemeMode = theme;
+        _configService.CurrentSettings.Theme = theme;
+        await _configService.SaveSettingsAsync();
     }
-
-    private string _totalSize = "0 GB";
-
-    public string TotalSize
-    {
-        get => _totalSize;
-        set => this.RaiseAndSetIfChanged(ref _totalSize, value);
-    }
-
-    private string _lastScanTime = "Never";
-
-    public string LastScanTime
-    {
-        get => _lastScanTime;
-        set => this.RaiseAndSetIfChanged(ref _lastScanTime, value);
-    }
-
-    private string _audioQuality = "Standard";
-
-    public string AudioQuality
-    {
-        get => _audioQuality;
-        set => this.RaiseAndSetIfChanged(ref _audioQuality, value);
-    }
-
-    private string _themeMode = "Dark";
-
-    public string ThemeMode
-    {
-        get => _themeMode;
-        set => this.RaiseAndSetIfChanged(ref _themeMode, value);
-    }
-
-    private bool _isScanning;
-
-    public bool IsScanning
-    {
-        get => _isScanning;
-        set => this.RaiseAndSetIfChanged(ref _isScanning, value);
-    }
-
-    public ReactiveCommand<Unit, Unit> AddFolderCommand { get; }
-    public ReactiveCommand<string, Unit> RemoveFolderCommand { get; }
-    public ReactiveCommand<Unit, Unit> ScanAllCommand { get; }
-    public ReactiveCommand<string, Unit> SelectAudioQualityCommand { get; }
-    public ReactiveCommand<string, Unit> SelectThemeCommand { get; }
 
     public SettingsViewModel(
         IWindowProvider windowProvider,
@@ -118,64 +112,7 @@ public partial class SettingsViewModel : ViewModelBase
         _musicLibraryService = musicLibraryService;
         _configService = configService;
 
-        // 从配置加载初始值
         LoadSettings();
-
-        AddFolderCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            var window = _windowProvider.CurrentWindow;
-            if (window == null) return;
-
-            var folders = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-            {
-                Title = "Select Music Folder",
-                AllowMultiple = true
-            });
-
-            foreach (var folder in folders)
-            {
-                var path = folder.Path.LocalPath;
-                if (!ScanFolders.Contains(path))
-                {
-                    ScanFolders.Add(path);
-                    await _configService.AddScanFolderAsync(path);
-                }
-            }
-        });
-
-        RemoveFolderCommand = ReactiveCommand.CreateFromTask(async (string path) =>
-        {
-            ScanFolders.Remove(path);
-            await _configService.RemoveScanFolderAsync(path);
-        });
-
-        ScanAllCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            if (ScanFolders.Count == 0) return;
-
-            IsScanning = true;
-
-            await _scanService.ScanAllFoldersAsync();
-
-            IsScanning = false;
-            LastScanTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
-            SongCount = _musicLibraryService.Songs.Count;
-            AlbumCount = _musicLibraryService.Songs.Select(s => s.Album).Distinct().Count();
-
-            // 保存配置
-            _configService.CurrentSettings.IncludeSubfolders = IncludeSubfolders;
-            _configService.CurrentSettings.LastScanTime = DateTime.Now;
-            await _configService.SaveSettingsAsync();
-        });
-
-        SelectAudioQualityCommand = ReactiveCommand.Create<string>(quality => { AudioQuality = quality; });
-
-        SelectThemeCommand = ReactiveCommand.Create<string>(async theme =>
-        {
-            ThemeMode = theme;
-            _configService.CurrentSettings.Theme = theme;
-            await _configService.SaveSettingsAsync();
-        });
     }
 
     private void LoadSettings()
@@ -199,9 +136,14 @@ public partial class SettingsViewModel : ViewModelBase
         }
     }
 
-    private async System.Threading.Tasks.Task SaveSettingsAsync()
+    private async Task SaveSettingsAsync()
     {
         _configService.CurrentSettings.IncludeSubfolders = IncludeSubfolders;
         await _configService.SaveSettingsAsync();
+    }
+
+    partial void OnIncludeSubfoldersChanged(bool value)
+    {
+        _ = SaveSettingsAsync();
     }
 }

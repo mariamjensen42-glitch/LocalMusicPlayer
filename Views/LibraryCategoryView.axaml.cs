@@ -14,23 +14,21 @@ public partial class LibraryCategoryView : UserControl
 
     private void ArtistItem_Tapped(object? sender, TappedEventArgs e)
     {
+        if (DataContext is not LibraryCategoryViewModel vm) return;
+        if (vm.OnNavigateToArtistDetail == null) return;
         if (sender is Border border && border.DataContext is ArtistGroup artist)
         {
-            if (DataContext is LibraryCategoryViewModel vm)
-            {
-                vm.SelectedItem = artist;
-            }
+            vm.OnNavigateToArtistDetail.Invoke(artist);
         }
     }
 
     private void AlbumItem_Tapped(object? sender, TappedEventArgs e)
     {
+        if (DataContext is not LibraryCategoryViewModel vm) return;
+        if (vm.OnNavigateToAlbumDetail == null) return;
         if (sender is Border border && border.DataContext is AlbumGroup album)
         {
-            if (DataContext is LibraryCategoryViewModel vm)
-            {
-                vm.SelectedItem = album;
-            }
+            vm.OnNavigateToAlbumDetail.Invoke(album);
         }
     }
 

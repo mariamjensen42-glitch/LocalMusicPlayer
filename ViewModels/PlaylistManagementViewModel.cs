@@ -1,17 +1,16 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
 using System.Threading.Tasks;
-using Avalonia.Controls;
-using ReactiveUI;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
 using LocalMusicPlayer.Services;
 using LocalMusicPlayer.Views;
 
 namespace LocalMusicPlayer.ViewModels;
 
-public class PlaylistManagementViewModel : ViewModelBase
+public partial class PlaylistManagementViewModel : ViewModelBase
 {
     private readonly IUserPlaylistService _playlistService;
     private readonly IMusicPlayerService _musicPlayerService;
@@ -23,6 +22,7 @@ public class PlaylistManagementViewModel : ViewModelBase
     private UserPlaylist? _selectedPlaylist;
     private string _newPlaylistName = string.Empty;
     private bool _isCreatingPlaylist;
+    private ObservableCollection<Song> _playlistSongs = new();
 
     public ObservableCollection<UserPlaylist> UserPlaylists => _playlistService.UserPlaylists;
 
@@ -31,28 +31,20 @@ public class PlaylistManagementViewModel : ViewModelBase
         get => _selectedPlaylist;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedPlaylist, value);
-            this.RaisePropertyChanged(nameof(PlaylistSongs));
-            this.RaisePropertyChanged(nameof(CanDeletePlaylist));
-            this.RaisePropertyChanged(nameof(CanRenamePlaylist));
+            if (SetProperty(ref _selectedPlaylist, value))
+            {
+                OnPropertyChanged(nameof(PlaylistSongs));
+                OnPropertyChanged(nameof(CanDeletePlaylist));
+                OnPropertyChanged(nameof(CanRenamePlaylist));
+                UpdatePlaylistSongs(value);
+            }
         }
     }
 
     public ObservableCollection<Song> PlaylistSongs
     {
-        get
-        {
-            var songs = new ObservableCollection<Song>();
-            if (_selectedPlaylist != null)
-            {
-                foreach (var song in _playlistService.GetPlaylistSongs(_selectedPlaylist.Id))
-                {
-                    songs.Add(song);
-                }
-            }
-
-            return songs;
-        }
+        get => _playlistSongs;
+        private set => SetProperty(ref _playlistSongs, value);
     }
 
     public bool CanDeletePlaylist => _selectedPlaylist != null &&
@@ -64,23 +56,112 @@ public class PlaylistManagementViewModel : ViewModelBase
     public string NewPlaylistName
     {
         get => _newPlaylistName;
-        set => this.RaiseAndSetIfChanged(ref _newPlaylistName, value);
+        set => SetProperty(ref _newPlaylistName, value);
     }
 
     public bool IsCreatingPlaylist
     {
         get => _isCreatingPlaylist;
-        set => this.RaiseAndSetIfChanged(ref _isCreatingPlaylist, value);
+        set => SetProperty(ref _isCreatingPlaylist, value);
     }
 
-    public ReactiveCommand<Unit, Unit> CreatePlaylistCommand { get; }
-    public ReactiveCommand<Unit, Unit> DeletePlaylistCommand { get; }
-    public ReactiveCommand<Unit, Unit> RenamePlaylistCommand { get; }
-    public ReactiveCommand<string, Unit> PlaySongCommand { get; }
-    public ReactiveCommand<string, Unit> RemoveSongCommand { get; }
-    public ReactiveCommand<Unit, Unit> PlayAllCommand { get; }
-    public ReactiveCommand<(int OldIndex, int NewIndex), Unit> MoveSongCommand { get; }
-    public ReactiveCommand<Song, Unit> EditSongMetadataCommand { get; }
+    [RelayCommand]
+    private void CreatePlaylist()
+    {
+        if (!string.IsNullOrWhiteSpace(_newPlaylistName))
+        {
+            _playlistService.CreatePlaylist(_newPlaylistName);
+            NewPlaylistName = string.Empty;
+            IsCreatingPlaylist = false;
+        }
+    }
+
+    [RelayCommand]
+    private void DeletePlaylist()
+    {
+        if (_selectedPlaylist != null && CanDeletePlaylist)
+        {
+            _playlistService.DeletePlaylist(_selectedPlaylist.Id);
+            SelectedPlaylist = null;
+        }
+    }
+
+    [RelayCommand]
+    private async Task RenamePlaylistAsync()
+    {
+        if (_selectedPlaylist == null || !CanRenamePlaylist)
+            return;
+
+        var newName = await _dialogService.ShowInputDialogAsync("Rename Playlist", _selectedPlaylist.Name);
+        if (!string.IsNullOrWhiteSpace(newName))
+        {
+            _playlistService.RenamePlaylist(_selectedPlaylist.Id, newName);
+        }
+    }
+
+    [RelayCommand]
+    private void PlaySong(string path)
+    {
+        var song = PlaylistSongs.FirstOrDefault(s => s.FilePath == path);
+        if (song != null)
+        {
+            _statisticsService.RecordPlayStart(song);
+            _musicPlayerService.Play(song);
+        }
+    }
+
+    [RelayCommand]
+    private void RemoveSong(string path)
+    {
+        if (_selectedPlaylist != null)
+        {
+            _playlistService.RemoveSongFromPlaylist(_selectedPlaylist.Id, path);
+            UpdatePlaylistSongs(_selectedPlaylist);
+        }
+    }
+
+    [RelayCommand]
+    private void PlayAll()
+    {
+        if (PlaylistSongs.Count == 0) return;
+
+        var currentPlaylist = _playbackService.CreatePlaylist("临时播放");
+        _playbackService.SetCurrentPlaylist(currentPlaylist);
+        _playbackService.ClearPlaylist();
+
+        foreach (var song in PlaylistSongs)
+        {
+            _playbackService.AddSongToPlaylist(currentPlaylist, song);
+        }
+
+        _playbackService.PlayNext();
+        if (_playbackService.CurrentSong != null)
+        {
+            _statisticsService.RecordPlayStart(_playbackService.CurrentSong);
+            _musicPlayerService.Play(_playbackService.CurrentSong);
+        }
+    }
+
+    [RelayCommand]
+    private void MoveSong((int OldIndex, int NewIndex) param)
+    {
+        if (_selectedPlaylist != null)
+        {
+            _playlistService.MoveSongInPlaylist(_selectedPlaylist.Id, param.OldIndex, param.NewIndex);
+            UpdatePlaylistSongs(_selectedPlaylist);
+        }
+    }
+
+    [RelayCommand]
+    private void EditSongMetadata(Song song)
+    {
+        var dialog = new MetadataEditorView
+        {
+            DataContext =
+                new MetadataEditorViewModel(song, _dialogService, () => { UpdatePlaylistSongs(_selectedPlaylist); })
+        };
+        dialog.Show();
+    }
 
     public PlaylistManagementViewModel(
         IUserPlaylistService playlistService,
@@ -99,99 +180,21 @@ public class PlaylistManagementViewModel : ViewModelBase
 
         EnsureFavoritesPlaylist();
 
-        CreatePlaylistCommand = ReactiveCommand.Create(() =>
+        _playlistService.PlaylistsChanged += (_, _) => { OnPropertyChanged(nameof(UserPlaylists)); };
+    }
+
+    private void UpdatePlaylistSongs(UserPlaylist? playlist)
+    {
+        var songs = new ObservableCollection<Song>();
+        if (playlist != null)
         {
-            if (!string.IsNullOrWhiteSpace(_newPlaylistName))
+            foreach (var song in _playlistService.GetPlaylistSongs(playlist.Id))
             {
-                _playlistService.CreatePlaylist(_newPlaylistName);
-                NewPlaylistName = string.Empty;
-                IsCreatingPlaylist = false;
+                songs.Add(song);
             }
-        });
+        }
 
-        DeletePlaylistCommand = ReactiveCommand.Create(() =>
-        {
-            if (_selectedPlaylist != null && CanDeletePlaylist)
-            {
-                _playlistService.DeletePlaylist(_selectedPlaylist.Id);
-                SelectedPlaylist = null;
-            }
-        });
-
-        RenamePlaylistCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            if (_selectedPlaylist == null || !CanRenamePlaylist)
-                return;
-
-            var newName = await _dialogService.ShowInputDialogAsync("Rename Playlist", _selectedPlaylist.Name);
-            if (!string.IsNullOrWhiteSpace(newName))
-            {
-                _playlistService.RenamePlaylist(_selectedPlaylist.Id, newName);
-            }
-        });
-
-        PlaySongCommand = ReactiveCommand.Create<string>(path =>
-        {
-            var song = PlaylistSongs.FirstOrDefault(s => s.FilePath == path);
-            if (song != null)
-            {
-                _statisticsService.RecordPlayStart(song);
-                _musicPlayerService.Play(song);
-            }
-        });
-
-        RemoveSongCommand = ReactiveCommand.Create<string>(path =>
-        {
-            if (_selectedPlaylist != null)
-            {
-                _playlistService.RemoveSongFromPlaylist(_selectedPlaylist.Id, path);
-                this.RaisePropertyChanged(nameof(PlaylistSongs));
-            }
-        });
-
-        PlayAllCommand = ReactiveCommand.Create(() =>
-        {
-            if (PlaylistSongs.Count == 0) return;
-
-            var currentPlaylist = _playbackService.CreatePlaylist("临时播放");
-            _playbackService.SetCurrentPlaylist(currentPlaylist);
-            _playbackService.ClearPlaylist();
-
-            foreach (var song in PlaylistSongs)
-            {
-                _playbackService.AddSongToPlaylist(currentPlaylist, song);
-            }
-
-            _playbackService.PlayNext();
-            if (_playbackService.CurrentSong != null)
-            {
-                _statisticsService.RecordPlayStart(_playbackService.CurrentSong);
-                _musicPlayerService.Play(_playbackService.CurrentSong);
-            }
-        });
-
-        MoveSongCommand = ReactiveCommand.Create<(int OldIndex, int NewIndex)>(param =>
-        {
-            if (_selectedPlaylist != null)
-            {
-                _playlistService.MoveSongInPlaylist(_selectedPlaylist.Id, param.OldIndex, param.NewIndex);
-                this.RaisePropertyChanged(nameof(PlaylistSongs));
-            }
-        });
-
-        EditSongMetadataCommand = ReactiveCommand.Create<Song>(song =>
-        {
-            var dialog = new MetadataEditorView
-            {
-                DataContext = new MetadataEditorViewModel(song, _dialogService, () =>
-                {
-                    this.RaisePropertyChanged(nameof(PlaylistSongs));
-                })
-            };
-            dialog.Show();
-        });
-
-        _playlistService.PlaylistsChanged += (_, _) => { this.RaisePropertyChanged(nameof(UserPlaylists)); };
+        PlaylistSongs = songs;
     }
 
     private void EnsureFavoritesPlaylist()
@@ -214,7 +217,7 @@ public class PlaylistManagementViewModel : ViewModelBase
         if (_selectedPlaylist != null)
         {
             _playlistService.AddSongToPlaylist(_selectedPlaylist.Id, song);
-            this.RaisePropertyChanged(nameof(PlaylistSongs));
+            UpdatePlaylistSongs(_selectedPlaylist);
         }
     }
 }

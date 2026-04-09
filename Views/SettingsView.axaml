@@ -11,29 +11,20 @@
         <vm:SettingsViewModel />
     </Design.DataContext>
 
-    <UserControl.Resources>
-        <!-- 紫粉渐变 -->
-        <LinearGradientBrush x:Key="PurplePinkGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-            <GradientStop Offset="0" Color="#FFA855F7" />
-            <GradientStop Offset="1" Color="#FFEC4899" />
-        </LinearGradientBrush>
-    </UserControl.Resources>
-
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel Spacing="20" Margin="32,0,32,32">
-            <!-- 页面头部 -->
             <Grid Margin="0,0,0,32">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Settings"
+                <TextBlock Text="{StaticResource String_Settings}"
                            Grid.Column="0"
                            FontSize="32"
                            FontWeight="Bold"
                            FontFamily="Inter"
                            Foreground="{StaticResource TextPrimaryBrush}" />
-                <TextBlock Text="Customize your music experience"
+                <TextBlock Text="{StaticResource String_CustomizeExperience}"
                            Grid.Column="1"
                            FontSize="14"
                            Foreground="{StaticResource TextMutedBrush}"
@@ -41,14 +32,8 @@
                            Margin="16,0,0,4" />
             </Grid>
 
-            <!-- 本地音乐库卡片 -->
-            <Border Background="{StaticResource BgCardBrush}"
-                    CornerRadius="12"
-                    Padding="28"
-                    BorderBrush="{StaticResource BorderSubtleBrush}"
-                    BorderThickness="1">
+            <Border Theme="{StaticResource CardTheme}">
                 <StackPanel Spacing="24">
-                    <!-- 头部区域 -->
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <Border Width="40"
                                 Height="40"
@@ -62,53 +47,43 @@
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="Local Music Library"
+                            <TextBlock Text="{StaticResource String_LocalMusicLibrary}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="Scan and manage your local music files"
+                            <TextBlock Text="{StaticResource String_ManageMusicFiles}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- 分隔线 -->
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
-                    <!-- 文件夹列表区域 -->
                     <StackPanel Spacing="12">
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Grid.Column="0"
-                                       Text="MUSIC FOLDERS"
+                                       Text="{StaticResource String_MusicFolders}"
                                        FontSize="11"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextMutedBrush}"
                                        LetterSpacing="4"
                                        VerticalAlignment="Center" />
                             <Button Grid.Column="1"
+                                    Theme="{StaticResource AccentButtonTheme}"
                                     Height="28"
-                                    Background="{StaticResource AccentPurpleBrush}"
-                                    CornerRadius="6"
-                                    Padding="12,0"
-                                    Foreground="White"
                                     FontSize="11"
-                                    FontWeight="Medium"
                                     Command="{Binding AddFolderCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <TextBlock Text="&#xE710;"
                                                FontFamily="Segoe Fluent Icons"
                                                FontSize="12"
                                                VerticalAlignment="Center" />
-                                    <TextBlock Text="Add" VerticalAlignment="Center" />
+                                    <TextBlock Text="{StaticResource String_Add}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
                         </Grid>
 
-                        <!-- 文件夹列表 -->
-                        <Border Background="{StaticResource BgInputBrush}"
-                                CornerRadius="10"
-                                BorderBrush="{StaticResource BorderSubtleBrush}"
-                                BorderThickness="1"
+                        <Border Theme="{StaticResource InputBorderTheme}"
                                 MinHeight="80"
                                 MaxHeight="200">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -124,22 +99,16 @@
                                                                Text="{Binding}"
                                                                FontSize="13"
                                                                Foreground="{StaticResource TextPrimaryBrush}"
-                                                               VerticalAlignment="Center"
-                                                               FontFamily="Consolas, monospace"
-                                                               TextTrimming="CharacterEllipsis" />
+                                                               VerticalAlignment="Center" />
                                                     <Button Grid.Column="1"
-                                                            Width="28"
-                                                            Height="28"
-                                                            Background="Transparent"
-                                                            CornerRadius="6"
-                                                            Command="{Binding $parent[ItemsControl].DataContext.RemoveFolderCommand}"
+                                                            Theme="{StaticResource IconButtonTheme}"
+                                                            x:DataType="vm:SettingsViewModel"
+                                                            Command="{Binding $parent[ItemsControl].((vm:SettingsViewModel)DataContext).RemoveFolderCommand}"
                                                             CommandParameter="{Binding}">
                                                         <TextBlock Text="&#xE74D;"
                                                                    FontFamily="Segoe Fluent Icons"
-                                                                   FontSize="12"
-                                                                   Foreground="{StaticResource TextMutedBrush}"
-                                                                   HorizontalAlignment="Center"
-                                                                   VerticalAlignment="Center" />
+                                                                   FontSize="14"
+                                                                   Foreground="{StaticResource TextMutedBrush}" />
                                                     </Button>
                                                 </Grid>
                                             </Border>
@@ -150,526 +119,261 @@
                         </Border>
                     </StackPanel>
 
-                    <!-- 扫描选项区域 -->
-                    <StackPanel Spacing="16">
-                        <TextBlock Text="SCAN OPTIONS"
+                    <Border Height="1" Background="{StaticResource BgElement2Brush}" />
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="{StaticResource String_ScanOptions}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}"
                                    LetterSpacing="4" />
 
-                        <!-- Include subfolders -->
-                        <Grid ColumnDefinitions="Auto,*">
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="&#xE8D7;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="18"
-                                           Foreground="{StaticResource AccentPurpleBrush}"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Text="Include subfolders"
-                                           FontSize="14"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           VerticalAlignment="Center" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1"
-                                          IsChecked="{Binding IncludeSubfolders}"
-                                          OnContent=""
-                                          OffContent=""
-                                          HorizontalAlignment="Right" />
-                        </Grid>
-
-                        <!-- Download album artwork -->
-                        <Grid ColumnDefinitions="Auto,*">
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="&#xE8B9;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="18"
-                                           Foreground="{StaticResource AccentPinkBrush}"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Text="Download album artwork"
-                                           FontSize="14"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           VerticalAlignment="Center" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1"
-                                          IsChecked="{Binding DownloadAlbumArtwork}"
-                                          OnContent=""
-                                          OffContent=""
-                                          HorizontalAlignment="Right" />
-                        </Grid>
-
-                        <!-- Auto-detect metadata -->
-                        <Grid ColumnDefinitions="Auto,*">
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="&#xE8EC;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="18"
-                                           Foreground="#3B82F6"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Text="Auto-detect metadata"
-                                           FontSize="14"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           VerticalAlignment="Center" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1"
-                                          IsChecked="{Binding AutoDetectMetadata}"
-                                          OnContent=""
-                                          OffContent=""
-                                          HorizontalAlignment="Right" />
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                            <CheckBox Grid.Row="0" Grid.Column="0"
+                                      Content="{StaticResource String_ScanSubfolders}"
+                                      IsChecked="{Binding IncludeSubfolders}"
+                                      Foreground="{StaticResource TextPrimaryBrush}" />
+                            <CheckBox Grid.Row="1" Grid.Column="0"
+                                      Content="{StaticResource String_DownloadAlbumArt}"
+                                      IsChecked="{Binding DownloadAlbumArtwork}"
+                                      Foreground="{StaticResource TextPrimaryBrush}" />
+                            <CheckBox Grid.Row="2" Grid.Column="0"
+                                      Content="{StaticResource String_AutoMetadata}"
+                                      IsChecked="{Binding AutoDetectMetadata}"
+                                      Foreground="{StaticResource TextPrimaryBrush}" />
                         </Grid>
                     </StackPanel>
 
-                    <!-- 操作按钮区域 -->
-                    <StackPanel HorizontalAlignment="Right">
-                        <Button Height="40"
-                                Padding="24,0"
-                                CornerRadius="8"
-                                Background="{StaticResource PurplePinkGradientBrush}"
-                                Foreground="White"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                Command="{Binding ScanAllCommand}"
-                                IsEnabled="{Binding !IsScanning}">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="&#xE72C;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="16"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Text="Scan All" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
+                    <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
-                    <!-- 统计区域 -->
-                    <Border Background="{StaticResource BgPrimaryBrush}"
-                            CornerRadius="10"
-                            BorderBrush="{StaticResource BorderSubtleBrush}"
-                            BorderThickness="1"
-                            Padding="24,20">
-                        <Grid ColumnDefinitions="*,*,*,*">
-                            <!-- Songs -->
-                            <StackPanel Grid.Column="0" Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding SongCount}"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
-                                           HorizontalAlignment="Center" />
-                                <TextBlock Text="Songs"
-                                           FontSize="12"
-                                           FontWeight="500"
-                                           Foreground="{StaticResource AccentPurpleBrush}"
-                                           HorizontalAlignment="Center" />
-                            </StackPanel>
-                            <!-- Albums -->
-                            <StackPanel Grid.Column="1" Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding AlbumCount}"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
-                                           HorizontalAlignment="Center" />
-                                <TextBlock Text="Albums"
-                                           FontSize="12"
-                                           FontWeight="500"
-                                           Foreground="{StaticResource AccentPurpleBrush}"
-                                           HorizontalAlignment="Center" />
-                            </StackPanel>
-                            <!-- Size -->
-                            <StackPanel Grid.Column="2" Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding TotalSize}"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
-                                           HorizontalAlignment="Center" />
-                                <TextBlock Text="Size"
-                                           FontSize="12"
-                                           FontWeight="500"
-                                           Foreground="{StaticResource AccentPurpleBrush}"
-                                           HorizontalAlignment="Center" />
-                            </StackPanel>
-                            <!-- Last Scan -->
-                            <StackPanel Grid.Column="3" Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding LastScanTime}"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
-                                           HorizontalAlignment="Center" />
-                                <TextBlock Text="Last Scan"
-                                           FontSize="12"
-                                           FontWeight="500"
-                                           Foreground="{StaticResource AccentPurpleBrush}"
-                                           HorizontalAlignment="Center" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                    <Button Theme="{StaticResource AccentButtonTheme}"
+                            Height="40"
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding ScanAllCommand}"
+                            IsEnabled="{Binding !IsScanning}">
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                            <TextBlock Text="&#xE72C;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="16"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{StaticResource String_RescanLibrary}"
+                                       FontSize="14"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <StackPanel Orientation="Horizontal" Spacing="24">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{Binding SongCount}"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="{StaticResource String_Songs}"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{Binding AlbumCount}"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="{StaticResource String_Albums}"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{Binding TotalSize}"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="{StaticResource String_Size}"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{Binding LastScanTime}"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="{StaticResource String_LastScan}"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 
-            <!-- 播放卡片 -->
-            <Border Background="{StaticResource BgCardBrush}"
-                    CornerRadius="12"
-                    Padding="28"
-                    BorderBrush="{StaticResource BorderSubtleBrush}"
-                    BorderThickness="1">
-                <StackPanel Spacing="24">
-                    <!-- 头部区域 -->
+            <Border Theme="{StaticResource CardTheme}">
+                <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <Border Width="40"
                                 Height="40"
                                 CornerRadius="10"
-                                Background="{StaticResource BgCardHoverBrush}">
-                            <TextBlock Text="&#xE15D;"
+                                Background="{StaticResource AccentPurpleBrush}">
+                            <TextBlock Text="&#xE8D7;"
                                        FontFamily="Segoe Fluent Icons"
-                                       Foreground="{StaticResource AccentPurpleBrush}"
+                                       Foreground="White"
                                        FontSize="20"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="Playback"
+                            <TextBlock Text="{StaticResource String_Playback}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="Audio quality and playback settings"
+                            <TextBlock Text="{StaticResource String_PlaybackSettings}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- 分隔线 -->
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
-                    <!-- 音频质量选择器 -->
-                    <StackPanel Spacing="12">
-                        <TextBlock Text="AUDIO QUALITY"
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="{StaticResource String_AudioQuality}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}"
                                    LetterSpacing="4" />
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <!-- Standard -->
-                            <Button Width="100"
-                                    Height="40"
-                                    CornerRadius="8"
-                                    FontSize="13"
-                                    Command="{Binding SelectAudioQualityCommand}"
-                                    CommandParameter="Standard">
-                                <Button.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-                                        <Setter Property="BorderBrush" Value="#333333" />
-                                        <Setter Property="BorderThickness" Value="1" />
-                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-                                        <Setter Property="FontWeight" Value="500" />
-                                    </Style>
-                                    <Style Selector="Button.selected">
-                                        <Setter Property="Background" Value="{StaticResource AccentPurpleBrush}" />
-                                        <Setter Property="BorderBrush" Value="{StaticResource AccentPurpleBrush}" />
-                                        <Setter Property="BorderThickness" Value="2" />
-                                        <Setter Property="Foreground" Value="White" />
-                                        <Setter Property="FontWeight" Value="SemiBold" />
-                                    </Style>
-                                </Button.Styles>
-                                <TextBlock Text="Standard" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Button>
-                            <!-- High -->
-                            <Button Width="100"
-                                    Height="40"
-                                    CornerRadius="8"
-                                    FontSize="13"
-                                    Command="{Binding SelectAudioQualityCommand}"
-                                    CommandParameter="High">
-                                <Button.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-                                        <Setter Property="BorderBrush" Value="#333333" />
-                                        <Setter Property="BorderThickness" Value="1" />
-                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-                                        <Setter Property="FontWeight" Value="500" />
-                                    </Style>
-                                    <Style Selector="Button.selected">
-                                        <Setter Property="Background" Value="{StaticResource AccentPurpleBrush}" />
-                                        <Setter Property="BorderBrush" Value="{StaticResource AccentPurpleBrush}" />
-                                        <Setter Property="BorderThickness" Value="2" />
-                                        <Setter Property="Foreground" Value="White" />
-                                        <Setter Property="FontWeight" Value="SemiBold" />
-                                    </Style>
-                                </Button.Styles>
-                                <TextBlock Text="High" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Button>
-                            <!-- Lossless -->
-                            <Button Width="100"
-                                    Height="40"
-                                    CornerRadius="8"
-                                    FontSize="13"
-                                    Command="{Binding SelectAudioQualityCommand}"
-                                    CommandParameter="Lossless">
-                                <Button.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-                                        <Setter Property="BorderBrush" Value="#333333" />
-                                        <Setter Property="BorderThickness" Value="1" />
-                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-                                        <Setter Property="FontWeight" Value="500" />
-                                    </Style>
-                                    <Style Selector="Button.selected">
-                                        <Setter Property="Background" Value="{StaticResource AccentPurpleBrush}" />
-                                        <Setter Property="BorderBrush" Value="{StaticResource AccentPurpleBrush}" />
-                                        <Setter Property="BorderThickness" Value="2" />
-                                        <Setter Property="Foreground" Value="White" />
-                                        <Setter Property="FontWeight" Value="SemiBold" />
-                                    </Style>
-                                </Button.Styles>
-                                <TextBlock Text="Lossless" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Button>
-                        </StackPanel>
+
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
+                            <RadioButton Grid.Row="0" Grid.Column="0"
+                                         Content="{StaticResource String_Standard}"
+                                         IsChecked="{Binding AudioQuality, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Standard}"
+                                         HorizontalAlignment="Center" />
+                            <RadioButton Grid.Row="0" Grid.Column="1"
+                                         Content="{StaticResource String_High}"
+                                         IsChecked="{Binding AudioQuality, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=High}"
+                                         HorizontalAlignment="Center" />
+                            <RadioButton Grid.Row="0" Grid.Column="2"
+                                         Content="{StaticResource String_Lossless}"
+                                         IsChecked="{Binding AudioQuality, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Lossless}"
+                                         HorizontalAlignment="Center" />
+                        </Grid>
                     </StackPanel>
                 </StackPanel>
             </Border>
 
-            <!-- 外观卡片 -->
-            <Border Background="{StaticResource BgCardBrush}"
-                    CornerRadius="12"
-                    Padding="28"
-                    BorderBrush="{StaticResource BorderSubtleBrush}"
-                    BorderThickness="1">
-                <StackPanel Spacing="24">
-                    <!-- 头部区域 -->
+            <Border Theme="{StaticResource CardTheme}">
+                <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <Border Width="40"
                                 Height="40"
                                 CornerRadius="10"
-                                Background="{StaticResource BgCardHoverBrush}">
+                                Background="{StaticResource AccentPurpleBrush}">
                             <TextBlock Text="&#xE790;"
                                        FontFamily="Segoe Fluent Icons"
-                                       Foreground="{StaticResource AccentPinkBrush}"
+                                       Foreground="White"
                                        FontSize="20"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="Appearance"
+                            <TextBlock Text="{StaticResource String_Appearance}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="Customize the look and feel"
+                            <TextBlock Text="{StaticResource String_AppearanceSettings}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- 分隔线 -->
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
-                    <!-- 主题选择器 -->
-                    <StackPanel Spacing="12">
-                        <TextBlock Text="THEME"
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="{StaticResource String_Theme}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}"
                                    LetterSpacing="4" />
-                        <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
-                            <!-- Dark -->
-                            <Button Width="96"
-                                    Height="88"
-                                    CornerRadius="20"
-                                    Padding="0"
-                                    Command="{Binding SelectThemeCommand}"
-                                    CommandParameter="Dark">
-                                <Button.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="Background" Value="#FF141428" />
-                                        <Setter Property="BorderBrush" Value="{StaticResource BgElement2Brush}" />
-                                        <Setter Property="BorderThickness" Value="1" />
-                                    </Style>
-                                    <Style Selector="Button.selected">
-                                        <Setter Property="Background" Value="#FF1A1A2E" />
-                                        <Setter Property="BorderBrush" Value="{StaticResource AccentPurpleBrush}" />
-                                        <Setter Property="BorderThickness" Value="2" />
-                                    </Style>
-                                </Button.Styles>
-                                <StackPanel Spacing="8" HorizontalAlignment="Center">
-                                    <TextBlock Text="&#xEE4D;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="24"
-                                               Foreground="{StaticResource AccentPurpleBrush}"
-                                               HorizontalAlignment="Center" />
-                                    <TextBlock Text="Dark"
-                                               FontSize="11"
-                                               FontWeight="500"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
-                                               HorizontalAlignment="Center" />
-                                    <Ellipse Width="8" Height="8" Fill="{StaticResource AccentPurpleBrush}" />
-                                </StackPanel>
-                            </Button>
-                            <!-- Light -->
-                            <Button Width="96"
-                                    Height="88"
-                                    CornerRadius="20"
-                                    Padding="0"
-                                    Command="{Binding SelectThemeCommand}"
-                                    CommandParameter="Light">
-                                <Button.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="Background" Value="#FF141428" />
-                                        <Setter Property="BorderBrush" Value="{StaticResource BgElement2Brush}" />
-                                        <Setter Property="BorderThickness" Value="1" />
-                                    </Style>
-                                    <Style Selector="Button.selected">
-                                        <Setter Property="Background" Value="#FF1A1A2E" />
-                                        <Setter Property="BorderBrush" Value="{StaticResource AccentPurpleBrush}" />
-                                        <Setter Property="BorderThickness" Value="2" />
-                                    </Style>
-                                </Button.Styles>
-                                <StackPanel Spacing="8" HorizontalAlignment="Center">
-                                    <TextBlock Text="&#xE706;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="24"
-                                               Foreground="#FBBF24"
-                                               HorizontalAlignment="Center" />
-                                    <TextBlock Text="Light"
-                                               FontSize="11"
-                                               FontWeight="500"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
-                                               HorizontalAlignment="Center" />
-                                    <Ellipse Width="8" Height="8" Fill="{StaticResource AccentPurpleBrush}" />
-                                </StackPanel>
-                            </Button>
-                            <!-- Auto -->
-                            <Button Width="96"
-                                    Height="88"
-                                    CornerRadius="20"
-                                    Padding="0"
-                                    Command="{Binding SelectThemeCommand}"
-                                    CommandParameter="Auto">
-                                <Button.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="Background" Value="#FF141428" />
-                                        <Setter Property="BorderBrush" Value="{StaticResource BgElement2Brush}" />
-                                        <Setter Property="BorderThickness" Value="1" />
-                                    </Style>
-                                    <Style Selector="Button.selected">
-                                        <Setter Property="Background" Value="#FF1A1A2E" />
-                                        <Setter Property="BorderBrush" Value="{StaticResource AccentPurpleBrush}" />
-                                        <Setter Property="BorderThickness" Value="2" />
-                                    </Style>
-                                </Button.Styles>
-                                <StackPanel Spacing="8" HorizontalAlignment="Center">
-                                    <TextBlock Text="&#xE770;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="24"
-                                               Foreground="#60A5FA"
-                                               HorizontalAlignment="Center" />
-                                    <TextBlock Text="Auto"
-                                               FontSize="11"
-                                               FontWeight="500"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
-                                               HorizontalAlignment="Center" />
-                                    <Ellipse Width="8" Height="8" Fill="{StaticResource AccentPurpleBrush}" />
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
+
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
+                            <RadioButton Grid.Row="0" Grid.Column="0"
+                                         Content="{StaticResource String_Dark}"
+                                         IsChecked="{Binding ThemeMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Dark}"
+                                         HorizontalAlignment="Center" />
+                            <RadioButton Grid.Row="0" Grid.Column="1"
+                                         Content="{StaticResource String_Light}"
+                                         IsChecked="{Binding ThemeMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Light}"
+                                         HorizontalAlignment="Center" />
+                            <RadioButton Grid.Row="0" Grid.Column="2"
+                                         Content="{StaticResource String_Auto}"
+                                         IsChecked="{Binding ThemeMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Auto}"
+                                         HorizontalAlignment="Center" />
+                        </Grid>
                     </StackPanel>
                 </StackPanel>
             </Border>
 
-            <!-- 关于卡片 -->
-            <Border Background="{StaticResource BgCardBrush}"
-                    CornerRadius="12"
-                    Padding="28"
-                    BorderBrush="{StaticResource BorderSubtleBrush}"
-                    BorderThickness="1">
-                <StackPanel Spacing="24">
-                    <!-- 头部区域 -->
+            <Border Theme="{StaticResource CardTheme}">
+                <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <Border Width="40"
                                 Height="40"
                                 CornerRadius="10"
-                                Background="{StaticResource BgCardHoverBrush}">
+                                Background="{StaticResource AccentPurpleBrush}">
                             <TextBlock Text="&#xE946;"
                                        FontFamily="Segoe Fluent Icons"
-                                       Foreground="#3B82F6"
+                                       Foreground="White"
                                        FontSize="20"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="About"
+                            <TextBlock Text="{StaticResource String_About}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="Application information"
+                            <TextBlock Text="{StaticResource String_AppInfo}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- 分隔线 -->
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
-                    <!-- 信息行 -->
-                    <StackPanel Spacing="12">
-                        <!-- Version -->
-                        <Border Background="{StaticResource BgInputBrush}"
-                                CornerRadius="8"
-                                Padding="16,12">
-                            <Grid ColumnDefinitions="Auto,*">
-                                <TextBlock Grid.Column="0"
-                                           Text="Version"
-                                           FontSize="13"
-                                           Foreground="{StaticResource TextMutedBrush}"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="1"
-                                           Text="2.0.1"
-                                           FontSize="13"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
-                                           HorizontalAlignment="Right"
-                                           VerticalAlignment="Center" />
-                            </Grid>
-                        </Border>
-                        <!-- Build -->
-                        <Border Background="{StaticResource BgInputBrush}"
-                                CornerRadius="8"
-                                Padding="16,12">
-                            <Grid ColumnDefinitions="Auto,*">
-                                <TextBlock Grid.Column="0"
-                                           Text="Build"
-                                           FontSize="13"
-                                           Foreground="{StaticResource TextMutedBrush}"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="1"
-                                           Text="2024.04.05"
-                                           FontSize="13"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
-                                           HorizontalAlignment="Right"
-                                           VerticalAlignment="Center" />
-                            </Grid>
-                        </Border>
-                        <!-- Developer -->
-                        <Border Background="{StaticResource BgInputBrush}"
-                                CornerRadius="8"
-                                Padding="16,12">
-                            <Grid ColumnDefinitions="Auto,*">
-                                <TextBlock Grid.Column="0"
-                                           Text="Developer"
-                                           FontSize="13"
-                                           Foreground="{StaticResource TextMutedBrush}"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="1"
-                                           Text="LocalMusic Team"
-                                           FontSize="13"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
-                                           HorizontalAlignment="Right"
-                                           VerticalAlignment="Center" />
-                            </Grid>
-                        </Border>
-                    </StackPanel>
+                    <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Text="{StaticResource String_Version}"
+                                   FontSize="13"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   Text="2.0.1"
+                                   FontSize="13"
+                                   Foreground="{StaticResource TextPrimaryBrush}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Text="{StaticResource String_Build}"
+                                   FontSize="13"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Margin="0,8,0,0" />
+                        <TextBlock Grid.Row="1" Grid.Column="1"
+                                   Text="2024.04.05"
+                                   FontSize="13"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   Margin="0,8,0,0" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                   Text="{StaticResource String_Developer}"
+                                   FontSize="13"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Margin="0,8,0,0" />
+                        <TextBlock Grid.Row="2" Grid.Column="1"
+                                   Text="LocalMusic Team"
+                                   FontSize="13"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   Margin="0,8,0,0" />
+                    </Grid>
                 </StackPanel>
             </Border>
         </StackPanel>

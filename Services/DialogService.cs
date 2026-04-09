@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -49,8 +50,17 @@ public class DialogService : IDialogService
         var cancelButton = new Button { Content = "Cancel", MinWidth = 80 };
         var confirmButton = new Button { Content = "OK", MinWidth = 80, IsDefault = true };
 
-        cancelButton.Click += (_, _) => { isConfirmed = false; dialog.Close(); };
-        confirmButton.Click += (_, _) => { isConfirmed = true; result = textBox.Text ?? string.Empty; dialog.Close(); };
+        cancelButton.Click += (_, _) =>
+        {
+            isConfirmed = false;
+            dialog.Close();
+        };
+        confirmButton.Click += (_, _) =>
+        {
+            isConfirmed = true;
+            result = textBox.Text ?? string.Empty;
+            dialog.Close();
+        };
 
         buttonPanel.Children.Add(cancelButton);
         buttonPanel.Children.Add(confirmButton);
@@ -106,15 +116,19 @@ public class DialogService : IDialogService
         var mainWindow = GetMainWindow();
         if (mainWindow == null) return null;
 
+#pragma warning disable CS0618 // OpenFileDialog is obsolete in Avalonia 11.x
         var dialog = new OpenFileDialog
         {
             Title = title,
             AllowMultiple = false,
-            Filters = filters?.Select(f => new FileDialogFilter { Name = f, Extensions = f.Split(',').Select(e => e.Trim()).ToList() }).ToList()
+            Filters = filters?.Select(f => new FileDialogFilter
+                          { Name = f, Extensions = f.Split(',').Select(e => e.Trim()).ToList() }).ToList() ??
+                      new List<FileDialogFilter>()
         };
 
         var result = await dialog.ShowAsync(mainWindow);
         return result?.FirstOrDefault();
+#pragma warning restore CS0618
     }
 
     private Window? GetMainWindow()
@@ -123,6 +137,7 @@ public class DialogService : IDialogService
         {
             return desktop.MainWindow;
         }
+
         return null;
     }
 }

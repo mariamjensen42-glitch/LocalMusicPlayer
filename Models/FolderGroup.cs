@@ -1,18 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Linq;
-using ReactiveUI;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LocalMusicPlayer.Models;
 
-public class FolderGroup : ReactiveObject
+public partial class FolderGroup : ObservableObject
 {
+    [ObservableProperty]
     private string _folderPath = string.Empty;
-
-    public string FolderPath
-    {
-        get => _folderPath;
-        set => this.RaiseAndSetIfChanged(ref _folderPath, value);
-    }
 
     public string FolderName => System.IO.Path.GetFileName(FolderPath);
 

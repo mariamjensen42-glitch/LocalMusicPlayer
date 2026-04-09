@@ -26,13 +26,11 @@
     </Window.Resources>
 
     <Grid ColumnDefinitions="Auto,*">
-        <!-- Sidebar - Full height from top to bottom -->
         <Border Grid.Column="0"
                 Background="{StaticResource BgSidebarBrush}"
                 ClipToBounds="True"
                 Width="{Binding SidebarWidth}">
             <Grid RowDefinitions="Auto,*,Auto">
-                <!-- 顶部 Logo 区域 -->
                 <Border Grid.Row="0"
                         Width="40"
                         Height="40"
@@ -51,86 +49,52 @@
                                VerticalAlignment="Center" />
                 </Border>
 
-                <!-- 中部导航按钮区域 - Vertically centered -->
                 <StackPanel Grid.Row="1"
-                            VerticalAlignment="Center"
+                            VerticalAlignment="Top"
                             Spacing="8"
-                            Margin="16,0">
-                    <!-- 播放列表按钮 -->
-                    <Button Command="{Binding NavigateToLibraryCommand}"
-                            Width="40"
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            Background="{StaticResource BgCardBrush}"
-                            BorderBrush="{StaticResource BorderSubtleBrush}"
-                            BorderThickness="1"
-                            CornerRadius="10"
-                            Padding="0"
-                            Cursor="Hand">
+                            Margin="16,24,16,0">
+                    <Button Theme="{StaticResource SidebarIconButtonTheme}"
+                            Command="{Binding NavigateToLibraryCommand}"
+                            HorizontalAlignment="Center">
                         <TextBlock Text="&#xE8FA;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
-                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Foreground="{Binding IsLibrarySelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
-                    <!-- 分类浏览按钮 -->
-                    <Button Command="{Binding NavigateToCategoryCommand}"
-                            Width="40"
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            Background="{StaticResource BgCardBrush}"
-                            BorderBrush="{StaticResource BorderSubtleBrush}"
-                            BorderThickness="1"
-                            CornerRadius="10"
-                            Padding="0"
-                            Cursor="Hand">
+                    <Button Theme="{StaticResource SidebarIconButtonTheme}"
+                            Command="{Binding NavigateToCategoryCommand}"
+                            HorizontalAlignment="Center">
                         <TextBlock Text="&#xE8FD;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
-                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Foreground="{Binding IsCategorySelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
-                    <!-- 统计按钮 -->
-                    <Button Command="{Binding NavigateToStatisticsCommand}"
-                            Width="40"
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            Background="{StaticResource BgCardBrush}"
-                            BorderBrush="{StaticResource BorderSubtleBrush}"
-                            BorderThickness="1"
-                            CornerRadius="10"
-                            Padding="0"
-                            Cursor="Hand">
+                    <Button Theme="{StaticResource SidebarIconButtonTheme}"
+                            Command="{Binding NavigateToStatisticsCommand}"
+                            HorizontalAlignment="Center">
                         <TextBlock Text="&#xE8B7;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
-                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Foreground="{Binding IsStatisticsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
-                    <!-- 设置按钮 -->
-                    <Button Command="{Binding NavigateToSettingsCommand}"
-                            Width="40"
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            Background="{StaticResource BgCardBrush}"
-                            BorderBrush="{StaticResource BorderSubtleBrush}"
-                            BorderThickness="1"
-                            CornerRadius="10"
-                            Padding="0"
-                            Cursor="Hand">
+                    <Button Theme="{StaticResource SidebarIconButtonTheme}"
+                            Command="{Binding NavigateToSettingsCommand}"
+                            HorizontalAlignment="Center">
                         <TextBlock Text="&#xE713;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
-                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Foreground="{Binding IsSettingsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>
 
-                <!-- 底部活跃导航按钮（音乐库） -->
                 <Button Grid.Row="2"
                         Width="40"
                         Height="40"
@@ -155,26 +119,21 @@
             </Grid>
         </Border>
 
-        <!-- Main Content Area -->
         <Grid Grid.Column="1" RowDefinitions="Auto,*">
-            <!-- Custom Title Bar with Actions -->
             <Border Grid.Row="0"
                     x:Name="TitleBar"
                     Background="Transparent"
                     Height="48"
                     BorderThickness="0">
                 <Grid ColumnDefinitions="*,Auto,Auto">
-                    <!-- Middle: Empty (for dragging) -->
                     <Border Grid.Column="0" Background="Transparent" />
 
-                    <!-- Left: Action Buttons (Search, Filter, Play All, etc.) -->
                     <StackPanel Grid.Column="1"
                                 Orientation="Horizontal"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 Spacing="8"
                                 Margin="0,0,16,0">
-                        <!-- Search Box -->
                         <Border Background="{StaticResource BgCardBrush}"
                                 BorderBrush="{StaticResource BorderSubtleBrush}"
                                 BorderThickness="1"
@@ -192,7 +151,7 @@
                                            Margin="12,0,8,0" />
                                 <TextBox Grid.Column="1"
                                          x:Name="SearchTextBox"
-                                         Watermark="Search..."
+                                         Watermark="{StaticResource String_Search}"
                                          Background="Transparent"
                                          BorderThickness="0"
                                          VerticalAlignment="Center"
@@ -201,13 +160,7 @@
                             </Grid>
                         </Border>
 
-                        <!-- Filter Button -->
-                        <Button Width="36"
-                                Height="36"
-                                Background="{StaticResource BgCardBrush}"
-                                BorderBrush="{StaticResource BorderSubtleBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8">
+                        <Button Theme="{StaticResource ToolbarButtonTheme}">
                             <TextBlock Text="&#xE71C;"
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="14"
@@ -216,13 +169,7 @@
                                        VerticalAlignment="Center" />
                         </Button>
 
-                        <!-- Grid View Toggle -->
-                        <Button Width="36"
-                                Height="36"
-                                Background="{StaticResource BgCardBrush}"
-                                BorderBrush="{StaticResource BorderSubtleBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8">
+                        <Button Theme="{StaticResource ToolbarButtonTheme}">
                             <TextBlock Text="&#xE80A;"
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="14"
@@ -232,13 +179,11 @@
                         </Button>
                     </StackPanel>
 
-                    <!-- Right: Window Controls -->
                     <StackPanel Grid.Column="2"
                                 Orientation="Horizontal"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 Margin="0,0,8,0">
-                        <!-- Minimize Button -->
                         <Button x:Name="MinimizeButton"
                                 Width="40"
                                 Height="40"
@@ -252,7 +197,6 @@
                                        VerticalAlignment="Center" />
                         </Button>
 
-                        <!-- Maximize/Restore Button -->
                         <Button x:Name="MaximizeButton"
                                 Width="40"
                                 Height="40"
@@ -277,7 +221,6 @@
                             </Panel>
                         </Button>
 
-                        <!-- Close Button -->
                         <Button x:Name="CloseButton"
                                 Width="40"
                                 Height="40"
@@ -294,11 +237,9 @@
                 </Grid>
             </Border>
 
-            <!-- Content Area -->
             <Grid Grid.Row="1">
                 <ContentControl Content="{Binding CurrentPage}" />
 
-                <!-- Queue Panel (Floating Overlay) -->
                 <Border HorizontalAlignment="Right"
                         Background="{StaticResource BgSidebarBrush}"
                         BorderBrush="{StaticResource BorderSubtleBrush}"

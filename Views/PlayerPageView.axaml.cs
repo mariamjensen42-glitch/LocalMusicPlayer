@@ -17,14 +17,7 @@ public partial class PlayerPageView : UserControl
             {
                 _lyricsScrollViewer = this.FindControl<ScrollViewer>("LyricsScrollViewer");
 
-                // 监听当前歌词索引变化，自动滚动
-                viewModel.PropertyChanged += (_, e) =>
-                {
-                    if (e.PropertyName == nameof(PlayerPageViewModel.CurrentLyricIndex))
-                    {
-                        ScrollToCurrentLyric(viewModel.CurrentLyricIndex);
-                    }
-                };
+                viewModel.OnScrollToLyric = ScrollToCurrentLyric;
             }
         };
     }
@@ -34,14 +27,17 @@ public partial class PlayerPageView : UserControl
         if (_lyricsScrollViewer == null || index < 0)
             return;
 
-        // 估算每个歌词项的高度（包括间距）
-        const double estimatedItemHeight = 80;
-        var targetOffset = (index * estimatedItemHeight) - (_lyricsScrollViewer.Viewport.Height / 2) +
-                           (estimatedItemHeight / 2);
+        var scrollViewer = _lyricsScrollViewer;
+        var viewportHeight = scrollViewer.Viewport.Height;
+        var scrollableHeight = scrollViewer.Extent.Height - viewportHeight;
 
-        // 确保偏移量在有效范围内
-        targetOffset = double.Max(0, targetOffset);
+        var lyricItemHeight = 80.0;
+        var margin = 300.0;
 
-        _lyricsScrollViewer.Offset = new Avalonia.Vector(0, targetOffset);
+        var targetPosition = margin + (index * lyricItemHeight) - (viewportHeight / 2) + (lyricItemHeight / 2);
+
+        targetPosition = double.Max(0, double.Min(scrollableHeight, targetPosition));
+
+        scrollViewer.Offset = new Avalonia.Vector(0, targetPosition);
     }
 }

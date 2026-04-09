@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+             x:Class="LocalMusicPlayer.Views.ArtistDetailView"
+             x:DataType="vm:ArtistDetailViewModel">
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0"
+                Background="{StaticResource BgCardBrush}"
+                Padding="24,16">
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <Button Theme="{StaticResource CircleIconButtonTheme}"
+                        Command="{Binding NavigateBackCommand}">
+                    <TextBlock Text="&#xE74A;"
+                               FontFamily="Segoe Fluent Icons"
+                               FontSize="16"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+                </Button>
+                <TextBlock Text="{Binding ArtistName}"
+                           Theme="{StaticResource TitleTextStyle}"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <TextBlock Grid.Row="1"
+                   Text="Artist Detail Page"
+                   FontSize="24"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+    </Grid>
+</UserControl>

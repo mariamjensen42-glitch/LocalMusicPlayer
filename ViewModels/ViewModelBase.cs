@@ -1,7 +1,7 @@
-﻿using ReactiveUI;
+﻿﻿﻿﻿﻿﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LocalMusicPlayer.ViewModels;
 
-public class ViewModelBase : ReactiveObject
+public abstract partial class ViewModelBase : ObservableObject
 {
 }

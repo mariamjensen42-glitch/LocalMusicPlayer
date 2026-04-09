@@ -18,14 +18,12 @@
     </UserControl.Resources>
 
     <Grid RowDefinitions="Auto,*,Auto">
-        <!-- Header -->
         <Border Grid.Row="0"
                 Background="{StaticResource BgSidebarBrush}"
                 BorderBrush="{StaticResource BorderSubtleBrush}"
                 BorderThickness="0,0,0,1"
                 Padding="16,12">
             <Grid ColumnDefinitions="*,Auto,Auto">
-                <!-- Title -->
                 <TextBlock Grid.Column="0"
                            Text="Queue"
                            FontSize="18"
@@ -33,7 +31,6 @@
                            Foreground="{StaticResource TextPrimaryBrush}"
                            VerticalAlignment="Center" />
 
-                <!-- Count -->
                 <TextBlock Grid.Column="1"
                            Text="{Binding QueueCount}"
                            FontSize="14"
@@ -41,13 +38,9 @@
                            VerticalAlignment="Center"
                            Margin="8,0,16,0" />
 
-                <!-- Close Button -->
                 <Button Grid.Column="2"
                         Command="{Binding ClosePanelCommand}"
-                        Background="Transparent"
-                        CornerRadius="50"
-                        Padding="8"
-                        Cursor="Hand"
+                        Theme="{StaticResource IconTextButtonTheme}"
                         Foreground="{StaticResource TextMutedBrush}">
                     <TextBlock Text="&#xE8BB;"
                                FontFamily="Segoe Fluent Icons"
@@ -58,34 +51,19 @@
             </Grid>
         </Border>
 
-        <!-- Queue List -->
         <ListBox Grid.Row="1"
                  x:Name="QueueListBox"
                  ItemsSource="{Binding QueueSongs}"
                  Background="Transparent"
                  BorderThickness="0"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ItemContainerTheme="{StaticResource QueueListItemTheme}"
                  DoubleTapped="QueueListBox_DoubleTapped">
-            <ListBox.Styles>
-                <Style Selector="ListBoxItem">
-                    <Setter Property="Padding" Value="0" />
-                    <Setter Property="Margin" Value="0" />
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="BorderThickness" Value="0" />
-                </Style>
-                <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                    <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-                </Style>
-                <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-                    <Setter Property="Background" Value="{StaticResource AccentPurpleTranslucentBrush}" />
-                </Style>
-            </ListBox.Styles>
             <ListBox.DataTemplates>
                 <DataTemplate DataType="models:Song">
                     <Border Padding="12,8"
                             BorderThickness="0">
                         <Grid ColumnDefinitions="40,*,Auto,40">
-                            <!-- Index -->
                             <TextBlock Grid.Column="0"
                                        Text="{Binding TrackNumber}"
                                        FontSize="12"
@@ -94,7 +72,6 @@
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center" />
 
-                            <!-- Title + Artist -->
                             <StackPanel Grid.Column="1"
                                         Spacing="2"
                                         VerticalAlignment="Center"
@@ -110,7 +87,6 @@
                                            TextTrimming="CharacterEllipsis" />
                             </StackPanel>
 
-                            <!-- Duration -->
                             <TextBlock Grid.Column="2"
                                        FontSize="12"
                                        Foreground="{StaticResource TextMutedBrush}"
@@ -123,14 +99,11 @@
                                 </TextBlock.Text>
                             </TextBlock>
 
-                            <!-- Remove Button -->
                             <Button Grid.Column="3"
-                                    Background="Transparent"
-                                    BorderThickness="0"
+                                    Theme="{StaticResource IconTextButtonTheme}"
+                                    Click="RemoveButton_Click"
                                     Padding="4"
-                                    VerticalAlignment="Center"
-                                    Cursor="Hand"
-                                    Click="RemoveButton_Click">
+                                    VerticalAlignment="Center">
                                 <TextBlock Text="&#xE711;"
                                            FontFamily="Segoe Fluent Icons"
                                            FontSize="12"
@@ -144,7 +117,6 @@
             </ListBox.DataTemplates>
         </ListBox>
 
-        <!-- Footer - Clear Button -->
         <Border Grid.Row="2"
                 Background="{StaticResource BgSidebarBrush}"
                 BorderBrush="{StaticResource BorderSubtleBrush}"
@@ -152,12 +124,7 @@
                 Padding="16,12">
             <Button Command="{Binding ClearQueueCommand}"
                     HorizontalAlignment="Stretch"
-                    Background="{StaticResource BgCardBrush}"
-                    BorderBrush="{StaticResource BorderSubtleBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="12,8"
-                    Cursor="Hand">
+                    Theme="{StaticResource CardButtonTheme}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBlock Text="&#xE74D;"
                                FontFamily="Segoe Fluent Icons"

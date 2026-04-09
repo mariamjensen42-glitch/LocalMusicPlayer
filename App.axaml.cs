@@ -58,6 +58,9 @@ public partial class App : Application
         services.AddSingleton<IUserPlaylistService, UserPlaylistService>();
         services.AddSingleton<IKeyboardShortcutService, KeyboardShortcutService>();
         services.AddSingleton<ILibraryCategoryService, LibraryCategoryService>();
+        services.AddSingleton<IPlaybackStateService, PlaybackStateService>();
+        services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IViewModelFactory, ViewModelFactory>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<StatisticsViewModel>();
         services.AddTransient<MainWindowViewModel>();
