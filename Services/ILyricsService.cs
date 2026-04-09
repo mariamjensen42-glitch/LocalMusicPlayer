@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using LocalMusicPlayer.Models;
+using ReactiveUI;
 
 namespace LocalMusicPlayer.Services;
 
@@ -22,8 +23,17 @@ public interface ILyricsService
     int GetCurrentLyricIndex(List<LyricLine> lyrics, TimeSpan position);
 }
 
-public class LyricLine
+public class LyricLine : ReactiveObject
 {
     public TimeSpan Timestamp { get; set; }
     public string Text { get; set; } = string.Empty;
+    public string? Translation { get; set; }
+
+    private bool _isActive;
+
+    public bool IsActive
+    {
+        get => _isActive;
+        set => this.RaiseAndSetIfChanged(ref _isActive, value);
+    }
 }

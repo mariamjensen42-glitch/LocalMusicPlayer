@@ -2,9 +2,12 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Threading.Tasks;
+using Avalonia.Controls;
 using ReactiveUI;
 using LocalMusicPlayer.Models;
 using LocalMusicPlayer.Services;
+using LocalMusicPlayer.Views;
 
 namespace LocalMusicPlayer.ViewModels;
 
@@ -15,6 +18,7 @@ public class PlaylistManagementViewModel : ViewModelBase
     private readonly IPlaylistService _playbackService;
     private readonly IStatisticsService _statisticsService;
     private readonly IMusicLibraryService _libraryService;
+    private readonly IDialogService _dialogService;
 
     private UserPlaylist? _selectedPlaylist;
     private string _newPlaylistName = string.Empty;
@@ -30,6 +34,7 @@ public class PlaylistManagementViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref _selectedPlaylist, value);
             this.RaisePropertyChanged(nameof(PlaylistSongs));
             this.RaisePropertyChanged(nameof(CanDeletePlaylist));
+            this.RaisePropertyChanged(nameof(CanRenamePlaylist));
         }
     }
 
@@ -51,7 +56,10 @@ public class PlaylistManagementViewModel : ViewModelBase
     }
 
     public bool CanDeletePlaylist => _selectedPlaylist != null &&
-                                     _selectedPlaylist.Id != "favorites"; // 不能删除收藏列表
+                                     _selectedPlaylist.Id != "favorites";
+
+    public bool CanRenamePlaylist => _selectedPlaylist != null &&
+                                     _selectedPlaylist.Id != "favorites";
 
     public string NewPlaylistName
     {
@@ -71,21 +79,24 @@ public class PlaylistManagementViewModel : ViewModelBase
     public ReactiveCommand<string, Unit> PlaySongCommand { get; }
     public ReactiveCommand<string, Unit> RemoveSongCommand { get; }
     public ReactiveCommand<Unit, Unit> PlayAllCommand { get; }
+    public ReactiveCommand<(int OldIndex, int NewIndex), Unit> MoveSongCommand { get; }
+    public ReactiveCommand<Song, Unit> EditSongMetadataCommand { get; }
 
     public PlaylistManagementViewModel(
         IUserPlaylistService playlistService,
         IMusicPlayerService musicPlayerService,
         IPlaylistService playbackService,
         IStatisticsService statisticsService,
-        IMusicLibraryService libraryService)
+        IMusicLibraryService libraryService,
+        IDialogService dialogService)
     {
         _playlistService = playlistService;
         _musicPlayerService = musicPlayerService;
         _playbackService = playbackService;
         _statisticsService = statisticsService;
         _libraryService = libraryService;
+        _dialogService = dialogService;
 
-        // 确保收藏列表存在
         EnsureFavoritesPlaylist();
 
         CreatePlaylistCommand = ReactiveCommand.Create(() =>
@@ -107,10 +118,16 @@ public class PlaylistManagementViewModel : ViewModelBase
             }
         });
 
-        RenamePlaylistCommand = ReactiveCommand.Create(() =>
+        RenamePlaylistCommand = ReactiveCommand.CreateFromTask(async () =>
         {
-            // 需要弹窗输入新名称，这里简化处理
-            // 实际实现时可以通过 IWindowProvider 打开对话框
+            if (_selectedPlaylist == null || !CanRenamePlaylist)
+                return;
+
+            var newName = await _dialogService.ShowInputDialogAsync("Rename Playlist", _selectedPlaylist.Name);
+            if (!string.IsNullOrWhiteSpace(newName))
+            {
+                _playlistService.RenamePlaylist(_selectedPlaylist.Id, newName);
+            }
         });
 
         PlaySongCommand = ReactiveCommand.Create<string>(path =>
@@ -153,7 +170,27 @@ public class PlaylistManagementViewModel : ViewModelBase
             }
         });
 
-        // 监听播放列表变更
+        MoveSongCommand = ReactiveCommand.Create<(int OldIndex, int NewIndex)>(param =>
+        {
+            if (_selectedPlaylist != null)
+            {
+                _playlistService.MoveSongInPlaylist(_selectedPlaylist.Id, param.OldIndex, param.NewIndex);
+                this.RaisePropertyChanged(nameof(PlaylistSongs));
+            }
+        });
+
+        EditSongMetadataCommand = ReactiveCommand.Create<Song>(song =>
+        {
+            var dialog = new MetadataEditorView
+            {
+                DataContext = new MetadataEditorViewModel(song, _dialogService, () =>
+                {
+                    this.RaisePropertyChanged(nameof(PlaylistSongs));
+                })
+            };
+            dialog.Show();
+        });
+
         _playlistService.PlaylistsChanged += (_, _) => { this.RaisePropertyChanged(nameof(UserPlaylists)); };
     }
 

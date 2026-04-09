@@ -26,6 +26,8 @@
             <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
             <converters:SongIsPlayingConverter x:Key="SongIsPlayingConverter" />
             <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+            <converters:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
+            <converters:BoolToLyricColorConverter x:Key="BoolToLyricColorConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

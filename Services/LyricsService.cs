@@ -82,15 +82,24 @@ public class LyricsService : ILyricsService
                 var milliseconds = match.Groups[3].Value.Length == 2
                     ? int.Parse(match.Groups[3].Value) * 10
                     : int.Parse(match.Groups[3].Value);
-                var text = match.Groups[4].Value.Trim();
+                var content = match.Groups[4].Value.Trim();
 
-                if (!string.IsNullOrEmpty(text))
+                if (!string.IsNullOrEmpty(content))
                 {
-                    lyrics.Add(new LyricLine
+                    // 解析原文和翻译（用 \\n 或 \n 分隔）
+                    var parts = content.Split(new[] { "\\\\n", "\\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    var text = parts[0].Trim();
+                    var translation = parts.Length > 1 ? parts[1].Trim() : null;
+
+                    if (!string.IsNullOrEmpty(text))
                     {
-                        Timestamp = new TimeSpan(0, 0, minutes, seconds, milliseconds),
-                        Text = text
-                    });
+                        lyrics.Add(new LyricLine
+                        {
+                            Timestamp = new TimeSpan(0, 0, minutes, seconds, milliseconds),
+                            Text = text,
+                            Translation = translation
+                        });
+                    }
                 }
             }
         }

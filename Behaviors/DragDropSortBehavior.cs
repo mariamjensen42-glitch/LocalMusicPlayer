@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -70,15 +71,17 @@ public class DragDropSortBehavior : Behavior<ListBox>
 
         if (targetIndex >= 0 && targetIndex != _dragStartIndex)
         {
-            // Get the ViewModel and call MoveSongInQueue
             var viewModel = AssociatedObject.DataContext as QueueViewModel;
             if (viewModel != null)
             {
                 viewModel.MoveSongInQueue(_dragStartIndex, targetIndex);
             }
+            else if (AssociatedObject.DataContext is PlaylistManagementViewModel playlistVm)
+            {
+                playlistVm.MoveSongCommand.Execute((_dragStartIndex, targetIndex)).Subscribe();
+            }
             else
             {
-                // Fallback: directly manipulate the collection
                 var items = AssociatedObject.ItemsSource as ObservableCollection<Song>;
                 if (items != null && _dragStartIndex < items.Count && targetIndex < items.Count)
                 {

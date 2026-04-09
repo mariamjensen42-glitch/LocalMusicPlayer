@@ -23,4 +23,10 @@ public class MusicLibraryService : IMusicLibraryService
             FilteredSongs.Add(song);
         }
     }
+
+    public void AddSong(Song song)
+    {
+        Songs.Add(song);
+        FilteredSongs.Add(song);
+    }
 }

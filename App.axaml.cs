@@ -44,9 +44,11 @@ public partial class App : Application
     private static void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<IWindowProvider, WindowProvider>();
+        services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IConfigurationService, ConfigurationService>();
         services.AddSingleton<IAlbumArtService, AlbumArtService>();
         services.AddSingleton<IFileScannerService, FileScannerService>();
+        services.AddSingleton<IFileWatcherService, FileWatcherService>();
         services.AddSingleton<IMusicPlayerService, MusicPlayerService>();
         services.AddSingleton<IPlaylistService, PlaylistService>();
         services.AddSingleton<IMusicLibraryService, MusicLibraryService>();

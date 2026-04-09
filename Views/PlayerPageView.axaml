@@ -305,55 +305,52 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- Right: Info Area -->
-                <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto,Auto" Margin="32,0,0,0">
-                    <!-- Song Info -->
-                    <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
-                        <TextBlock Text="{Binding CurrentSong.Title, FallbackValue='Unknown Title'}"
-                                   FontSize="36"
-                                   FontWeight="Bold"
-                                   FontFamily="Inter"
-                                   Foreground="White"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap" />
-                        <TextBlock FontSize="18"
-                                   FontFamily="Inter"
-                                   Foreground="{StaticResource TextMutedBrush}"
-                                   TextTrimming="CharacterEllipsis">
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat="{}{0} • {1}">
-                                    <Binding Path="CurrentSong.Artist" />
-                                    <Binding Path="CurrentSong.Album" />
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
-                    </StackPanel>
-
-                    <!-- Lyrics Area -->
-                    <Border Grid.Row="1"
-                            Background="#0D0D0D"
-                            CornerRadius="12"
-                            Margin="0,0,0,32"
-                            Padding="16">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                      HorizontalScrollBarVisibility="Disabled">
-                            <ItemsControl ItemsSource="{Binding Lyrics}"
-                                          HorizontalAlignment="Stretch">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="services:LyricLine">
+                <!-- Right: Lyrics Area -->
+                <Grid Grid.Column="1" Margin="32,0,0,0">
+                    <ScrollViewer x:Name="LyricsScrollViewer"
+                                  VerticalScrollBarVisibility="Hidden"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  IsVisible="{Binding HasLyrics}">
+                        <ItemsControl ItemsSource="{Binding Lyrics}"
+                                      HorizontalAlignment="Stretch"
+                                      Margin="0,300,0,300">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="services:LyricLine">
+                                    <StackPanel Spacing="6"
+                                                Margin="0,20,0,20"
+                                                HorizontalAlignment="Center">
+                                        <!-- Original Lyric -->
                                         <TextBlock Text="{Binding Text}"
-                                                   FontSize="14"
+                                                   FontSize="28"
+                                                   FontWeight="{Binding IsActive, Converter={StaticResource BoolToFontWeightConverter}}"
                                                    FontFamily="Inter"
-                                                   Foreground="#3F3F46"
+                                                   Foreground="{Binding IsActive, Converter={StaticResource BoolToLyricColorConverter}}"
                                                    TextAlignment="Center"
-                                                   TextWrapping="Wrap"
-                                                   Margin="0,6" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </Border>
+                                                   TextWrapping="Wrap" />
+                                        <!-- Translation -->
+                                        <TextBlock
+                                            IsVisible="{Binding Translation, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                            Text="{Binding Translation}"
+                                            FontSize="16"
+                                            FontFamily="Inter"
+                                            Foreground="{StaticResource TextMutedBrush}"
+                                            TextAlignment="Center"
+                                            TextWrapping="Wrap"
+                                            Opacity="0.9" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
 
+                    <!-- No Lyrics Message -->
+                    <TextBlock IsVisible="{Binding !HasLyrics}"
+                               Text="No lyrics available"
+                               FontSize="16"
+                               FontFamily="Inter"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
                 </Grid>
             </Grid>
         </Grid>

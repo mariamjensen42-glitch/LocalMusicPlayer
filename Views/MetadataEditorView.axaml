@@ -1,0 +1,98 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:LocalMusicPlayer.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="500"
+        x:Class="LocalMusicPlayer.Views.MetadataEditorView"
+        x:DataType="vm:MetadataEditorViewModel"
+        Title="Edit Song Information"
+        Width="450"
+        Height="520"
+        WindowStartupLocation="CenterOwner"
+        CanResize="false"
+        Background="{StaticResource BgPrimaryBrush}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollViewer Grid.Row="0" Padding="24">
+            <StackPanel Spacing="16">
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Title"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" Margin="0,0,16,0" />
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Title}"
+                             Watermark="Song title" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Artist"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" Margin="0,12,16,0" />
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Artist}"
+                             Watermark="Artist name" Margin="0,12,0,0" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Album"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" Margin="0,12,16,0" />
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Album}"
+                             Watermark="Album name" Margin="0,12,0,0" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Track #"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" Margin="0,12,16,0" />
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding TrackNumber}"
+                             Watermark="Track number" Margin="0,12,0,0" />
+                </Grid>
+
+                <Border Height="1" Background="{StaticResource BorderSubtleBrush}" Margin="0,8" />
+
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <Border Width="150" Height="150" CornerRadius="8"
+                            Background="{StaticResource BgElement2Brush}">
+                        <Image Source="{Binding AlbumArtBitmap}" Stretch="UniformToFill" />
+                    </Border>
+                    <StackPanel VerticalAlignment="Center" Spacing="8">
+                        <TextBlock Text="Album Cover"
+                                   FontSize="14" FontWeight="Medium"
+                                   Foreground="{StaticResource TextPrimaryBrush}" />
+                        <Button Command="{Binding ChangeCoverCommand}"
+                                Background="{StaticResource BgCardBrush}"
+                                BorderBrush="{StaticResource BorderSubtleBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="16,8">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="&#xE8B5;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource TextSecondaryBrush}" />
+                                <TextBlock Text="Change Cover"
+                                           FontSize="13"
+                                           Foreground="{StaticResource TextPrimaryBrush}" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="1"
+                Background="{StaticResource BgCardBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="24,16">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                <Button Content="Cancel" MinWidth="100" Height="36"
+                        Background="{StaticResource BgCardBrush}"
+                        BorderBrush="{StaticResource BorderSubtleBrush}"
+                        BorderThickness="1"
+                        Command="{Binding CancelCommand}"
+                        Click="CancelButton_Click" />
+                <Button Content="Save" MinWidth="100" Height="36"
+                        Background="{StaticResource AccentPurpleBrush}"
+                        Foreground="White"
+                        Command="{Binding SaveCommand}"
+                        Click="SaveButton_Click" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

@@ -10,4 +10,5 @@ public interface IMusicLibraryService
     ObservableCollection<Song> FilteredSongs { get; }
     void Clear();
     void AddSongs(IEnumerable<Song> songs);
+    void AddSong(Song song);
 }

@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -30,6 +32,97 @@ public partial class MainWindow : Window
 
         // 监听键盘事件
         KeyDown += OnKeyDown;
+
+        // 拖拽文件支持
+        AddHandler(DragDrop.DragOverEvent, OnDragOver);
+        AddHandler(DragDrop.DropEvent, OnDrop);
+    }
+
+    private void OnDragOver(object? sender, DragEventArgs e)
+    {
+        if (e.Data.Contains(DataFormats.Files))
+        {
+            e.DragEffects = DragDropEffects.Copy;
+        }
+        else
+        {
+            e.DragEffects = DragDropEffects.None;
+        }
+        e.Handled = true;
+    }
+
+    private async void OnDrop(object? sender, DragEventArgs e)
+    {
+        if (!e.Data.Contains(DataFormats.Files))
+            return;
+
+        var files = e.Data.GetFiles();
+        if (files == null || !files.Any())
+            return;
+
+        var app = Avalonia.Application.Current as App;
+        if (app?.Services == null)
+            return;
+
+        var fileScannerService = app.Services.GetService(typeof(IFileScannerService)) as IFileScannerService;
+        var musicLibraryService = app.Services.GetService(typeof(IMusicLibraryService)) as IMusicLibraryService;
+
+        if (fileScannerService == null || musicLibraryService == null)
+            return;
+
+        foreach (var file in files)
+        {
+            var path = file?.Path?.LocalPath;
+            if (string.IsNullOrEmpty(path))
+                continue;
+
+            if (File.Exists(path) && fileScannerService.SupportedExtensions.Contains(
+                Path.GetExtension(path).ToLowerInvariant()))
+            {
+                await AddSingleFileAsync(path, fileScannerService, musicLibraryService);
+            }
+            else if (Directory.Exists(path))
+            {
+                await AddFolderAsync(path, fileScannerService, musicLibraryService);
+            }
+        }
+    }
+
+    private async System.Threading.Tasks.Task AddSingleFileAsync(string filePath, IFileScannerService fileScannerService, IMusicLibraryService musicLibraryService)
+    {
+        try
+        {
+            var directory = Path.GetDirectoryName(filePath);
+            if (directory == null) return;
+
+            var songs = await fileScannerService.ScanDirectoryAsync(directory, false);
+            var song = songs.FirstOrDefault(s => s.FilePath == filePath);
+            if (song != null && !musicLibraryService.Songs.Any(s => s.FilePath == filePath))
+            {
+                musicLibraryService.AddSong(song);
+            }
+        }
+        catch
+        {
+        }
+    }
+
+    private async System.Threading.Tasks.Task AddFolderAsync(string folderPath, IFileScannerService fileScannerService, IMusicLibraryService musicLibraryService)
+    {
+        try
+        {
+            var songs = await fileScannerService.ScanDirectoryAsync(folderPath, true);
+            foreach (var song in songs)
+            {
+                if (!musicLibraryService.Songs.Any(s => s.FilePath == song.FilePath))
+                {
+                    musicLibraryService.AddSong(song);
+                }
+            }
+        }
+        catch
+        {
+        }
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)

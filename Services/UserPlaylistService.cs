@@ -97,6 +97,25 @@ public class UserPlaylistService : IUserPlaylistService
             .ToList()!;
     }
 
+    public void MoveSongInPlaylist(string playlistId, int oldIndex, int newIndex)
+    {
+        var playlist = _userPlaylists.FirstOrDefault(p => p.Id == playlistId);
+        if (playlist == null) return;
+
+        if (oldIndex < 0 || oldIndex >= playlist.SongFilePaths.Count)
+            return;
+
+        if (newIndex < 0 || newIndex >= playlist.SongFilePaths.Count)
+            return;
+
+        var item = playlist.SongFilePaths[oldIndex];
+        playlist.SongFilePaths.RemoveAt(oldIndex);
+        playlist.SongFilePaths.Insert(newIndex, item);
+        playlist.ModifiedTime = DateTime.Now;
+        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+        SavePlaylistsAsync().ConfigureAwait(false);
+    }
+
     public void AddToFavorites(Song song)
     {
         if (!_favoriteFilePaths.Contains(song.FilePath))

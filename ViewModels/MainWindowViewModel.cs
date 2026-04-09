@@ -233,7 +233,8 @@ public partial class MainWindowViewModel : ViewModelBase
         ILyricsService lyricsService,
         IStatisticsService statisticsService,
         IUserPlaylistService userPlaylistService,
-        ILibraryCategoryService libraryCategoryService)
+        ILibraryCategoryService libraryCategoryService,
+        IDialogService dialogService)
     {
         _musicPlayerService = musicPlayerService;
         _playlistService = playlistService;
@@ -276,7 +277,8 @@ public partial class MainWindowViewModel : ViewModelBase
             musicPlayerService,
             playlistService,
             statisticsService,
-            musicLibraryService);
+            musicLibraryService,
+            dialogService);
 
         // 创建 LibraryCategoryViewModel
         LibraryCategoryViewModel = new LibraryCategoryViewModel(

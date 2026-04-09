@@ -143,6 +143,14 @@ public class PlayerPageViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _currentLyricIndex, value);
     }
 
+    private bool _hasLyrics;
+
+    public bool HasLyrics
+    {
+        get => _hasLyrics;
+        set => this.RaiseAndSetIfChanged(ref _hasLyrics, value);
+    }
+
     public ReactiveCommand<Unit, Unit> PlayCommand { get; }
     public ReactiveCommand<Unit, Unit> PauseCommand { get; }
     public ReactiveCommand<Unit, Unit> NextCommand { get; }
@@ -287,6 +295,7 @@ public class PlayerPageViewModel : ViewModelBase
     {
         Lyrics.Clear();
         CurrentLyricIndex = -1;
+        HasLyrics = false;
 
         if (CurrentSong != null && !string.IsNullOrEmpty(CurrentSong.FilePath))
         {
@@ -295,6 +304,8 @@ public class PlayerPageViewModel : ViewModelBase
             {
                 Lyrics.Add(lyric);
             }
+
+            HasLyrics = Lyrics.Count > 0;
         }
     }
 
@@ -302,7 +313,21 @@ public class PlayerPageViewModel : ViewModelBase
     {
         if (Lyrics.Count > 0)
         {
-            CurrentLyricIndex = _lyricsService.GetCurrentLyricIndex(Lyrics.ToList(), Position);
+            var newIndex = _lyricsService.GetCurrentLyricIndex(Lyrics.ToList(), Position);
+
+            // 清除之前的活动状态
+            if (CurrentLyricIndex >= 0 && CurrentLyricIndex < Lyrics.Count)
+            {
+                Lyrics[CurrentLyricIndex].IsActive = false;
+            }
+
+            // 设置新的活动状态
+            if (newIndex >= 0 && newIndex < Lyrics.Count)
+            {
+                Lyrics[newIndex].IsActive = true;
+            }
+
+            CurrentLyricIndex = newIndex;
         }
     }
 }
