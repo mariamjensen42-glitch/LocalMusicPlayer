@@ -1,11 +1,17 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
              x:Class="LocalMusicPlayer.Views.ArtistDetailView"
              x:DataType="vm:ArtistDetailViewModel">
+
+    <UserControl.Resources>
+        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+    </UserControl.Resources>
 
     <Grid RowDefinitions="Auto,*">
         <Border Grid.Row="0"
@@ -25,10 +31,177 @@
             </StackPanel>
         </Border>
 
-        <TextBlock Grid.Row="1"
-                   Text="Artist Detail Page"
-                   FontSize="24"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center" />
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="32,24">
+                <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,24">
+                    <Border Grid.Column="0"
+                            Width="180"
+                            Height="180"
+                            CornerRadius="12"
+                            Background="{StaticResource BgElement2Brush}"
+                            Margin="0,0,24,0">
+                        <Image Source="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
+                               Stretch="UniformToFill" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Spacing="8">
+                        <TextBlock Text="{Binding ArtistName}"
+                                   FontSize="28"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}" />
+                        <TextBlock FontSize="14"
+                                   Foreground="{StaticResource TextSecondaryBrush}">
+                            <Run Text="{Binding SongCount}" />
+                            <Run Text="songs ·" />
+                            <Run Text="{Binding TotalDurationText}" />
+                        </TextBlock>
+
+                        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                            <Button Theme="{StaticResource PrimaryButtonTheme}"
+                                    Command="{Binding PlayAllCommand}"
+                                    Padding="20,10">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="&#xE768;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="14"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Text="Play All"
+                                               FontSize="13"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <Button Theme="{StaticResource SecondaryButtonTheme}"
+                                    Command="{Binding ShufflePlayCommand}"
+                                    Padding="20,10">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="&#xE81B;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="14"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Text="Shuffle"
+                                               FontSize="13"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+
+                <Border Background="{StaticResource BgTableHeaderBrush}"
+                        CornerRadius="8"
+                        Padding="16,12"
+                        Margin="0,0,0,6">
+                    <Grid ColumnDefinitions="40,*,150,80,50">
+                        <TextBlock Grid.Column="0"
+                                   Text="#"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="1"
+                                   Text="Title"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="2"
+                                   Text="Album"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="3"
+                                   Text="Plays"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Grid.Column="4"
+                                   Text="Duration"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   HorizontalAlignment="Right" />
+                    </Grid>
+                </Border>
+
+                <ItemsControl ItemsSource="{Binding Songs}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:Song">
+                            <Border x:Name="SongRow"
+                                    CornerRadius="8"
+                                    Padding="16,12"
+                                    Margin="0,0,0,4"
+                                    Background="Transparent"
+                                    Cursor="Hand">
+                                <Grid ColumnDefinitions="40,*,150,80,50,Auto">
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding TrackNumber}"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               FontFamily="Consolas"
+                                               VerticalAlignment="Center" />
+
+                                    <StackPanel Grid.Column="1"
+                                                Spacing="2"
+                                                VerticalAlignment="Center"
+                                                Margin="0,0,16,0">
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="14"
+                                                   FontWeight="Medium"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Artist}"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding Album}"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center" />
+
+                                    <TextBlock Grid.Column="3"
+                                               Text="{Binding PlayCount}"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               FontFamily="Consolas"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center" />
+
+                                    <TextBlock Grid.Column="4"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               FontFamily="Consolas"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right">
+                                        <TextBlock.Text>
+                                            <Binding Path="Duration" Converter="{StaticResource TimeSpanConverter}" />
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <Button Grid.Column="5"
+                                            Theme="{StaticResource SongRowButtonTheme}"
+                                            Width="34"
+                                            Height="34"
+                                            Margin="12,0,0,0"
+                                            Command="{Binding $parent[ItemsControl].DataContext.PlaySongCommand}"
+                                            CommandParameter="{Binding FilePath}">
+                                        <TextBlock Text="&#xE768;"
+                                                   FontFamily="Segoe Fluent Icons"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

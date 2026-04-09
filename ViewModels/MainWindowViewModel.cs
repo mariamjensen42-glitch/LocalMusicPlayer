@@ -15,6 +15,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private readonly IViewModelFactory _viewModelFactory;
     private readonly IPlaylistService _playlistService;
     private readonly IMusicLibraryService _musicLibraryService;
+    private readonly IMusicPlayerService _musicPlayerService;
     private readonly IStatisticsService _statisticsService;
     private readonly IConfigurationService _configService;
     private readonly IUserPlaylistService _userPlaylistService;
@@ -199,7 +200,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     {
         ArtistDetailViewModel = new ArtistDetailViewModel(
             artistGroup,
-            _musicLibraryService as IMusicPlayerService ?? throw new InvalidOperationException(),
+            _musicPlayerService,
             _playlistService,
             _statisticsService);
         ArtistDetailViewModel.OnNavigateBack = () => CurrentPage = LibraryCategoryViewModel!;
@@ -211,7 +212,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     {
         AlbumDetailViewModel = new AlbumDetailViewModel(
             albumGroup,
-            _musicLibraryService as IMusicPlayerService ?? throw new InvalidOperationException(),
+            _musicPlayerService,
             _playlistService,
             _statisticsService);
         AlbumDetailViewModel.OnNavigateBack = () => CurrentPage = LibraryCategoryViewModel!;
@@ -262,6 +263,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         IViewModelFactory viewModelFactory,
         IPlaylistService playlistService,
         IMusicLibraryService musicLibraryService,
+        IMusicPlayerService musicPlayerService,
         IStatisticsService statisticsService,
         IConfigurationService configService,
         IUserPlaylistService userPlaylistService,
@@ -272,6 +274,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         _viewModelFactory = viewModelFactory;
         _playlistService = playlistService;
         _musicLibraryService = musicLibraryService;
+        _musicPlayerService = musicPlayerService;
         _statisticsService = statisticsService;
         _configService = configService;
         _userPlaylistService = userPlaylistService;
