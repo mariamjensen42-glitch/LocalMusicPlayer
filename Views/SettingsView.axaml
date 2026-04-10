@@ -260,6 +260,94 @@
                                          HorizontalAlignment="Center" />
                         </Grid>
                     </StackPanel>
+
+                    <Border Height="1" Background="{StaticResource BgElement2Brush}" />
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="播放效果"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   LetterSpacing="4" />
+
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="淡入淡出"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <ToggleSwitch Grid.Row="0" Grid.Column="1"
+                                          IsChecked="{Binding CrossfadeEnabled}" />
+
+                            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                        Spacing="8"
+                                        IsVisible="{Binding CrossfadeEnabled}">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Grid.Column="0"
+                                               Text="1s"
+                                               FontSize="12"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               VerticalAlignment="Center" />
+                                    <Slider Grid.Column="1"
+                                            Minimum="1"
+                                            Maximum="10"
+                                            Value="{Binding CrossfadeDurationSeconds}"
+                                            Margin="8,0" />
+                                    <TextBlock Grid.Column="2"
+                                               Text="10s"
+                                               FontSize="12"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                                <TextBlock Text="{Binding CrossfadeDurationSeconds, StringFormat='{}{0} 秒'}"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                       Text="音量归一化 (ReplayGain)"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,8,0,0" />
+                            <ToggleSwitch Grid.Row="2" Grid.Column="1"
+                                          IsChecked="{Binding ReplayGainEnabled}"
+                                          Margin="0,8,0,0" />
+                        </Grid>
+                    </StackPanel>
+
+                    <Border Height="1" Background="{StaticResource BgElement2Brush}" />
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="播放速度"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   LetterSpacing="4" />
+
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="0.5x"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       VerticalAlignment="Center" />
+                            <Slider Grid.Column="1"
+                                    Minimum="0.5"
+                                    Maximum="2.0"
+                                    Value="{Binding PlaybackRate}"
+                                    Margin="8,0" />
+                            <TextBlock Grid.Column="2"
+                                       Text="2.0x"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                        <TextBlock Text="{Binding PlaybackRate, StringFormat='{}{0:0.##}x'}"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
 

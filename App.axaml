@@ -30,6 +30,9 @@
             <converters:BoolToLyricColorConverter x:Key="BoolToLyricColorConverter" />
             <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
             <converters:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+            <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
+            <converters:PlayCountConverter x:Key="PlayCountConverter" />
+            <converters:LyricTranslationFontSizeConverter x:Key="LyricTranslationFontSizeConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

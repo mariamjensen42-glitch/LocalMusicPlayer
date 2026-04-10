@@ -29,4 +29,10 @@ public class MusicLibraryService : IMusicLibraryService
         Songs.Add(song);
         FilteredSongs.Add(song);
     }
+
+    public void RemoveSong(Song song)
+    {
+        Songs.Remove(song);
+        FilteredSongs.Remove(song);
+    }
 }

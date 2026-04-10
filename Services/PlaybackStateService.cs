@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia.Threading;
 using LocalMusicPlayer.Models;
 
@@ -32,18 +33,45 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
     private void OnPlaybackEnded(object? sender, EventArgs e)
     {
         PlaybackEnded?.Invoke(this, EventArgs.Empty);
-        if (_playlistService.PlayNext())
+
+        if (IsCrossfadeEnabled)
         {
-            var song = _playlistService.CurrentSong;
-            if (song != null)
-            {
-                _playerService.Play(song);
-            }
+            _ = HandleCrossfadeAsync();
+        }
+        else
+        {
+            PlayNextSong();
+        }
+    }
+
+    private async Task HandleCrossfadeAsync()
+    {
+        await _playerService.FadeOutAsync(CrossfadeDuration);
+
+        if (PlayNextSong())
+        {
+            await _playerService.FadeInAsync(Volume, CrossfadeDuration);
         }
         else
         {
             Stop();
         }
+    }
+
+    private bool PlayNextSong()
+    {
+        if (_playlistService.PlayNext())
+        {
+            var song = _playlistService.CurrentSong;
+            if (song != null)
+            {
+                _playerService.SetReplayGainEnabled(IsReplayGainEnabled);
+                _playerService.Play(song);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void OnPlaybackStateChanged(object? sender, PlayState state)
@@ -82,6 +110,14 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
 
     public bool IsMuted => _playerService.IsMuted;
 
+    public float PlaybackRate => _playerService.PlaybackRate;
+
+    public bool IsCrossfadeEnabled { get; set; }
+
+    public TimeSpan CrossfadeDuration { get; set; } = TimeSpan.FromSeconds(3);
+
+    public bool IsReplayGainEnabled { get; set; } = true;
+
     public PlaybackMode PlaybackMode
     {
         get => _playlistService.PlaybackMode;
@@ -98,6 +134,7 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
 
     public void Play(Song song)
     {
+        _playerService.SetReplayGainEnabled(IsReplayGainEnabled);
         _playerService.Play(song);
     }
 
@@ -106,6 +143,7 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
         var song = _playlistService.CurrentSong;
         if (song != null)
         {
+            _playerService.SetReplayGainEnabled(IsReplayGainEnabled);
             _playerService.Play(song);
         }
     }
@@ -145,6 +183,11 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
         _playerService.Mute();
     }
 
+    public void SetPlaybackRate(float rate)
+    {
+        _playerService.SetPlaybackRate(rate);
+    }
+
     public void PlayNext()
     {
         if (_playlistService.PlayNext())
@@ -152,6 +195,7 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
             var song = _playlistService.CurrentSong;
             if (song != null)
             {
+                _playerService.SetReplayGainEnabled(IsReplayGainEnabled);
                 _playerService.Play(song);
             }
         }
@@ -168,6 +212,7 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
             var song = _playlistService.CurrentSong;
             if (song != null)
             {
+                _playerService.SetReplayGainEnabled(IsReplayGainEnabled);
                 _playerService.Play(song);
             }
         }

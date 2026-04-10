@@ -97,6 +97,8 @@ public class FileScannerService : IFileScannerService
         {
             using var file = TagLib.File.Create(filePath);
             var albumArtPath = await _albumArtService.ExtractAlbumArtAsync(filePath);
+            var fileInfo = new FileInfo(filePath);
+
             return new Song
             {
                 Title = string.IsNullOrWhiteSpace(file.Tag.Title)
@@ -106,15 +108,18 @@ public class FileScannerService : IFileScannerService
                 Album = file.Tag.Album ?? string.Empty,
                 FilePath = filePath,
                 Duration = file.Properties.Duration,
-                AlbumArtPath = albumArtPath
+                AlbumArtPath = albumArtPath,
+                FileSizeBytes = fileInfo.Length
             };
         }
         catch
         {
+            var fileInfo = new FileInfo(filePath);
             return new Song
             {
                 Title = Path.GetFileNameWithoutExtension(filePath),
-                FilePath = filePath
+                FilePath = filePath,
+                FileSizeBytes = fileInfo.Exists ? fileInfo.Length : 0
             };
         }
     }

@@ -64,6 +64,8 @@ public partial class App : Application
         services.AddSingleton<IPlaybackStateService, PlaybackStateService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ISystemTrayService, SystemTrayService>();
+        services.AddSingleton<IPlayHistoryService, PlayHistoryService>();
+        services.AddSingleton<IDedupService, DedupService>();
         services.AddSingleton<IViewModelFactory, ViewModelFactory>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<StatisticsViewModel>();

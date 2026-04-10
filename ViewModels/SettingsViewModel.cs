@@ -15,6 +15,7 @@ public partial class SettingsViewModel : ViewModelBase
     private readonly IScanService _scanService;
     private readonly IMusicLibraryService _musicLibraryService;
     private readonly IConfigurationService _configService;
+    private readonly IPlaybackStateService _playbackStateService;
 
     public ObservableCollection<string> ScanFolders { get; } = new();
 
@@ -37,6 +38,14 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] private string _themeMode = "Dark";
 
     [ObservableProperty] private bool _isScanning;
+
+    [ObservableProperty] private bool _crossfadeEnabled;
+
+    [ObservableProperty] private int _crossfadeDurationSeconds = 3;
+
+    [ObservableProperty] private float _playbackRate = 1.0f;
+
+    [ObservableProperty] private bool _replayGainEnabled = true;
 
     [RelayCommand]
     private async Task AddFolder()
@@ -105,12 +114,14 @@ public partial class SettingsViewModel : ViewModelBase
         IWindowProvider windowProvider,
         IScanService scanService,
         IMusicLibraryService musicLibraryService,
-        IConfigurationService configService)
+        IConfigurationService configService,
+        IPlaybackStateService playbackStateService)
     {
         _windowProvider = windowProvider;
         _scanService = scanService;
         _musicLibraryService = musicLibraryService;
         _configService = configService;
+        _playbackStateService = playbackStateService;
 
         LoadSettings();
     }
@@ -127,6 +138,10 @@ public partial class SettingsViewModel : ViewModelBase
 
         IncludeSubfolders = settings.IncludeSubfolders;
         ThemeMode = settings.Theme;
+        CrossfadeEnabled = settings.CrossfadeEnabled;
+        CrossfadeDurationSeconds = settings.CrossfadeDurationMs / 1000;
+        PlaybackRate = settings.PlaybackRate;
+        ReplayGainEnabled = settings.ReplayGainEnabled;
         SongCount = _musicLibraryService.Songs.Count;
         AlbumCount = _musicLibraryService.Songs.Select(s => s.Album).Distinct().Count();
 
@@ -145,5 +160,33 @@ public partial class SettingsViewModel : ViewModelBase
     partial void OnIncludeSubfoldersChanged(bool value)
     {
         _ = SaveSettingsAsync();
+    }
+
+    partial void OnCrossfadeEnabledChanged(bool value)
+    {
+        _playbackStateService.IsCrossfadeEnabled = value;
+        _configService.CurrentSettings.CrossfadeEnabled = value;
+        _ = _configService.SaveSettingsAsync();
+    }
+
+    partial void OnCrossfadeDurationSecondsChanged(int value)
+    {
+        _playbackStateService.CrossfadeDuration = TimeSpan.FromSeconds(value);
+        _configService.CurrentSettings.CrossfadeDurationMs = value * 1000;
+        _ = _configService.SaveSettingsAsync();
+    }
+
+    partial void OnPlaybackRateChanged(float value)
+    {
+        _playbackStateService.SetPlaybackRate(value);
+        _configService.CurrentSettings.PlaybackRate = value;
+        _ = _configService.SaveSettingsAsync();
+    }
+
+    partial void OnReplayGainEnabledChanged(bool value)
+    {
+        _playbackStateService.IsReplayGainEnabled = value;
+        _configService.CurrentSettings.ReplayGainEnabled = value;
+        _ = _configService.SaveSettingsAsync();
     }
 }

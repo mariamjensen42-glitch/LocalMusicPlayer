@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using LibVLCSharp.Shared;
 using LocalMusicPlayer.Models;
 
@@ -13,6 +14,9 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
     private bool _isMuted;
     private int _previousVolume;
     private bool _disposed;
+    private float _playbackRate = 1.0f;
+    private bool _replayGainEnabled = true;
+    private float _replayGainAdjustment = 0f;
 
     public event EventHandler? PlaybackEnded;
     public event EventHandler<PlayState>? PlaybackStateChanged;
@@ -26,6 +30,7 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
     public bool IsPlaying => _mediaPlayer?.IsPlaying ?? false;
     public int Volume => _volume;
     public bool IsMuted => _isMuted;
+    public float PlaybackRate => _playbackRate;
 
     public MusicPlayerService()
     {
@@ -47,7 +52,29 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
         _currentSong = song;
         using var media = new Media(_libVlc, new Uri(song.FilePath));
         _mediaPlayer.Play(media);
-        _mediaPlayer.Volume = _volume;
+
+        if (_replayGainEnabled)
+            ApplyReplayGain(song.ReplayGainTrackGain);
+        else
+            _mediaPlayer.Volume = _volume;
+    }
+
+    public void SetReplayGainEnabled(bool enabled)
+    {
+        _replayGainEnabled = enabled;
+        if (_currentSong != null)
+            ApplyReplayGain(_currentSong.ReplayGainTrackGain);
+    }
+
+    public void ApplyReplayGain(float trackGain)
+    {
+        _replayGainAdjustment = trackGain;
+        var effectiveVolume = _replayGainEnabled
+            ? Math.Clamp(_volume + (int)Math.Round(trackGain), 0, 100)
+            : _volume;
+
+        if (_mediaPlayer != null)
+            _mediaPlayer.Volume = effectiveVolume;
     }
 
     public void Pause()
@@ -87,10 +114,7 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
     public void SetVolume(int level)
     {
         _volume = Math.Clamp(level, 0, 100);
-        if (_mediaPlayer != null && !_isMuted)
-        {
-            _mediaPlayer.Volume = _volume;
-        }
+        ApplyReplayGain(_replayGainAdjustment);
     }
 
     public void Mute()
@@ -99,10 +123,7 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
         {
             _isMuted = false;
             _volume = _previousVolume;
-            if (_mediaPlayer != null)
-            {
-                _mediaPlayer.Volume = _volume;
-            }
+            ApplyReplayGain(_replayGainAdjustment);
         }
         else
         {
@@ -112,6 +133,52 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
             {
                 _mediaPlayer.Volume = 0;
             }
+        }
+    }
+
+    public void SetPlaybackRate(float rate)
+    {
+        _playbackRate = Math.Clamp(rate, 0.5f, 2.0f);
+        if (_mediaPlayer != null)
+        {
+            _mediaPlayer.SetRate(_playbackRate);
+        }
+    }
+
+    public async Task FadeInAsync(int targetVolume, TimeSpan duration)
+    {
+        if (_mediaPlayer == null || _disposed) return;
+
+        var steps = 20;
+        var stepDuration = duration.TotalMilliseconds / steps;
+        var volumeStep = (double)targetVolume / steps;
+
+        for (int i = 1; i <= steps; i++)
+        {
+            if (_disposed || _mediaPlayer == null) break;
+            var vol = (int)Math.Round(volumeStep * i);
+            _mediaPlayer.Volume = Math.Clamp(vol, 0, 100);
+            await Task.Delay((int)stepDuration);
+        }
+
+        _volume = targetVolume;
+    }
+
+    public async Task FadeOutAsync(TimeSpan duration)
+    {
+        if (_mediaPlayer == null || _disposed) return;
+
+        var steps = 20;
+        var stepDuration = duration.TotalMilliseconds / steps;
+        var currentVol = _volume;
+        var volumeStep = (double)currentVol / steps;
+
+        for (int i = steps - 1; i >= 0; i--)
+        {
+            if (_disposed || _mediaPlayer == null) break;
+            var vol = (int)Math.Round(volumeStep * i);
+            _mediaPlayer.Volume = Math.Clamp(vol, 0, 100);
+            await Task.Delay((int)stepDuration);
         }
     }
 

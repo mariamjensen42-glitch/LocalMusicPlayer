@@ -131,6 +131,23 @@ public class DialogService : IDialogService
 #pragma warning restore CS0618
     }
 
+    public async Task<string?> ShowSaveFileDialogAsync(string title, string[]? filters = null)
+    {
+        var mainWindow = GetMainWindow();
+        if (mainWindow == null) return null;
+
+        var dialog = new SaveFileDialog
+        {
+            Title = title,
+            Filters = filters?.Select(f => new FileDialogFilter
+                          { Name = f, Extensions = f.Split(',').Select(e => e.Trim()).ToList() }).ToList() ??
+                      new List<FileDialogFilter>()
+        };
+
+        var result = await dialog.ShowAsync(mainWindow);
+        return result;
+    }
+
     private Window? GetMainWindow()
     {
         if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

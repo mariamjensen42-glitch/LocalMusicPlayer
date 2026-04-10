@@ -21,6 +21,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private readonly IConfigurationService _configService;
     private readonly IUserPlaylistService _userPlaylistService;
     private readonly ISystemTrayService _systemTrayService;
+    private readonly IPlayHistoryService _playHistoryService;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsPlayerPageVisible))]
@@ -34,6 +35,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     [ObservableProperty] private bool _isCategorySelected;
     [ObservableProperty] private bool _isStatisticsSelected;
     [ObservableProperty] private bool _isSettingsSelected;
+
+    [ObservableProperty] private bool _isHistorySelected;
 
     public IMusicLibraryService Library => _musicLibraryService;
 
@@ -98,6 +101,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         {
             SelectedSongs.Add(song);
         }
+
         IsSelectAll = SelectedSongs.Count == Library.FilteredSongs.Count;
     }
 
@@ -134,9 +138,12 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     [RelayCommand]
     private void Repeat()
     {
-        _playbackStateService.PlaybackMode = _playbackStateService.PlaybackMode == PlaybackMode.Loop
-            ? PlaybackMode.Normal
-            : PlaybackMode.Loop;
+        _playbackStateService.PlaybackMode = _playbackStateService.PlaybackMode switch
+        {
+            PlaybackMode.Normal => PlaybackMode.Loop,
+            PlaybackMode.Loop => PlaybackMode.SingleLoop,
+            _ => PlaybackMode.Normal
+        };
     }
 
     [RelayCommand]
@@ -150,6 +157,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             _playlistService.SetCurrentPlaylist(CurrentPlaylist);
             _playlistService.PlaySong(song);
             _statisticsService.RecordPlayStart(song);
+            _playHistoryService.AddToHistory(song);
             _playbackStateService.Play(song);
         }
     }
@@ -174,6 +182,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         IsCategorySelected = false;
         IsStatisticsSelected = false;
         IsSettingsSelected = true;
+        IsHistorySelected = false;
         SettingsViewModel = _viewModelFactory.CreateSettingsViewModel();
         CurrentPage = SettingsViewModel;
         _navigationService.NavigateTo<SettingsViewModel>();
@@ -186,6 +195,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         IsCategorySelected = false;
         IsStatisticsSelected = false;
         IsSettingsSelected = false;
+        IsHistorySelected = false;
         CurrentPage = this;
         _navigationService.NavigateTo<MainWindowViewModel>();
     }
@@ -204,6 +214,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         IsCategorySelected = false;
         IsStatisticsSelected = true;
         IsSettingsSelected = false;
+        IsHistorySelected = false;
         StatisticsViewModel = _viewModelFactory.CreateStatisticsViewModel();
         CurrentPage = StatisticsViewModel;
         _navigationService.NavigateTo<StatisticsViewModel>();
@@ -224,6 +235,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         IsCategorySelected = true;
         IsStatisticsSelected = false;
         IsSettingsSelected = false;
+        IsHistorySelected = false;
         LibraryCategoryViewModel = _viewModelFactory.CreateLibraryCategoryViewModel();
         LibraryCategoryViewModel.OnNavigateToArtistDetail = NavigateToArtistDetail;
         LibraryCategoryViewModel.OnNavigateToAlbumDetail = NavigateToAlbumDetail;
@@ -232,31 +244,20 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     }
 
     [RelayCommand]
-    private void NavigateToRecentlyPlayed()
+    private void NavigateToHistory()
     {
         IsLibrarySelected = false;
         IsCategorySelected = false;
         IsStatisticsSelected = false;
         IsSettingsSelected = false;
-        RecentlyPlayedViewModel = _viewModelFactory.CreateRecentlyPlayedViewModel();
-        RecentlyPlayedViewModel.OnNavigateBack = () => CurrentPage = this;
-        CurrentPage = RecentlyPlayedViewModel;
-        _navigationService.NavigateTo<RecentlyPlayedViewModel>();
-    }
-
-    [RelayCommand]
-    private void NavigateToPlayHistory()
-    {
-        IsLibrarySelected = false;
-        IsCategorySelected = false;
-        IsStatisticsSelected = false;
-        IsSettingsSelected = false;
+        IsHistorySelected = true;
         PlayHistoryViewModel = _viewModelFactory.CreatePlayHistoryViewModel();
         PlayHistoryViewModel.OnNavigateBack = () => CurrentPage = this;
         CurrentPage = PlayHistoryViewModel;
         _navigationService.NavigateTo<PlayHistoryViewModel>();
     }
 
+    [RelayCommand]
     public void NavigateToArtistDetail(ArtistGroup artistGroup)
     {
         ArtistDetailViewModel = new ArtistDetailViewModel(
@@ -302,6 +303,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             if (song != null)
             {
                 _statisticsService.RecordPlayStart(song);
+                _playHistoryService.AddToHistory(song);
                 _playbackStateService.Play(song);
             }
         }
@@ -325,6 +327,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             if (song != null)
             {
                 _statisticsService.RecordPlayStart(song);
+                _playHistoryService.AddToHistory(song);
                 _playbackStateService.Play(song);
             }
         }
@@ -349,9 +352,12 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         {
             _musicLibraryService.RemoveSong(song);
         }
+
         SelectedSongs.Clear();
         IsSelectAll = false;
     }
+
+    public PlayHistoryViewModel? PlayHistoryViewModel { get; private set; }
 
     public PlayerPageViewModel PlayerPageViewModel { get; }
     public QueueViewModel QueueViewModel { get; }
@@ -361,8 +367,6 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     public StatisticsViewModel? StatisticsViewModel { get; private set; }
     public ArtistDetailViewModel? ArtistDetailViewModel { get; private set; }
     public AlbumDetailViewModel? AlbumDetailViewModel { get; private set; }
-    public RecentlyPlayedViewModel? RecentlyPlayedViewModel { get; private set; }
-    public PlayHistoryViewModel? PlayHistoryViewModel { get; private set; }
 
     private readonly DispatcherTimer _positionTimer;
 
@@ -377,7 +381,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         IConfigurationService configService,
         IUserPlaylistService userPlaylistService,
         IScanService scanService,
-        ISystemTrayService systemTrayService)
+        ISystemTrayService systemTrayService,
+        IPlayHistoryService playHistoryService)
     {
         _playbackStateService = playbackStateService;
         _navigationService = navigationService;
@@ -389,6 +394,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         _configService = configService;
         _userPlaylistService = userPlaylistService;
         _systemTrayService = systemTrayService;
+        _playHistoryService = playHistoryService;
 
         CurrentPlaylist = _playlistService.CreatePlaylist("默认播放列表");
         _playlistService.SetCurrentPlaylist(CurrentPlaylist);
@@ -433,8 +439,6 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
                 CurrentPage = ArtistDetailViewModel;
             else if (pageType == typeof(AlbumDetailViewModel) && AlbumDetailViewModel != null)
                 CurrentPage = AlbumDetailViewModel;
-            else if (pageType == typeof(RecentlyPlayedViewModel) && RecentlyPlayedViewModel != null)
-                CurrentPage = RecentlyPlayedViewModel;
             else if (pageType == typeof(PlayHistoryViewModel) && PlayHistoryViewModel != null)
                 CurrentPage = PlayHistoryViewModel;
         };
@@ -453,7 +457,11 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         };
         _positionTimer.Start();
 
-        Library.Songs.CollectionChanged += (_, _) => UpdateLibraryStats();
+        Library.Songs.CollectionChanged += (_, _) =>
+        {
+            UpdateLibraryStats();
+            FilterSongs();
+        };
 
         InitializeAsync(scanService);
     }
@@ -475,6 +483,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         IsMuted = _configService.CurrentSettings.IsMuted;
         _playbackStateService.SetVolume(Volume);
         if (IsMuted) _playbackStateService.Mute();
+        _playbackStateService.SetPlaybackRate(_configService.CurrentSettings.PlaybackRate);
 
         var folders = _configService.GetScanFolders();
         if (folders.Count > 0)

@@ -4,5 +4,6 @@ public enum PlaybackMode
 {
     Normal,
     Shuffle,
-    Loop
+    Loop,
+    SingleLoop
 }

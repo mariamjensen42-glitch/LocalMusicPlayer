@@ -12,6 +12,13 @@ public class AppSettings
     public DateTime? LastScanTime { get; set; }
     public string Theme { get; set; } = "Dark";
     public string PlaybackMode { get; set; } = "Normal";
+    public float PlaybackRate { get; set; } = 1.0f;
+    public bool CrossfadeEnabled { get; set; }
+    public int CrossfadeDurationMs { get; set; } = 3000;
+    public double LyricFontSize { get; set; } = 28;
+    public double LyricLineSpacing { get; set; } = 20;
+    public bool ShowTranslation { get; set; } = true;
+    public bool ReplayGainEnabled { get; set; } = true;
 
     /// <summary>
     /// 歌曲统计数据，Key 为文件路径
@@ -37,4 +44,9 @@ public class AppSettings
     /// 收藏歌曲文件路径列表
     /// </summary>
     public List<string> FavoriteFilePaths { get; set; } = new();
+
+    /// <summary>
+    /// 播放历史记录
+    /// </summary>
+    public List<PlayHistoryRecord> PlayHistory { get; set; } = new();
 }

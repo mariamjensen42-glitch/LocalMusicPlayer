@@ -105,7 +105,7 @@ public partial class PlaylistManagementViewModel : ViewModelBase
         if (_selectedPlaylist == null)
             return;
 
-        var filePath = await _dialogService.SaveFileAsync("导出播放列表", "JSON Files (*.json)|*.json");
+        var filePath = await _dialogService.ShowSaveFileDialogAsync("导出播放列表", ["JSON Files (*.json)|*.json"]);
         if (!string.IsNullOrEmpty(filePath))
         {
             await _playlistService.ExportPlaylistAsync(_selectedPlaylist.Id, filePath);
@@ -115,7 +115,7 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     [RelayCommand]
     private async Task ImportPlaylistAsync()
     {
-        var filePath = await _dialogService.OpenFileAsync("导入播放列表", "JSON Files (*.json)|*.json");
+        var filePath = await _dialogService.ShowOpenFileDialogAsync("导入播放列表", ["JSON Files (*.json)|*.json"]);
         if (!string.IsNullOrEmpty(filePath))
         {
             await _playlistService.ImportPlaylistAsync(filePath);

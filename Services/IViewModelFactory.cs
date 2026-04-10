@@ -8,6 +8,5 @@ public interface IViewModelFactory
     ViewModels.StatisticsViewModel CreateStatisticsViewModel();
     ViewModels.LibraryCategoryViewModel CreateLibraryCategoryViewModel();
     ViewModels.QueueViewModel CreateQueueViewModel();
-    ViewModels.RecentlyPlayedViewModel CreateRecentlyPlayedViewModel();
     ViewModels.PlayHistoryViewModel CreatePlayHistoryViewModel();
 }

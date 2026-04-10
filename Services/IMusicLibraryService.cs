@@ -11,4 +11,5 @@ public interface IMusicLibraryService
     void Clear();
     void AddSongs(IEnumerable<Song> songs);
     void AddSong(Song song);
+    void RemoveSong(Song song);
 }

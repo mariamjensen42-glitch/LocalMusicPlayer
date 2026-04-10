@@ -26,6 +26,13 @@ public interface IPlaybackStateService
     void Mute();
     void PlayNext();
     void PlayPrevious();
+    void SetPlaybackRate(float rate);
+
+    float PlaybackRate { get; }
+
+    bool IsCrossfadeEnabled { get; set; }
+    TimeSpan CrossfadeDuration { get; set; }
+    bool IsReplayGainEnabled { get; set; }
 
     event EventHandler? PlaybackEnded;
     event EventHandler<PlayState>? PlaybackStateChanged;

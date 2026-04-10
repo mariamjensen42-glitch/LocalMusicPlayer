@@ -26,4 +26,8 @@ public partial class Song : ObservableObject
     [ObservableProperty] private int _playCount;
 
     [ObservableProperty] private DateTime? _lastPlayedTime;
+
+    [ObservableProperty] private float _replayGainTrackGain;
+
+    [ObservableProperty] private long _fileSizeBytes;
 }

@@ -112,7 +112,7 @@
                         <Button Theme="{StaticResource SecondaryButtonTheme}"
                                 Height="32"
                                 FontSize="12"
-                                Command="{Binding RenamePlaylistAsyncCommand}"
+                                Command="{Binding RenamePlaylistCommand}"
                                 IsEnabled="{Binding CanRenamePlaylist}"
                                 Margin="0,0,8,0">
                             <TextBlock Text="&#xE8AC;"
@@ -123,7 +123,7 @@
                         <Button Theme="{StaticResource SecondaryButtonTheme}"
                                 Height="32"
                                 FontSize="12"
-                                Command="{Binding ExportPlaylistAsyncCommand}"
+                                Command="{Binding ExportPlaylistCommand}"
                                 IsEnabled="{Binding SelectedPlaylist}"
                                 Margin="0,0,8,0">
                             <TextBlock Text="&#xE792;"
@@ -134,7 +134,7 @@
                         <Button Theme="{StaticResource SecondaryButtonTheme}"
                                 Height="32"
                                 FontSize="12"
-                                Command="{Binding ImportPlaylistAsyncCommand}"
+                                Command="{Binding ImportPlaylistCommand}"
                                 Margin="0,0,8,0">
                             <TextBlock Text="&#xE78F;"
                                        FontFamily="Segoe Fluent Icons"

@@ -140,6 +140,9 @@ public class PlaylistService : IPlaylistService
         int nextIndex;
         switch (_playbackMode)
         {
+            case PlaybackMode.SingleLoop:
+                nextIndex = _currentIndex;
+                break;
             case PlaybackMode.Shuffle:
                 nextIndex = _random.Next(_currentPlaylist.Songs.Count);
                 break;

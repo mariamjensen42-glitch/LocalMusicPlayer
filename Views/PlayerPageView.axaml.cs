@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using LocalMusicPlayer.ViewModels;
 
 namespace LocalMusicPlayer.Views;
@@ -6,6 +7,7 @@ namespace LocalMusicPlayer.Views;
 public partial class PlayerPageView : UserControl
 {
     private ScrollViewer? _lyricsScrollViewer;
+    private Popup? _speedPopup;
 
     public PlayerPageView()
     {
@@ -16,10 +18,19 @@ public partial class PlayerPageView : UserControl
             if (DataContext is PlayerPageViewModel viewModel)
             {
                 _lyricsScrollViewer = this.FindControl<ScrollViewer>("LyricsScrollViewer");
+                _speedPopup = this.FindControl<Popup>("SpeedPopup");
 
                 viewModel.OnScrollToLyric = ScrollToCurrentLyric;
             }
         };
+    }
+
+    public void OnSpeedButtonClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (_speedPopup != null)
+        {
+            _speedPopup.IsOpen = !_speedPopup.IsOpen;
+        }
     }
 
     private void ScrollToCurrentLyric(int index)

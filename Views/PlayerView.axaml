@@ -19,84 +19,25 @@
         <Grid Grid.Row="0" RowDefinitions="Auto,*">
             <!-- Header Area -->
             <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
-                    <!-- Left: Title and Stats -->
-                    <StackPanel Grid.Column="0" Spacing="4">
-                        <TextBlock Text="{StaticResource String_Library}"
-                                   FontSize="32"
-                                   FontWeight="ExtraBold"
-                                   FontFamily="Inter"
-                                   Foreground="{StaticResource TextPrimaryBrush}" />
-                        <TextBlock Text="{Binding LibraryStats}"
-                                   FontSize="14"
-                                   Foreground="{StaticResource TextSecondaryBrush}" />
-                    </StackPanel>
+                <!-- Left: Title and Stats -->
+                <StackPanel Grid.Column="0" Spacing="4">
+                    <TextBlock Text="{StaticResource String_Library}"
+                               FontSize="32"
+                               FontWeight="ExtraBold"
+                               FontFamily="Inter"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock Text="{Binding LibraryStats}"
+                               FontSize="14"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+                </StackPanel>
 
-                    <!-- Right: Play All Button and Batch Operations -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
-                        <!-- Batch Operations -->
-                        <StackPanel Orientation="Horizontal" Spacing="4" IsVisible="{Binding SelectedSongs.Count, Converter={StaticResource CountToBoolConverter}}">
-                            <Button Height="38"
-                                    Command="{Binding PlaySelectedCommand}"
-                                    CornerRadius="8"
-                                    Padding="12,0"
-                                    Cursor="Hand"
-                                    Background="{StaticResource PurplePinkVerticalGradientBrush}">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <TextBlock Text="&#xE768;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="14"
-                                               Foreground="White"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Text="播放选中"
-                                               FontSize="13"
-                                               FontWeight="Medium"
-                                               Foreground="White"
-                                               VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
-                            <Button Height="38"
-                                    Command="{Binding AddSelectedToPlaylistCommand}"
-                                    CornerRadius="8"
-                                    Padding="12,0"
-                                    Cursor="Hand"
-                                    Background="{StaticResource BgCardBrush}">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <TextBlock Text="&#xE710;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="14"
-                                               Foreground="{StaticResource TextPrimaryBrush}"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Text="添加到播放列表"
-                                               FontSize="13"
-                                               FontWeight="Medium"
-                                               Foreground="{StaticResource TextPrimaryBrush}"
-                                               VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
-                            <Button Height="38"
-                                    Command="{Binding RemoveSelectedFromLibraryCommand}"
-                                    CornerRadius="8"
-                                    Padding="12,0"
-                                    Cursor="Hand"
-                                    Background="{StaticResource BgCardBrush}">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <TextBlock Text="&#xE74D;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="14"
-                                               Foreground="{StaticResource TextPrimaryBrush}"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Text="移除"
-                                               FontSize="13"
-                                               FontWeight="Medium"
-                                               Foreground="{StaticResource TextPrimaryBrush}"
-                                               VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                        
-                        <!-- Play All Button -->
+                <!-- Right: Play All Button and Batch Operations -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
+                    <!-- Batch Operations -->
+                    <StackPanel Orientation="Horizontal" Spacing="4"
+                                IsVisible="{Binding SelectedSongs.Count, Converter={StaticResource CountToBoolConverter}}">
                         <Button Height="38"
-                                Command="{Binding PlayAllCommand}"
+                                Command="{Binding PlaySelectedCommand}"
                                 CornerRadius="8"
                                 Padding="12,0"
                                 Cursor="Hand"
@@ -107,15 +48,75 @@
                                            FontSize="14"
                                            Foreground="White"
                                            VerticalAlignment="Center" />
-                                <TextBlock Text="{StaticResource String_PlayAll}"
+                                <TextBlock Text="播放选中"
                                            FontSize="13"
                                            FontWeight="Medium"
                                            Foreground="White"
                                            VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
+                        <Button Height="38"
+                                Command="{Binding AddSelectedToPlaylistCommand}"
+                                CornerRadius="8"
+                                Padding="12,0"
+                                Cursor="Hand"
+                                Background="{StaticResource BgCardBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="&#xE710;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="添加到播放列表"
+                                           FontSize="13"
+                                           FontWeight="Medium"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Height="38"
+                                Command="{Binding RemoveSelectedFromLibraryCommand}"
+                                CornerRadius="8"
+                                Padding="12,0"
+                                Cursor="Hand"
+                                Background="{StaticResource BgCardBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="&#xE74D;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="移除"
+                                           FontSize="13"
+                                           FontWeight="Medium"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
-                </Grid>
+
+                    <!-- Play All Button -->
+                    <Button Height="38"
+                            Command="{Binding PlayAllCommand}"
+                            CornerRadius="8"
+                            Padding="12,0"
+                            Cursor="Hand"
+                            Background="{StaticResource PurplePinkVerticalGradientBrush}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="&#xE768;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="White"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{StaticResource String_PlayAll}"
+                                       FontSize="13"
+                                       FontWeight="Medium"
+                                       Foreground="White"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
 
             <!-- Song List Table Area -->
             <Grid Grid.Row="1" Margin="32,24,24,24">
@@ -196,7 +197,6 @@
                                 <Grid ColumnDefinitions="24,30,*,180,70,60,Auto,Auto">
                                     <!-- Selection Checkbox -->
                                     <CheckBox Grid.Column="0"
-                                              IsChecked="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).SelectedSongs.Contains(.), Mode=TwoWay}"
                                               Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).ToggleSongSelectionCommand}"
                                               CommandParameter="{Binding}"
                                               VerticalAlignment="Center" />
@@ -246,12 +246,15 @@
 
                                     <!-- Plays -->
                                     <TextBlock Grid.Column="5"
-                                               Text="-"
                                                FontSize="13"
                                                Foreground="{StaticResource TextMutedBrush}"
                                                FontFamily="Consolas"
                                                VerticalAlignment="Center"
-                                               HorizontalAlignment="Right" />
+                                               HorizontalAlignment="Right">
+                                        <TextBlock.Text>
+                                            <Binding Path="PlayCount" Converter="{StaticResource PlayCountConverter}" />
+                                        </TextBlock.Text>
+                                    </TextBlock>
 
                                     <!-- Play/Pause Button Panel -->
                                     <Panel Grid.Column="6" Margin="12,0,0,0">

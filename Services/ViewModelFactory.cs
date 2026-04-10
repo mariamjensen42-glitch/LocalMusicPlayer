@@ -17,6 +17,8 @@ public class ViewModelFactory : IViewModelFactory
     private readonly IConfigurationService _configService;
     private readonly IPlaybackStateService _playbackStateService;
     private readonly INavigationService _navigationService;
+    private readonly IAlbumArtService _albumArtService;
+    private readonly IPlayHistoryService _playHistoryService;
 
     public ViewModelFactory(
         IMusicPlayerService musicPlayerService,
@@ -31,7 +33,9 @@ public class ViewModelFactory : IViewModelFactory
         IScanService scanService,
         IConfigurationService configService,
         IPlaybackStateService playbackStateService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        IAlbumArtService albumArtService,
+        IPlayHistoryService playHistoryService)
     {
         _musicPlayerService = musicPlayerService;
         _playlistService = playlistService;
@@ -46,6 +50,8 @@ public class ViewModelFactory : IViewModelFactory
         _configService = configService;
         _playbackStateService = playbackStateService;
         _navigationService = navigationService;
+        _albumArtService = albumArtService;
+        _playHistoryService = playHistoryService;
     }
 
     public PlayerPageViewModel CreatePlayerPageViewModel()
@@ -54,7 +60,9 @@ public class ViewModelFactory : IViewModelFactory
             _playbackStateService,
             _navigationService,
             _lyricsService,
-            _musicLibraryService);
+            _musicLibraryService,
+            _albumArtService,
+            _configService);
     }
 
     public PlaylistManagementViewModel CreatePlaylistManagementViewModel()
@@ -74,7 +82,8 @@ public class ViewModelFactory : IViewModelFactory
             _windowProvider,
             _scanService,
             _musicLibraryService,
-            _configService);
+            _configService,
+            _playbackStateService);
     }
 
     public StatisticsViewModel CreateStatisticsViewModel()
@@ -101,21 +110,12 @@ public class ViewModelFactory : IViewModelFactory
             _navigationService);
     }
 
-    public RecentlyPlayedViewModel CreateRecentlyPlayedViewModel()
-    {
-        return new RecentlyPlayedViewModel(
-            _musicLibraryService,
-            _statisticsService,
-            _playlistService,
-            _playbackStateService);
-    }
-
     public PlayHistoryViewModel CreatePlayHistoryViewModel()
     {
         return new PlayHistoryViewModel(
-            _musicLibraryService,
-            _statisticsService,
+            _playHistoryService,
+            _playbackStateService,
             _playlistService,
-            _playbackStateService);
+            _statisticsService);
     }
 }

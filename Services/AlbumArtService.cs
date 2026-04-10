@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using TagLib;
 
@@ -125,9 +128,79 @@ public class AlbumArtService : IAlbumArtService
         }
         catch (Exception)
         {
-            // 忽略清除错误
         }
 
         await Task.CompletedTask;
+    }
+
+    public async Task<Color?> ExtractDominantColorAsync(string? albumArtPath)
+    {
+        if (string.IsNullOrEmpty(albumArtPath))
+            return null;
+
+        return await Task.Run<Color?>(() =>
+        {
+            try
+            {
+                if (!System.IO.File.Exists(albumArtPath))
+                    return null;
+
+                using var stream = System.IO.File.OpenRead(albumArtPath);
+                using var bitmap = new Bitmap(stream);
+
+                var pixelWidth = bitmap.PixelSize.Width;
+                var pixelHeight = bitmap.PixelSize.Height;
+
+                var sampleSize = Math.Min(50, Math.Min(pixelWidth, pixelHeight));
+                var stepX = Math.Max(1, pixelWidth / sampleSize);
+                var stepY = Math.Max(1, pixelHeight / sampleSize);
+
+                long totalR = 0, totalG = 0, totalB = 0;
+                int count = 0;
+
+                using var resized = bitmap.CreateScaledBitmap(new PixelSize(sampleSize, sampleSize));
+                var stride = sampleSize * 4;
+                var pixelCount = sampleSize * stride;
+                var pixels = new byte[pixelCount];
+                var handle = GCHandle.Alloc(pixels, GCHandleType.Pinned);
+                try
+                {
+                    resized.CopyPixels(new PixelRect(0, 0, sampleSize, sampleSize), handle.AddrOfPinnedObject(), pixelCount, stride);
+                }
+                finally
+                {
+                    handle.Free();
+                }
+
+                for (int y = 0; y < sampleSize; y++)
+                {
+                    for (int x = 0; x < sampleSize; x++)
+                    {
+                        var offset = y * stride + x * 4;
+                        var b = pixels[offset];
+                        var g = pixels[offset + 1];
+                        var r = pixels[offset + 2];
+
+                        var brightness = (r + g + b) / 3.0;
+                        if (brightness < 30 || brightness > 225)
+                            continue;
+
+                        totalR += r;
+                        totalG += g;
+                        totalB += b;
+                        count++;
+                    }
+                }
+
+                if (count == 0)
+                    return null;
+
+                return Color.FromRgb((byte)(totalR / count), (byte)(totalG / count), (byte)(totalB / count));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        });
     }
 }

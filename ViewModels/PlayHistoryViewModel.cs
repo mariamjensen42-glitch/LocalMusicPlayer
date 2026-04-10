@@ -1,4 +1,6 @@
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
@@ -8,50 +10,54 @@ namespace LocalMusicPlayer.ViewModels;
 
 public partial class PlayHistoryViewModel : ViewModelBase
 {
-    private readonly IMusicLibraryService _musicLibraryService;
-    private readonly IStatisticsService _statisticsService;
-    private readonly IPlaylistService _playlistService;
+    private readonly IPlayHistoryService _playHistoryService;
     private readonly IPlaybackStateService _playbackStateService;
+    private readonly IPlaylistService _playlistService;
+    private readonly IStatisticsService _statisticsService;
 
-    [ObservableProperty]
-    private ObservableCollection<SongPlayRecord> _playHistorySongs = new();
+    [ObservableProperty] private ObservableCollection<PlayHistoryEntry> _historyEntries = new();
 
-    public delegate void NavigateBackDelegate();
-    public NavigateBackDelegate? OnNavigateBack { get; set; }
+    public Action? OnNavigateBack { get; set; }
 
     public PlayHistoryViewModel(
-        IMusicLibraryService musicLibraryService,
-        IStatisticsService statisticsService,
+        IPlayHistoryService playHistoryService,
+        IPlaybackStateService playbackStateService,
         IPlaylistService playlistService,
-        IPlaybackStateService playbackStateService)
+        IStatisticsService statisticsService)
     {
-        _musicLibraryService = musicLibraryService;
-        _statisticsService = statisticsService;
-        _playlistService = playlistService;
+        _playHistoryService = playHistoryService;
         _playbackStateService = playbackStateService;
+        _playlistService = playlistService;
+        _statisticsService = statisticsService;
 
-        LoadPlayHistory();
+        LoadHistory();
+        _playHistoryService.HistoryChanged += (_, _) => LoadHistory();
     }
 
-    private void LoadPlayHistory()
+    private void LoadHistory()
     {
-        var historySongs = _statisticsService.GetTopPlayedSongs(50);
-        PlayHistorySongs.Clear();
-        foreach (var song in historySongs)
+        HistoryEntries.Clear();
+        foreach (var entry in _playHistoryService.GetHistory())
         {
-            PlayHistorySongs.Add(song);
+            HistoryEntries.Add(entry);
         }
     }
 
     [RelayCommand]
     private void PlaySong(Song song)
     {
-        var playlist = _playlistService.CreatePlaylist("播放历史");
         _playlistService.ClearPlaylist();
-        _playlistService.AddSongToPlaylist(playlist, song);
-        _playlistService.SetCurrentPlaylist(playlist);
+        _playlistService.AddSongToPlaylist(_playlistService.CurrentPlaylist!, song);
+        _playlistService.SetCurrentPlaylist(_playlistService.CurrentPlaylist!);
         _playlistService.PlaySong(song);
+        _statisticsService.RecordPlayStart(song);
         _playbackStateService.Play(song);
+    }
+
+    [RelayCommand]
+    private void ClearHistory()
+    {
+        _playHistoryService.ClearHistory();
     }
 
     [RelayCommand]
