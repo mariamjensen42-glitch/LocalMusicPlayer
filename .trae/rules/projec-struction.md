@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 
+---
 # 项目规则指南
 
 ## 框架版本

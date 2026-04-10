@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 
 namespace LocalMusicPlayer.Services;
 
@@ -136,16 +137,18 @@ public class DialogService : IDialogService
         var mainWindow = GetMainWindow();
         if (mainWindow == null) return null;
 
-        var dialog = new SaveFileDialog
+        var fileTypeChoices = filters?.Select(f => new FilePickerFileType(f)
+        {
+            Patterns = f.Split(',').Select(e => $"*{e.Trim()}").ToList()
+        }).ToList();
+
+        var result = await mainWindow.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = title,
-            Filters = filters?.Select(f => new FileDialogFilter
-                          { Name = f, Extensions = f.Split(',').Select(e => e.Trim()).ToList() }).ToList() ??
-                      new List<FileDialogFilter>()
-        };
+            FileTypeChoices = fileTypeChoices
+        });
 
-        var result = await dialog.ShowAsync(mainWindow);
-        return result;
+        return result?.Path.LocalPath;
     }
 
     private Window? GetMainWindow()

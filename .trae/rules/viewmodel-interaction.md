@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 
+---
 # ViewModel 交互规范
 
 ## ViewModel 职责

@@ -67,6 +67,7 @@ internal class SystemTrayService : ISystemTrayService, IDisposable
 
     private void ExitApplication()
     {
+        if (_mainWindow == null) return;
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             _mainWindow.Closing -= OnMainWindowClosing;

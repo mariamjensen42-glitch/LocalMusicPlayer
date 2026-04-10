@@ -15,8 +15,8 @@
         <vm:PlayerPageViewModel />
     </Design.DataContext>
 
-    <Grid Background="{Binding GradientBackground}">
-        <Grid RowDefinitions="Auto,*">
+    <Grid Background="{Binding GradientBackground}" Margin="0,-48,0,0">
+        <Grid RowDefinitions="Auto,*" Margin="0,48,0,0">
             <!-- Header -->
             <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="32,24,32,0">
                 <!-- Left: Back Button + Title -->

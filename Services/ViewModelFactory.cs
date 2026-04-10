@@ -118,4 +118,18 @@ public class ViewModelFactory : IViewModelFactory
             _playlistService,
             _statisticsService);
     }
+
+    public LibraryBrowserViewModel CreateLibraryBrowserViewModel()
+    {
+        return new LibraryBrowserViewModel(
+            _musicLibraryService,
+            _musicPlayerService,
+            _playlistService,
+            _navigationService);
+    }
+
+    public StatisticsReportViewModel CreateStatisticsReportViewModel()
+    {
+        return new StatisticsReportViewModel(_statisticsService);
+    }
 }

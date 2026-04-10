@@ -232,7 +232,7 @@ public class UserPlaylistService : IUserPlaylistService
         if (playlistData == null || playlistData.Name == null)
             return;
 
-        var playlist = CreatePlaylist(playlistData.Name.ToString());
+        var playlist = CreatePlaylist(playlistData.Name?.ToString() ?? string.Empty);
         playlist.CreatedTime = playlistData.CreatedTime ?? DateTime.Now;
         playlist.ModifiedTime = playlistData.ModifiedTime ?? DateTime.Now;
 

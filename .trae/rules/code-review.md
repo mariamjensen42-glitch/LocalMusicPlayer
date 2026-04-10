@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 
+---
 # 代码审查清单
 
 ## 合并前必须检查

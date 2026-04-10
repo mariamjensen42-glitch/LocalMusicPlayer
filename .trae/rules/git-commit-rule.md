@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 
+---
 # Git 提交规范
 
 ## 提交信息格式

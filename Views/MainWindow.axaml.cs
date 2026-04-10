@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using LocalMusicPlayer.ViewModels;
 using LocalMusicPlayer.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +32,7 @@ public partial class MainWindow : Window
         {
             if (DataContext is ViewModels.MainWindowViewModel vm)
             {
-                vm.SearchText = SearchTextBox.Text;
+                vm.SearchText = SearchTextBox.Text ?? string.Empty;
             }
         };
 
@@ -209,6 +210,10 @@ public partial class MainWindow : Window
             ? Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome
             : Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
         ExtendClientAreaToDecorationsHint = true;
+
+        TitleBar.Background = isPlayerPage
+            ? new SolidColorBrush(Color.FromRgb(30, 30, 46))
+            : new SolidColorBrush(Color.FromRgb(10, 10, 10));
     }
 
     private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)

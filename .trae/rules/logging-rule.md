@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 
+---
 # 日志规范
 
 ## 日志级别

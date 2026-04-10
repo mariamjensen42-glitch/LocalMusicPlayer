@@ -9,12 +9,20 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
 {
     private readonly IPlaylistService _playlistService;
     private readonly IMusicPlayerService _playerService;
+    private readonly IStatisticsService _statisticsService;
     private readonly DispatcherTimer _positionTimer;
 
-    public PlaybackStateService(IPlaylistService playlistService, IMusicPlayerService playerService)
+    private Song? _currentTrackedSong;
+    private TimeSpan _playStartTime;
+    private TimeSpan _accumulatedPlayTime;
+    private bool _hasTrackedPlay;
+    private const double PlayThresholdPercentage = 0.5;
+
+    public PlaybackStateService(IPlaylistService playlistService, IMusicPlayerService playerService, IStatisticsService statisticsService)
     {
         _playlistService = playlistService;
         _playerService = playerService;
+        _statisticsService = statisticsService;
 
         _positionTimer = new DispatcherTimer
         {
@@ -32,6 +40,7 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
 
     private void OnPlaybackEnded(object? sender, EventArgs e)
     {
+        _ = TrackPlayIfThresholdMetAsync();
         PlaybackEnded?.Invoke(this, EventArgs.Empty);
 
         if (IsCrossfadeEnabled)
@@ -76,6 +85,14 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
 
     private void OnPlaybackStateChanged(object? sender, PlayState state)
     {
+        if (state == PlayState.Playing)
+        {
+            _playStartTime = _playerService.Position;
+        }
+        else if (state == PlayState.Paused || state == PlayState.Stopped)
+        {
+            UpdateAccumulatedPlayTime();
+        }
         PlaybackStateChanged?.Invoke(this, state);
     }
 
@@ -86,6 +103,8 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
 
     private void OnCurrentSongChanged(object? sender, Song? song)
     {
+        _ = TrackPlayIfThresholdMetAsync();
+        StartTrackingNewSong(song);
         CurrentSongChanged?.Invoke(this, song);
     }
 
@@ -228,8 +247,51 @@ public class PlaybackStateService : IPlaybackStateService, IDisposable
     public event EventHandler<Song?>? CurrentSongChanged;
     public event EventHandler<PlaybackMode>? PlaybackModeChanged;
 
+    private void StartTrackingNewSong(Song? song)
+    {
+        _currentTrackedSong = song;
+        _playStartTime = TimeSpan.Zero;
+        _accumulatedPlayTime = TimeSpan.Zero;
+        _hasTrackedPlay = false;
+    }
+
+    private void UpdateAccumulatedPlayTime()
+    {
+        if (_currentTrackedSong != null && _playerService.IsPlaying)
+        {
+            var currentPosition = _playerService.Position;
+            var delta = currentPosition - _playStartTime;
+            if (delta > TimeSpan.Zero)
+            {
+                _accumulatedPlayTime += delta;
+            }
+            _playStartTime = currentPosition;
+        }
+    }
+
+    private async Task TrackPlayIfThresholdMetAsync()
+    {
+        if (_currentTrackedSong == null || _hasTrackedPlay)
+            return;
+
+        UpdateAccumulatedPlayTime();
+
+        var duration = _currentTrackedSong.Duration;
+        if (duration.TotalSeconds <= 0)
+            return;
+
+        var playPercentage = _accumulatedPlayTime.TotalSeconds / duration.TotalSeconds;
+
+        if (playPercentage >= PlayThresholdPercentage)
+        {
+            _hasTrackedPlay = true;
+            await _statisticsService.TrackPlayAsync(_currentTrackedSong, _accumulatedPlayTime);
+        }
+    }
+
     public void Dispose()
     {
+        _ = TrackPlayIfThresholdMetAsync();
         _positionTimer.Stop();
 
         _playerService.PlaybackEnded -= OnPlaybackEnded;

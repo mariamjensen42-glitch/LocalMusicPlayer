@@ -50,6 +50,7 @@ public partial class App : Application
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IConfigurationService, ConfigurationService>();
         services.AddSingleton<IAlbumArtService, AlbumArtService>();
+        services.AddSingleton<ICoverManagerService, CoverManagerService>();
         services.AddSingleton<IFileScannerService, FileScannerService>();
         services.AddSingleton<IFileWatcherService, FileWatcherService>();
         services.AddSingleton<IMusicPlayerService, MusicPlayerService>();
@@ -67,8 +68,11 @@ public partial class App : Application
         services.AddSingleton<IPlayHistoryService, PlayHistoryService>();
         services.AddSingleton<IDedupService, DedupService>();
         services.AddSingleton<IViewModelFactory, ViewModelFactory>();
+        services.AddSingleton<IFileManagerService, FileManagerService>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<StatisticsViewModel>();
         services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<LibraryBrowserViewModel>();
+        services.AddTransient<StatisticsReportViewModel>();
     }
 }

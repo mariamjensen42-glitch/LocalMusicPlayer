@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 
+---
 # 依赖注入规范
 
 ## 服务注册

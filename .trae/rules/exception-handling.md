@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 
+---
 # 错误处理规范
 
 ## 异常处理原则

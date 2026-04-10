@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 
+---
 # 单元测试规范
 
 ## 测试项目结构

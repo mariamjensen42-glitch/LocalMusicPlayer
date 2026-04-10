@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Threading;
@@ -258,6 +258,32 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     }
 
     [RelayCommand]
+    private void NavigateToLibraryBrowser()
+    {
+        IsLibrarySelected = true;
+        IsCategorySelected = false;
+        IsStatisticsSelected = false;
+        IsSettingsSelected = false;
+        IsHistorySelected = false;
+        LibraryBrowserViewModel = _viewModelFactory.CreateLibraryBrowserViewModel();
+        CurrentPage = LibraryBrowserViewModel;
+        _navigationService.NavigateTo<LibraryBrowserViewModel>();
+    }
+
+    [RelayCommand]
+    private void NavigateToStatisticsReport()
+    {
+        IsLibrarySelected = false;
+        IsCategorySelected = false;
+        IsStatisticsSelected = true;
+        IsSettingsSelected = false;
+        IsHistorySelected = false;
+        StatisticsReportViewModel = _viewModelFactory.CreateStatisticsReportViewModel();
+        CurrentPage = StatisticsReportViewModel;
+        _navigationService.NavigateTo<StatisticsReportViewModel>();
+    }
+
+    [RelayCommand]
     public void NavigateToArtistDetail(ArtistGroup artistGroup)
     {
         ArtistDetailViewModel = new ArtistDetailViewModel(
@@ -367,6 +393,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     public StatisticsViewModel? StatisticsViewModel { get; private set; }
     public ArtistDetailViewModel? ArtistDetailViewModel { get; private set; }
     public AlbumDetailViewModel? AlbumDetailViewModel { get; private set; }
+    public LibraryBrowserViewModel? LibraryBrowserViewModel { get; private set; }
+    public StatisticsReportViewModel? StatisticsReportViewModel { get; private set; }
 
     private readonly DispatcherTimer _positionTimer;
 
@@ -441,6 +469,10 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
                 CurrentPage = AlbumDetailViewModel;
             else if (pageType == typeof(PlayHistoryViewModel) && PlayHistoryViewModel != null)
                 CurrentPage = PlayHistoryViewModel;
+            else if (pageType == typeof(LibraryBrowserViewModel) && LibraryBrowserViewModel != null)
+                CurrentPage = LibraryBrowserViewModel;
+            else if (pageType == typeof(StatisticsReportViewModel) && StatisticsReportViewModel != null)
+                CurrentPage = StatisticsReportViewModel;
         };
 
         _positionTimer = new DispatcherTimer

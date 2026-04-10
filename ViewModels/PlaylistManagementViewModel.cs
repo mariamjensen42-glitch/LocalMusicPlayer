@@ -186,6 +186,23 @@ public partial class PlaylistManagementViewModel : ViewModelBase
         dialog.Show();
     }
 
+    [RelayCommand]
+    private void BatchEditMetadata(System.Collections.IList selectedItems)
+    {
+        var songs = selectedItems.OfType<Song>().ToList();
+        if (songs.Count < 2)
+        {
+            _dialogService.ShowMessageDialogAsync("Batch Edit", "Please select at least 2 songs to batch edit.");
+            return;
+        }
+
+        var dialog = new BatchMetadataEditorView
+        {
+            DataContext = new BatchMetadataEditorViewModel(songs, _dialogService, () => { UpdatePlaylistSongs(_selectedPlaylist); })
+        };
+        dialog.Show();
+    }
+
     public PlaylistManagementViewModel(
         IUserPlaylistService playlistService,
         IMusicPlayerService musicPlayerService,

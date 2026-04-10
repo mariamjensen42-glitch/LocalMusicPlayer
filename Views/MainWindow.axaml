@@ -54,8 +54,9 @@
                             Spacing="8"
                             Margin="16,24,16,0">
                     <Button Theme="{StaticResource SidebarIconButtonTheme}"
-                            Command="{Binding NavigateToLibraryCommand}"
-                            HorizontalAlignment="Center">
+                            Command="{Binding NavigateToLibraryBrowserCommand}"
+                            HorizontalAlignment="Center"
+                            ToolTip.Tip="Music Library">
                         <TextBlock Text="&#xE8FA;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
@@ -65,7 +66,8 @@
                     </Button>
                     <Button Theme="{StaticResource SidebarIconButtonTheme}"
                             Command="{Binding NavigateToCategoryCommand}"
-                            HorizontalAlignment="Center">
+                            HorizontalAlignment="Center"
+                            ToolTip.Tip="Categories">
                         <TextBlock Text="&#xE8FD;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
@@ -74,8 +76,9 @@
                                    VerticalAlignment="Center" />
                     </Button>
                     <Button Theme="{StaticResource SidebarIconButtonTheme}"
-                            Command="{Binding NavigateToStatisticsCommand}"
-                            HorizontalAlignment="Center">
+                            Command="{Binding NavigateToStatisticsReportCommand}"
+                            HorizontalAlignment="Center"
+                            ToolTip.Tip="Statistics Report">
                         <TextBlock Text="&#xE8B7;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
@@ -85,7 +88,8 @@
                     </Button>
                     <Button Theme="{StaticResource SidebarIconButtonTheme}"
                             Command="{Binding NavigateToHistoryCommand}"
-                            HorizontalAlignment="Center">
+                            HorizontalAlignment="Center"
+                            ToolTip.Tip="Play History">
                         <TextBlock Text="&#xE81C;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
@@ -95,7 +99,8 @@
                     </Button>
                     <Button Theme="{StaticResource SidebarIconButtonTheme}"
                             Command="{Binding NavigateToSettingsCommand}"
-                            HorizontalAlignment="Center">
+                            HorizontalAlignment="Center"
+                            ToolTip.Tip="Settings">
                         <TextBlock Text="&#xE713;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
@@ -132,9 +137,8 @@
         <Grid Grid.Column="1" RowDefinitions="Auto,*">
             <Border Grid.Row="0"
                     x:Name="TitleBar"
-                    Background="Transparent"
-                    Height="48"
-                    BorderThickness="0">
+                    Background="{StaticResource BgPrimaryBrush}"
+                    Height="48">
                 <Grid ColumnDefinitions="*,Auto,Auto">
                     <Border Grid.Column="0" Background="Transparent" />
 

@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 
+---
 # 异步编程规范
 
 ## 基本规则

@@ -9,4 +9,6 @@ public interface IViewModelFactory
     ViewModels.LibraryCategoryViewModel CreateLibraryCategoryViewModel();
     ViewModels.QueueViewModel CreateQueueViewModel();
     ViewModels.PlayHistoryViewModel CreatePlayHistoryViewModel();
+    ViewModels.LibraryBrowserViewModel CreateLibraryBrowserViewModel();
+    ViewModels.StatisticsReportViewModel CreateStatisticsReportViewModel();
 }

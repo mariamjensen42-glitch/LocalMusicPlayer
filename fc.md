@@ -72,3 +72,62 @@
 - 启动时自动从配置加载历史记录，根据文件路径匹配音乐库中的歌曲
 - 播放历史变更时自动保存到配置文件
 - 最多保存 200 条记录
+
+### 11. 数据统计和报告
+- 新增 StatisticsReportViewModel
+  - 使用 CommunityToolkit.Mvvm 实现
+  - 总览统计属性（总歌曲数、总时长、总播放次数）
+  - 排行数据集合（TopArtists, TopAlbums, TopSongs）
+  - 流派分布数据集合
+  - 收听历史数据集合
+  - 刷新命令和加载命令
+  - 时间范围筛选（7天/30天/90天/1年）
+- 新增 StatisticsReportView.axaml
+  - 总览统计卡片布局（4个统计卡片）
+  - Top艺术家/专辑/歌曲列表
+  - 流派分布显示（带进度条）
+  - 收听历史列表
+  - 刷新按钮和时间范围筛选按钮
+  - 使用 x:DataType 编译绑定
+- 新增 StatisticsReportView.axaml.cs
+- PlaybackStateService 集成统计触发
+  - 注入 IStatisticsService
+  - 跟踪歌曲播放进度
+  - 播放超过50%时长时调用 TrackPlayAsync
+  - 在歌曲切换、播放结束、暂停时正确统计
+
+### 12. 音乐库管理增强功能
+- **多维分类浏览**
+  - 新增 LibraryBrowserViewModel / LibraryBrowserView
+  - 支持按歌曲/艺术家/专辑/流派/文件夹浏览
+  - 左侧 Sidebar 切换分类，右侧显示对应列表
+  - 专辑网格视图显示封面
+  - 文件夹树形结构浏览
+  - 扩展 IMusicLibraryService（GetArtists, GetAlbums, GetGenres 等）
+- **批量标签编辑**
+  - 新增 BatchMetadataEditorViewModel / BatchMetadataEditorView
+  - 支持多选歌曲（Ctrl/Shift+点击）
+  - 自动检测共同字段，混合值显示 "<Mixed Values>"
+  - 批量保存带进度条
+  - PlaylistManagementView 添加右键菜单"批量编辑"选项
+- **文件管理**
+  - 新增 IFileManagerService / FileManagerService
+  - 支持文件重命名（命名模板如 "{Artist} - {Title}.mp3"）
+  - 支持文件移动、复制、删除
+  - 批量操作带进度报告（IProgress<FileOperationProgress>）
+  - 后台线程执行，线程安全
+- **封面管理**
+  - 新增 ICoverManagerService / CoverManagerService
+  - 使用 TagLibSharp 读取/写入内嵌封面
+  - 本地缓存机制（%AppData%/LocalMusicPlayer/covercache/）
+  - 支持从本地文件设置封面
+  - 支持将封面嵌入音频文件
+- **数据统计增强**
+  - Song 模型扩展（PlayCount, LastPlayedAt, AddedAt）
+  - IStatisticsService 扩展（TrackPlay, GetReport, GetHistory, GetTopArtists 等）
+  - 数据持久化到 JSON 文件
+  - 收听报告包含总览、排行、趋势、流派分布
+- **UI 集成**
+  - 主窗口添加"音乐库"和"统计报告"导航入口
+  - 集成到 MainWindowViewModel 导航系统
+  - 播放统计自动触发（超过50%时长）

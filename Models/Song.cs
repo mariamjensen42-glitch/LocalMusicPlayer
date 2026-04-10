@@ -11,6 +11,8 @@ public partial class Song : ObservableObject
 
     [ObservableProperty] private string _album = string.Empty;
 
+    [ObservableProperty] private string _genre = string.Empty;
+
     [ObservableProperty] private string _filePath = string.Empty;
 
     [ObservableProperty] private TimeSpan _duration;
@@ -30,4 +32,6 @@ public partial class Song : ObservableObject
     [ObservableProperty] private float _replayGainTrackGain;
 
     [ObservableProperty] private long _fileSizeBytes;
+
+    [ObservableProperty] private DateTime _addedAt = DateTime.Now;
 }
