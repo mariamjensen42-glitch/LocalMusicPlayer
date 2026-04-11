@@ -498,7 +498,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private void OnCurrentSongChanged(object? sender, Song? song)
     {
         OnPropertyChanged(nameof(CurrentSong));
-        if (CurrentSong != null)
+        if (CurrentSong != null && _configService.CurrentSettings.ShowSongChangeNotification)
         {
             _systemTrayService.ShowNotification("NowPlaying", $"{CurrentSong.Title} - {CurrentSong.Artist}");
         }

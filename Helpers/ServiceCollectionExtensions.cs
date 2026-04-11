@@ -64,6 +64,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IConfigurationService, ConfigurationService>();
         services.AddSingleton<ISystemTrayService, SystemTrayService>();
+        services.AddSingleton<IAutoStartService, AutoStartService>();
         services.AddSingleton<AppDbContext>();
         services.AddSingleton<IDatabaseService, DatabaseService>();
     }
@@ -86,5 +87,18 @@ public static class ServiceCollectionExtensions
         services.AddTransient<StatisticsViewModel>();
         services.AddTransient<LibraryBrowserViewModel>();
         services.AddTransient<StatisticsReportViewModel>();
+        services.AddTransient<PlayerPageViewModel>();
+        services.AddTransient<PlaylistManagementViewModel>();
+        services.AddTransient<PlaylistListViewModel>();
+        services.AddTransient<LibraryCategoryViewModel>();
+        services.AddTransient<QueueViewModel>();
+        services.AddTransient<PlayHistoryViewModel>();
+        services.AddTransient<ArtistDetailViewModel>();
+        services.AddTransient<AlbumDetailViewModel>();
+        services.AddTransient<HomeViewModel>();
+        services.AddTransient<ArtistsPageViewModel>();
+        services.AddTransient<AlbumsPageViewModel>();
+        services.AddTransient<MetadataEditorViewModel>();
+        services.AddTransient<BatchMetadataEditorViewModel>();
     }
 }

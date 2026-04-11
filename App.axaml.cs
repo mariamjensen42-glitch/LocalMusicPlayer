@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using LocalMusicPlayer.Helpers;
+using LocalMusicPlayer.Models;
 using LocalMusicPlayer.Services;
 using LocalMusicPlayer.ViewModels;
 using LocalMusicPlayer.Views.Main;
@@ -30,8 +31,9 @@ public partial class App : Application
             var windowProvider = _services.GetRequiredService<IWindowProvider>();
             var dropHandlerService = _services.GetRequiredService<IDropHandlerService>();
             var keyboardShortcutService = _services.GetRequiredService<IKeyboardShortcutService>();
+            var configService = _services.GetRequiredService<IConfigurationService>();
 
-            desktop.MainWindow = new MainWindow(dropHandlerService, keyboardShortcutService);
+            desktop.MainWindow = new MainWindow(dropHandlerService, keyboardShortcutService, configService);
             windowProvider.CurrentWindow = desktop.MainWindow;
 
             desktop.MainWindow.Loaded += async (_, _) =>
@@ -44,11 +46,40 @@ public partial class App : Application
 
                 var systemTrayService = _services.GetRequiredService<ISystemTrayService>();
                 systemTrayService.Initialize();
+
+                if (configService.CurrentSettings.ResumeLastPlayback)
+                {
+                    var settings = configService.CurrentSettings;
+                    if (!string.IsNullOrEmpty(settings.LastSongFilePath) && settings.QueueFilePaths.Count > 0)
+                    {
+                        var musicLibraryService = _services.GetRequiredService<IMusicLibraryService>();
+                        var playlistService = _services.GetRequiredService<IPlaylistService>();
+                        var playbackStateService = _services.GetRequiredService<IPlaybackStateService>();
+
+                        var songs = settings.QueueFilePaths
+                            .Select(p => musicLibraryService.Songs.FirstOrDefault(s => s.FilePath == p))
+                            .Where(s => s != null)
+                            .ToList();
+
+                        if (songs.Count > 0)
+                        {
+                            var lastSong = songs.FirstOrDefault(s => s?.FilePath == settings.LastSongFilePath) ?? songs[0];
+                            var playlist = new Playlist();
+                            foreach (var song in songs)
+                            {
+                                if (song != null) playlist.Songs.Add(song);
+                            }
+                            playlistService.SetCurrentPlaylist(playlist);
+                            playlistService.PlaySong(lastSong);
+                            playbackStateService.Seek(TimeSpan.FromSeconds(settings.LastPlaybackPosition));
+                        }
+                    }
+                }
             };
 
             desktop.MainWindow.Closing += async (_, _) =>
             {
-                var configService = _services.GetRequiredService<IConfigurationService>();
+                var cfgService = _services.GetRequiredService<IConfigurationService>();
                 var playlistService = _services.GetRequiredService<IPlaylistService>();
                 var playbackStateService = _services.GetRequiredService<IPlaybackStateService>();
 
@@ -58,12 +89,12 @@ public partial class App : Application
                     .ToList() ?? new List<string>();
                 var lastPosition = playbackStateService.Position.TotalSeconds;
 
-                await configService.SavePlaybackStateAsync(
+                await cfgService.SavePlaybackStateAsync(
                     currentSong?.FilePath,
                     queueFilePaths,
                     lastPosition);
 
-                await configService.SaveSettingsAsync();
+                await cfgService.SaveSettingsAsync();
             };
         }
 

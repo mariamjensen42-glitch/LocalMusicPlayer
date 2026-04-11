@@ -1,17 +1,25 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using LocalMusicPlayer.Views.Main;
 
 namespace LocalMusicPlayer.Services;
 
 internal class SystemTrayService : ISystemTrayService, IDisposable
 {
+    private readonly IConfigurationService _configService;
     private MainWindow? _mainWindow;
     private TrayIcon? _trayIcon;
+
+    public SystemTrayService(IConfigurationService configService)
+    {
+        _configService = configService;
+    }
 
     public void Initialize()
     {
@@ -49,11 +57,10 @@ internal class SystemTrayService : ISystemTrayService, IDisposable
 
         _trayIcon.Clicked += (_, _) => ShowMainWindow();
 
-        _mainWindow.Closing += (_, e) =>
+        if (_configService.CurrentSettings.MinimizeToTray)
         {
-            e.Cancel = true;
-            _mainWindow.Hide();
-        };
+            _mainWindow.Closing += OnMainWindowClosing;
+        }
     }
 
     private void ShowMainWindow()
@@ -83,10 +90,21 @@ internal class SystemTrayService : ISystemTrayService, IDisposable
 
     public void UpdateTrayIcon(bool isPlaying)
     {
+        if (_trayIcon == null) return;
+
+        var text = isPlaying
+            ? "LocalMusicPlayer - 正在播放"
+            : "LocalMusicPlayer";
+
+        Dispatcher.UIThread.Post(() => _trayIcon.ToolTipText = text);
     }
 
     public void ShowNotification(string title, string message)
     {
+        if (_trayIcon == null) return;
+
+        var text = $"{title}: {message}";
+        Dispatcher.UIThread.Post(() => _trayIcon.ToolTipText = text);
     }
 
     public void Dispose()

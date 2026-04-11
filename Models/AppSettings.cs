@@ -64,4 +64,8 @@ public class AppSettings
     /// 上次播放位置（秒）
     /// </summary>
     public double LastPlaybackPosition { get; set; }
+    public bool MinimizeToTray { get; set; } = true;
+    public bool ShowSongChangeNotification { get; set; } = true;
+    public bool AutoStartOnBoot { get; set; }
+    public bool ResumeLastPlayback { get; set; } = true;
 }

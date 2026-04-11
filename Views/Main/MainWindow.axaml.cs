@@ -14,12 +14,14 @@ public partial class MainWindow : Window
 {
     private readonly IKeyboardShortcutService _keyboardShortcutService;
     private readonly IDropHandlerService _dropHandlerService;
+    private readonly IConfigurationService _configService;
     private MainWindowViewModel? _mainWindowViewModel;
 
-    public MainWindow(IDropHandlerService dropHandlerService, IKeyboardShortcutService keyboardShortcutService)
+    public MainWindow(IDropHandlerService dropHandlerService, IKeyboardShortcutService keyboardShortcutService, IConfigurationService configService)
     {
         _dropHandlerService = dropHandlerService;
         _keyboardShortcutService = keyboardShortcutService;
+        _configService = configService;
 
         InitializeComponent();
 
@@ -171,7 +173,14 @@ public partial class MainWindow : Window
 
     private void CloseButton_Click(object? sender, RoutedEventArgs e)
     {
-        Hide();
+        if (_configService.CurrentSettings.MinimizeToTray)
+        {
+            Hide();
+        }
+        else
+        {
+            Close();
+        }
     }
 
     public void PlayPause()

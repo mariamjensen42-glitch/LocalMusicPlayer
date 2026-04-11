@@ -55,6 +55,10 @@ public class ConfigurationService : IConfigurationService
         settings.LastSongFilePath = GetJsonValue<string?>(entities, nameof(AppSettings.LastSongFilePath), null);
         settings.QueueFilePaths = GetJsonValue(entities, nameof(AppSettings.QueueFilePaths), settings.QueueFilePaths);
         settings.LastPlaybackPosition = GetJsonValue(entities, nameof(AppSettings.LastPlaybackPosition), settings.LastPlaybackPosition);
+        settings.MinimizeToTray = GetJsonValue(entities, nameof(AppSettings.MinimizeToTray), settings.MinimizeToTray);
+        settings.ShowSongChangeNotification = GetJsonValue(entities, nameof(AppSettings.ShowSongChangeNotification), settings.ShowSongChangeNotification);
+        settings.AutoStartOnBoot = GetJsonValue(entities, nameof(AppSettings.AutoStartOnBoot), settings.AutoStartOnBoot);
+        settings.ResumeLastPlayback = GetJsonValue(entities, nameof(AppSettings.ResumeLastPlayback), settings.ResumeLastPlayback);
 
         _currentSettings = settings;
     }
@@ -85,6 +89,10 @@ public class ConfigurationService : IConfigurationService
         await SaveEntityAsync(db, nameof(AppSettings.LastSongFilePath), _currentSettings.LastSongFilePath);
         await SaveEntityAsync(db, nameof(AppSettings.QueueFilePaths), _currentSettings.QueueFilePaths);
         await SaveEntityAsync(db, nameof(AppSettings.LastPlaybackPosition), _currentSettings.LastPlaybackPosition);
+        await SaveEntityAsync(db, nameof(AppSettings.MinimizeToTray), _currentSettings.MinimizeToTray);
+        await SaveEntityAsync(db, nameof(AppSettings.ShowSongChangeNotification), _currentSettings.ShowSongChangeNotification);
+        await SaveEntityAsync(db, nameof(AppSettings.AutoStartOnBoot), _currentSettings.AutoStartOnBoot);
+        await SaveEntityAsync(db, nameof(AppSettings.ResumeLastPlayback), _currentSettings.ResumeLastPlayback);
         await db.SaveChangesAsync();
     }
 

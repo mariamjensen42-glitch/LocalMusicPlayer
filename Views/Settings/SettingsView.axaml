@@ -33,6 +33,108 @@
             </Grid>
 
             <Border Theme="{StaticResource CardTheme}">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Border Width="40"
+                                Height="40"
+                                CornerRadius="10"
+                                Background="{StaticResource AccentPurpleBrush}">
+                            <TextBlock Text="&#xE962;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       Foreground="White"
+                                       FontSize="20"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Spacing="4" VerticalAlignment="Center">
+                            <TextBlock Text="{StaticResource String_SystemTray}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock Text="{StaticResource String_SystemTraySettings}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextSecondaryBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Border Height="1" Background="{StaticResource BgElement2Brush}" />
+
+                    <StackPanel Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="{StaticResource String_MinimizeToTray}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <ToggleSwitch Grid.Column="1"
+                                          IsChecked="{Binding MinimizeToTray}" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="{StaticResource String_SongChangeNotification}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <ToggleSwitch Grid.Column="1"
+                                          IsChecked="{Binding ShowSongChangeNotification}" />
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Theme="{StaticResource CardTheme}">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Border Width="40"
+                                Height="40"
+                                CornerRadius="10"
+                                Background="{StaticResource AccentPurpleBrush}">
+                            <TextBlock Text="&#xE8B5;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       Foreground="White"
+                                       FontSize="20"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Spacing="4" VerticalAlignment="Center">
+                            <TextBlock Text="{StaticResource String_StartupBehavior}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock Text="{StaticResource String_StartupBehaviorSettings}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextSecondaryBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Border Height="1" Background="{StaticResource BgElement2Brush}" />
+
+                    <StackPanel Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="{StaticResource String_AutoStartOnBoot}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <ToggleSwitch Grid.Column="1"
+                                          IsChecked="{Binding AutoStartOnBoot}" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="{StaticResource String_ResumeLastPlayback}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <ToggleSwitch Grid.Column="1"
+                                          IsChecked="{Binding ResumeLastPlayback}" />
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Theme="{StaticResource CardTheme}">
                 <StackPanel Spacing="24">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <Border Width="40"

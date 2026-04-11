@@ -152,5 +152,17 @@
     <x:String x:Key="String_TotalListeningSessions">Total Listening Sessions</x:String>
     <x:String x:Key="String_AverageSessionLength">Average Session Length</x:String>
     <x:String x:Key="String_Playlists">Playlists</x:String>
+
+    <!-- 系统托盘设置 -->
+    <x:String x:Key="String_SystemTray">系统托盘</x:String>
+    <x:String x:Key="String_SystemTraySettings">最小化和通知设置</x:String>
+    <x:String x:Key="String_MinimizeToTray">关闭时最小化到系统托盘</x:String>
+    <x:String x:Key="String_SongChangeNotification">歌曲切换时显示通知</x:String>
+
+    <!-- 启动行为设置 -->
+    <x:String x:Key="String_StartupBehavior">启动行为</x:String>
+    <x:String x:Key="String_StartupBehaviorSettings">应用程序启动选项</x:String>
+    <x:String x:Key="String_AutoStartOnBoot">开机时自动启动</x:String>
+    <x:String x:Key="String_ResumeLastPlayback">启动时恢复上次播放</x:String>
 </ResourceDictionary>
 

@@ -263,3 +263,38 @@
   - 注册 CreatePlaylistListViewModel
   - 映射 PlaylistListViewModel → PlaylistListView
   - MainWindowViewModel 添加 PlaylistListViewModel 页面类型检查
+
+### 4. 设置页面扩展 — 系统托盘/通知 + 启动行为
+- **AppSettings 新增 4 个属性**
+  - `MinimizeToTray`（默认 true）：关闭时最小化到系统托盘
+  - `ShowSongChangeNotification`（默认 true）：歌曲切换时显示通知
+  - `AutoStartOnBoot`（默认 false）：开机时自动启动
+  - `ResumeLastPlayback`（默认 true）：启动时恢复上次播放
+- **ConfigurationService 扩展**：LoadSettingsAsync / SaveSettingsAsync 新增 4 个字段读写
+- **新增 IAutoStartService / AutoStartService**
+  - 通过 Windows 注册表 `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` 管理开机自启
+  - `SetAutoStartAsync(bool)` 写入/删除注册表项
+  - `IsAutoStartEnabled()` 检查注册表状态
+- **SystemTrayService 改造**
+  - 构造函数注入 IConfigurationService
+  - Initialize() 根据 MinimizeToTray 决定是否拦截 Closing 事件（Hide 而非 Close）
+  - UpdateTrayIcon(bool) 实现为更新 ToolTipText（显示播放状态）
+  - ShowNotification(string, string) 实现为更新 ToolTipText（Avalonia TrayIcon 无原生通知 API）
+- **MainWindow.axaml.cs 改造**
+  - 构造函数注入 IConfigurationService
+  - CloseButton_Click 根据 MinimizeToTray 决定 Hide() 或 Close()
+- **MainWindowViewModel 改造**
+  - OnCurrentSongChanged 根据 ShowSongChangeNotification 决定是否调用 ShowNotification
+- **App.axaml.cs 集成恢复播放逻辑**
+  - MainWindow Loaded 回调中检查 ResumeLastPlayback
+  - 启用时从 LastSongFilePath/QueueFilePaths/LastPlaybackPosition 恢复播放状态
+  - 通过 IMusicLibraryService 匹配文件路径、IPlaylistService 恢复队列和播放、IPlaybackStateService Seek 到上次位置
+- **DI 注册**：ServiceCollectionExtensions.AddSystemServices() 注册 IAutoStartService/AutoStartService
+- **SettingsViewModel 扩展**
+  - 注入 IAutoStartService
+  - 新增 4 个 ObservableProperty + 4 个 OnXxxChanged partial 方法自动保存设置
+  - AutoStartOnBoot 变更时调用 _autoStartService.SetAutoStartAsync 写入注册表
+- **Strings.axaml 新增 8 个字符串资源**：系统托盘相关 4 个 + 启动行为相关 4 个
+- **SettingsView.axaml 新增 2 个卡片**
+  - 系统托盘卡片：MinimizeToTray ToggleSwitch + ShowSongChangeNotification ToggleSwitch
+  - 启动行为卡片：AutoStartOnBoot ToggleSwitch + ResumeLastPlayback ToggleSwitch

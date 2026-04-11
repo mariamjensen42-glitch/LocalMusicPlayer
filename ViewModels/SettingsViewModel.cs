@@ -15,6 +15,7 @@ public partial class SettingsViewModel : ViewModelBase
     private readonly IMusicLibraryService _musicLibraryService;
     private readonly IConfigurationService _configService;
     private readonly IPlaybackStateService _playbackStateService;
+    private readonly IAutoStartService _autoStartService;
 
     public ObservableCollection<string> ScanFolders { get; } = new();
 
@@ -45,6 +46,14 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] private float _playbackRate = 1.0f;
 
     [ObservableProperty] private bool _replayGainEnabled = true;
+
+    [ObservableProperty] private bool _minimizeToTray = true;
+
+    [ObservableProperty] private bool _showSongChangeNotification = true;
+
+    [ObservableProperty] private bool _autoStartOnBoot;
+
+    [ObservableProperty] private bool _resumeLastPlayback = true;
 
     [RelayCommand]
     private async Task AddFolder()
@@ -108,13 +117,15 @@ public partial class SettingsViewModel : ViewModelBase
         IScanService scanService,
         IMusicLibraryService musicLibraryService,
         IConfigurationService configService,
-        IPlaybackStateService playbackStateService)
+        IPlaybackStateService playbackStateService,
+        IAutoStartService autoStartService)
     {
         _dialogService = dialogService;
         _scanService = scanService;
         _musicLibraryService = musicLibraryService;
         _configService = configService;
         _playbackStateService = playbackStateService;
+        _autoStartService = autoStartService;
 
         LoadSettings();
     }
@@ -135,6 +146,10 @@ public partial class SettingsViewModel : ViewModelBase
         CrossfadeDurationSeconds = settings.CrossfadeDurationMs / 1000;
         PlaybackRate = settings.PlaybackRate;
         ReplayGainEnabled = settings.ReplayGainEnabled;
+        MinimizeToTray = settings.MinimizeToTray;
+        ShowSongChangeNotification = settings.ShowSongChangeNotification;
+        AutoStartOnBoot = _autoStartService.IsAutoStartEnabled();
+        ResumeLastPlayback = settings.ResumeLastPlayback;
         SongCount = _musicLibraryService.Songs.Count;
         AlbumCount = _musicLibraryService.Songs.Select(s => s.Album).Distinct().Count();
 
@@ -180,6 +195,36 @@ public partial class SettingsViewModel : ViewModelBase
     {
         _playbackStateService.IsReplayGainEnabled = value;
         _configService.CurrentSettings.ReplayGainEnabled = value;
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    partial void OnMinimizeToTrayChanged(bool value)
+    {
+        _configService.CurrentSettings.MinimizeToTray = value;
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    partial void OnShowSongChangeNotificationChanged(bool value)
+    {
+        _configService.CurrentSettings.ShowSongChangeNotification = value;
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    partial void OnAutoStartOnBootChanged(bool value)
+    {
+        _ = HandleAutoStartOnBootChangedAsync(value);
+    }
+
+    private async Task HandleAutoStartOnBootChangedAsync(bool value)
+    {
+        await _autoStartService.SetAutoStartAsync(value);
+        _configService.CurrentSettings.AutoStartOnBoot = value;
+        await _configService.SaveSettingsAsync();
+    }
+
+    partial void OnResumeLastPlaybackChanged(bool value)
+    {
+        _configService.CurrentSettings.ResumeLastPlayback = value;
         _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 }
