@@ -1,0 +1,142 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="600"
+             x:Class="LocalMusicPlayer.Views.Playlist.QueueView"
+             x:DataType="vm:QueueViewModel">
+
+    <Design.DataContext>
+        <vm:QueueViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Border Grid.Row="0"
+                Background="{StaticResource BgSidebarBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="16,12">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="Queue"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           VerticalAlignment="Center" />
+
+                <TextBlock Grid.Column="1"
+                           Text="{Binding QueueCount}"
+                           FontSize="14"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           VerticalAlignment="Center"
+                           Margin="8,0,16,0" />
+
+                <Button Grid.Column="2"
+                        Command="{Binding ClosePanelCommand}"
+                        Theme="{StaticResource IconTextButtonTheme}"
+                        Foreground="{StaticResource TextMutedBrush}">
+                    <TextBlock Text="&#xE8BB;"
+                               FontFamily="Segoe Fluent Icons"
+                               FontSize="14"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Button>
+            </Grid>
+        </Border>
+
+        <ListBox Grid.Row="1"
+                 x:Name="QueueListBox"
+                 ItemsSource="{Binding QueueSongs}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ItemContainerTheme="{StaticResource QueueListItemTheme}"
+                 DoubleTapped="QueueListBox_DoubleTapped">
+            <ListBox.DataTemplates>
+                <DataTemplate x:DataType="models:Song">
+                    <Border Padding="12,8"
+                            BorderThickness="0">
+                        <Grid ColumnDefinitions="40,*,Auto,40">
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding TrackNumber}"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       FontFamily="Consolas"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" />
+
+                            <StackPanel Grid.Column="1"
+                                        Spacing="2"
+                                        VerticalAlignment="Center"
+                                        Margin="8,0,0,0">
+                                <TextBlock Text="{Binding Title}"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Artist}"
+                                           FontSize="11"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Column="2"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       FontFamily="Consolas"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,0,12,0">
+                                <TextBlock.Text>
+                                    <Binding Path="Duration" Converter="{StaticResource TimeSpanToStringConverter}" />
+                                </TextBlock.Text>
+                            </TextBlock>
+
+                            <Button Grid.Column="3"
+                                    Theme="{StaticResource IconTextButtonTheme}"
+                                    Command="{Binding $parent[ListBox].DataContext.RemoveSongByReferenceCommand}"
+                                    CommandParameter="{Binding}"
+                                    Padding="4"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="&#xE711;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Button>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.DataTemplates>
+        </ListBox>
+
+        <Border Grid.Row="2"
+                Background="{StaticResource BgSidebarBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,12">
+            <Button Command="{Binding ClearQueueCommand}"
+                    HorizontalAlignment="Stretch"
+                    Theme="{StaticResource CardButtonTheme}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="&#xE74D;"
+                               FontFamily="Segoe Fluent Icons"
+                               FontSize="14"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{DynamicResource String_Clear}"
+                               FontSize="13"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
@@ -14,6 +15,7 @@ public abstract partial class DetailViewModelBase : ViewModelBase
     private readonly IPlaylistService _playlistService;
     private readonly IStatisticsService _statisticsService;
     private readonly INavigationService _navigationService;
+    private readonly IDialogService _dialogService;
 
     public abstract string DetailName { get; }
     public abstract string? CoverArtPath { get; }
@@ -29,12 +31,14 @@ public abstract partial class DetailViewModelBase : ViewModelBase
         IMusicPlayerService musicPlayerService,
         IPlaylistService playlistService,
         IStatisticsService statisticsService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        IDialogService dialogService)
     {
         _musicPlayerService = musicPlayerService;
         _playlistService = playlistService;
         _statisticsService = statisticsService;
         _navigationService = navigationService;
+        _dialogService = dialogService;
     }
 
     protected void LoadSongs(System.Collections.Generic.IEnumerable<Song> songs)
@@ -102,6 +106,16 @@ public abstract partial class DetailViewModelBase : ViewModelBase
         {
             _statisticsService.RecordPlayStart(_playlistService.CurrentSong);
             _musicPlayerService.Play(_playlistService.CurrentSong);
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddToPlaylistAsync(string filePath)
+    {
+        var song = Songs.FirstOrDefault(s => s.FilePath == filePath);
+        if (song != null)
+        {
+            await _dialogService.ShowAddToPlaylistDialogAsync(song);
         }
     }
 }

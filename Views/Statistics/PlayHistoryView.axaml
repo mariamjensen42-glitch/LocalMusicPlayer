@@ -1,0 +1,122 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
+             x:Class="LocalMusicPlayer.Views.Statistics.PlayHistoryView"
+             x:DataType="vm:PlayHistoryViewModel">
+
+    <Grid Background="{StaticResource BgPrimaryBrush}">
+        <Grid RowDefinitions="Auto,*">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="32,24,32,0">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16">
+                    <Button Theme="{StaticResource CircleIconButtonTheme}"
+                            Command="{Binding NavigateBackCommand}">
+                        <TextBlock Text="&#xE74A;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="16"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Button>
+                    <TextBlock Text="{DynamicResource String_PlayHistory}"
+                               Theme="{StaticResource TitleTextStyle}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                    <Button Height="38"
+                            Command="{Binding ClearHistoryCommand}"
+                            CornerRadius="8"
+                            Padding="12,0"
+                            Cursor="Hand"
+                            Background="{StaticResource BgCardBrush}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="&#xE74D;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{DynamicResource String_Clear}"
+                                       FontSize="13"
+                                       FontWeight="Medium"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <ListBox Grid.Row="1"
+                     ItemsSource="{Binding HistoryEntries}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Margin="32,24,24,24"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ItemContainerTheme="{StaticResource SongListItemTheme}">
+                <ListBox.DataTemplates>
+                    <DataTemplate x:DataType="models:PlayHistoryEntry">
+                        <Border CornerRadius="8"
+                                Padding="16,12"
+                                BorderThickness="1"
+                                BorderBrush="{StaticResource BorderSubtleBrush}"
+                                Background="{StaticResource BgCardBrush}"
+                                Cursor="Hand">
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                <Border Width="44"
+                                        Height="44"
+                                        CornerRadius="8"
+                                        Background="{StaticResource BgElement2Brush}"
+                                        ClipToBounds="True">
+                                    <Image Source="{Binding Song.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                           Stretch="UniformToFill" />
+                                </Border>
+
+                                <StackPanel Grid.Column="1"
+                                            Spacing="2"
+                                            VerticalAlignment="Center"
+                                            Margin="16,0,0,0">
+                                    <TextBlock Text="{Binding Song.Title}"
+                                               FontSize="14"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding Song.Artist}"
+                                               FontSize="12"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding FormattedPlayedAt}"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           VerticalAlignment="Center"
+                                           Margin="16,0" />
+
+                                <Button Grid.Column="3"
+                                        Width="34" Height="34"
+                                        CornerRadius="9999"
+                                        Background="{StaticResource BgCardHoverBrush}"
+                                        BorderThickness="0"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding $parent[ListBox].((vm:PlayHistoryViewModel)DataContext).PlaySongCommand}"
+                                        CommandParameter="{Binding Song}">
+                                    <TextBlock Text="&#xE768;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="14"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.DataTemplates>
+            </ListBox>
+        </Grid>
+    </Grid>
+</UserControl>

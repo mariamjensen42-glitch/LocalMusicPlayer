@@ -36,12 +36,14 @@ public partial class LibraryBrowserViewModel : ViewModelBase
         IMusicLibraryService musicLibraryService,
         IMusicPlayerService musicPlayerService,
         IPlaylistService playlistService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        BrowserCategory initialCategory = BrowserCategory.Songs)
     {
         _musicLibraryService = musicLibraryService;
         _musicPlayerService = musicPlayerService;
         _playlistService = playlistService;
         _navigationService = navigationService;
+        _currentCategory = initialCategory;
 
         _ = LoadDataAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }

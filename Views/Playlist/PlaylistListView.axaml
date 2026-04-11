@@ -1,0 +1,93 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+             x:Class="LocalMusicPlayer.Views.Playlist.PlaylistListView"
+             x:DataType="vm:PlaylistListViewModel">
+
+    <Design.DataContext>
+        <vm:PlaylistListViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="24" Margin="32">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="{DynamicResource String_Playlists}"
+                           FontSize="24"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimaryBrush}" />
+                <Button Grid.Column="1"
+                        Theme="{StaticResource AccentButtonTheme}"
+                        Height="36"
+                        Command="{Binding CreatePlaylistCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="&#xE710;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="14"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="{DynamicResource String_NewPlaylist}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding UserPlaylists}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="models:UserPlaylist">
+                        <Border Width="180"
+                                CornerRadius="12"
+                                Background="{StaticResource BgCardBrush}"
+                                BorderBrush="{StaticResource BorderSubtleBrush}"
+                                BorderThickness="1"
+                                Cursor="Hand"
+                                Margin="8">
+                            <i:Interaction.Behaviors>
+                                <behaviors:TapCommandBehavior Command="{Binding $parent[ItemsControl].DataContext.SelectPlaylistCommand}" CommandParameter="{Binding}" />
+                            </i:Interaction.Behaviors>
+
+                            <StackPanel Spacing="12" Margin="16">
+                                <Border Width="148"
+                                        Height="148"
+                                        CornerRadius="8"
+                                        Background="{StaticResource BgElement2Brush}"
+                                        ClipToBounds="True">
+                                    <TextBlock Text="&#xE8FC;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="48"
+                                               Foreground="{StaticResource AccentPurpleBrush}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Border>
+
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="14"
+                                           FontWeight="Medium"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           TextTrimming="CharacterEllipsis" />
+
+                                <TextBlock Text="{Binding SongFilePaths.Count, StringFormat='{}{0} songs'}"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextMutedBrush}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

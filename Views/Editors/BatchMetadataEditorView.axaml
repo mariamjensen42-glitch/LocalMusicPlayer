@@ -1,0 +1,171 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:LocalMusicPlayer.ViewModels"
+        xmlns:models="using:LocalMusicPlayer.Models"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="520"
+        x:Class="LocalMusicPlayer.Views.Editors.BatchMetadataEditorView"
+        x:DataType="vm:BatchMetadataEditorViewModel"
+        Title="{DynamicResource String_BatchEditMetadata}"
+        Width="480"
+        Height="520"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Design.DataContext>
+        <vm:BatchMetadataEditorViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Border Grid.Row="0"
+                Background="{StaticResource BgCardBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="24,16">
+            <StackPanel>
+                <TextBlock Text="{DynamicResource String_BatchEditMetadata}"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimaryBrush}" />
+                <TextBlock Text="{Binding TotalCount, StringFormat='{}Editing {0} songs'}"
+                           FontSize="13"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" Margin="24,16">
+            <StackPanel Spacing="16">
+                <StackPanel>
+                    <TextBlock Text="Title"
+                               FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,6" />
+                    <TextBox Text="{Binding TitleField.Value, Mode=TwoWay}"
+                             Watermark="{Binding TitleField.Placeholder}"
+                             IsEnabled="{Binding !IsSaving}"
+                             TextChanged="OnFieldTextChanged" />
+                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
+                               FontSize="11"
+                               Foreground="{StaticResource AccentOrangeBrush}"
+                               IsVisible="{Binding TitleField.IsMixedValue}"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="Artist"
+                               FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,6" />
+                    <TextBox Text="{Binding ArtistField.Value, Mode=TwoWay}"
+                             Watermark="{Binding ArtistField.Placeholder}"
+                             IsEnabled="{Binding !IsSaving}"
+                             TextChanged="OnFieldTextChanged" />
+                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
+                               FontSize="11"
+                               Foreground="{StaticResource AccentOrangeBrush}"
+                               IsVisible="{Binding ArtistField.IsMixedValue}"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="Album"
+                               FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,6" />
+                    <TextBox Text="{Binding AlbumField.Value, Mode=TwoWay}"
+                             Watermark="{Binding AlbumField.Placeholder}"
+                             IsEnabled="{Binding !IsSaving}"
+                             TextChanged="OnFieldTextChanged" />
+                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
+                               FontSize="11"
+                               Foreground="{StaticResource AccentOrangeBrush}"
+                               IsVisible="{Binding AlbumField.IsMixedValue}"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="Genre"
+                               FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,6" />
+                    <TextBox Text="{Binding GenreField.Value, Mode=TwoWay}"
+                             Watermark="{Binding GenreField.Placeholder}"
+                             IsEnabled="{Binding !IsSaving}"
+                             TextChanged="OnFieldTextChanged" />
+                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
+                               FontSize="11"
+                               Foreground="{StaticResource AccentOrangeBrush}"
+                               IsVisible="{Binding GenreField.IsMixedValue}"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource String_Year}"
+                               FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,6" />
+                    <TextBox Text="{Binding YearField.Value, Mode=TwoWay}"
+                             Watermark="{Binding YearField.Placeholder}"
+                             IsEnabled="{Binding !IsSaving}"
+                             TextChanged="OnFieldTextChanged" />
+                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
+                               FontSize="11"
+                               Foreground="{StaticResource AccentOrangeBrush}"
+                               IsVisible="{Binding YearField.IsMixedValue}"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="2"
+                Background="{StaticResource BgCardBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="24,16">
+            <Grid RowDefinitions="Auto,Auto" IsVisible="{Binding IsSaving}">
+                <ProgressBar Grid.Row="0"
+                             Value="{Binding ProgressPercentage}"
+                             Maximum="100"
+                             Height="4"
+                             Margin="0,0,0,8" />
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding StatusMessage}"
+                               FontSize="13"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding ProcessedCount, StringFormat='{}{0}/'}{Binding TotalCount}"
+                               FontSize="13"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2"
+                Background="{StaticResource BgCardBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="24,16"
+                IsVisible="{Binding !IsSaving}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                <Button Theme="{StaticResource SecondaryButtonTheme}"
+                            Height="36"
+                            FontSize="13"
+                            Command="{Binding CancelCommand}"
+                            Click="OnCancelClick">
+                    <TextBlock Text="{DynamicResource String_Cancel}" VerticalAlignment="Center" />
+                </Button>
+                <Button Theme="{StaticResource PrimaryButtonTheme}"
+                        Height="36"
+                        FontSize="13"
+                        Command="{Binding SaveCommand}">
+                    <TextBlock Text="{DynamicResource String_SaveAll}" VerticalAlignment="Center" />
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

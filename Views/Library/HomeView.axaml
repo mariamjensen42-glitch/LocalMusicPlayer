@@ -1,0 +1,307 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+             xmlns:shared="using:LocalMusicPlayer.Views.Shared"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="LocalMusicPlayer.Views.Library.HomeView"
+             x:DataType="vm:HomeViewModel"
+             x:CompileBindings="True">
+
+    <UserControl.Resources>
+        <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
+        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+        <converters:SongIsPlayingConverter x:Key="SongIsPlayingConverter" />
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="24" Margin="32">
+            <!-- 顶部区域：复用 DetailHeader -->
+            <shared:DetailHeaderView Title="所有歌曲"
+                                     Subtitle="{Binding LibraryStats}"
+                                     CoverImageSource="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                     PlayAllCommand="{Binding PlayAllCommand}"
+                                     ShufflePlayCommand="{Binding ShufflePlayCommand}" />
+
+            <!-- 歌曲列表表格区域 -->
+            <Border Background="{StaticResource BgCardBrush}"
+                    CornerRadius="12"
+                    BorderBrush="{StaticResource BorderSubtleBrush}"
+                    BorderThickness="1"
+                    Margin="0,16,0,0">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- 表头 -->
+                    <Border Grid.Row="0"
+                            Height="40"
+                            Padding="12,0,12,0"
+                            Background="{StaticResource BgTableHeaderBrush}"
+                            CornerRadius="12,12,0,0">
+                        <Grid ColumnDefinitions="48,44,*,200,56,64"
+                              VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0"
+                                       Text="#"
+                                       FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Column="1"
+                                       Text=""
+                                       VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Column="2"
+                                       Text="标题 &amp; 艺术家"
+                                       FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis" />
+
+                            <TextBlock Grid.Column="3"
+                                       Text="专辑"
+                                       FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis" />
+
+                            <TextBlock Grid.Column="4"
+                                       Text=""
+                                       VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Column="5"
+                                       Text="时长"
+                                       FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,12,0" />
+                        </Grid>
+                    </Border>
+
+                    <!-- 歌曲列表 -->
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding Songs}"
+                             Background="Transparent"
+                             BorderThickness="0">
+                        <ListBox.ItemContainerTheme>
+                            <ControlTheme TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Margin" Value="0" />
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Style Selector="^:pointerover">
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                                <Style Selector="^:selected">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                                <Style Selector="^:pressed">
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                                <Setter Property="Template">
+                                    <ControlTemplate>
+                                        <ContentPresenter Content="{TemplateBinding Content}"
+                                                          ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                    </ControlTemplate>
+                                </Setter>
+                            </ControlTheme>
+                        </ListBox.ItemContainerTheme>
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:Song">
+                                <Border Theme="{StaticResource SongListItemRowTheme}"
+                                        Margin="0,2,0,4"
+                                        Cursor="Hand">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:TapCommandBehavior
+                                            Command="{Binding $parent[ListBox].DataContext.PlaySongCommand}"
+                                            CommandParameter="{Binding FilePath}" />
+                                    </i:Interaction.Behaviors>
+
+                                    <Border.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="{DynamicResource String_AddToPlaylist}"
+                                                      Command="{Binding $parent[ListBox].DataContext.AddToPlaylistCommand}"
+                                                      CommandParameter="{Binding FilePath}">
+                                                <MenuItem.Icon>
+                                                    <TextBlock Text="&#xE710;" FontFamily="Segoe Fluent Icons" FontSize="12" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </Border.ContextMenu>
+
+                                    <Grid ColumnDefinitions="48,44,*,200,56,64"
+                                          VerticalAlignment="Center">
+                                        <!-- 序号列 -->
+                                        <Grid Grid.Column="0"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center">
+                                            <!-- 默认显示序号，悬停时隐藏；悬停时显示播放图标 -->
+                                            <TextBlock Text="{Binding TrackNumber}"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource TextMutedBrush}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center">
+                                                <TextBlock.IsVisible>
+                                                    <MultiBinding Converter="{StaticResource SongIsPlayingConverter}"
+                                                                  ConverterParameter="invert">
+                                                        <Binding Path="FilePath" />
+                                                        <Binding
+                                                            Path="$parent[ListBox].DataContext.CurrentSong.FilePath"
+                                                            FallbackValue="" />
+                                                        <Binding Path="$parent[ListBox].DataContext.IsPlaying"
+                                                                 FallbackValue="False" />
+                                                    </MultiBinding>
+                                                </TextBlock.IsVisible>
+                                            </TextBlock>
+
+                                            <!-- 悬停或当前播放时显示播放图标 -->
+                                            <TextBlock Text="&#xE768;"
+                                                       FontFamily="Segoe Fluent Icons"
+                                                       FontSize="14"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center">
+                                                <TextBlock.IsVisible>
+                                                    <MultiBinding Converter="{StaticResource SongIsPlayingConverter}">
+                                                        <Binding Path="FilePath" />
+                                                        <Binding
+                                                            Path="$parent[ListBox].DataContext.CurrentSong.FilePath"
+                                                            FallbackValue="" />
+                                                        <Binding Path="$parent[ListBox].DataContext.IsPlaying"
+                                                                 FallbackValue="False" />
+                                                    </MultiBinding>
+                                                </TextBlock.IsVisible>
+                                            </TextBlock>
+                                        </Grid>
+
+                                        <!-- 封面缩略图列 -->
+                                        <Border Grid.Column="1"
+                                                Width="40"
+                                                Height="40"
+                                                CornerRadius="6"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Background="{StaticResource BgElement2Brush}"
+                                                ClipToBounds="True">
+                                            <Image
+                                                Source="{Binding AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                                Stretch="UniformToFill" />
+                                        </Border>
+
+                                        <!-- 标题 & 艺术家列 -->
+                                        <StackPanel Grid.Column="2"
+                                                    Margin="12,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Spacing="4">
+                                            <!-- 歌曲名 -->
+                                            <TextBlock Text="{Binding Title}"
+                                                       FontSize="14"
+                                                       FontWeight="Medium"
+                                                       TextTrimming="CharacterEllipsis">
+                                                <TextBlock.Foreground>
+                                                    <MultiBinding Converter="{StaticResource SongIsPlayingConverter}">
+                                                        <Binding Path="FilePath" />
+                                                        <Binding
+                                                            Path="$parent[ListBox].DataContext.CurrentSong.FilePath"
+                                                            FallbackValue="" />
+                                                        <Binding Path="$parent[ListBox].DataContext.IsPlaying"
+                                                                 FallbackValue="False" />
+                                                    </MultiBinding>
+                                                </TextBlock.Foreground>
+                                            </TextBlock>
+
+                                            <!-- 艺术家名 -->
+                                            <TextBlock Text="{Binding Artist}"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+
+                                        <!-- 专辑列 -->
+                                        <TextBlock Grid.Column="3"
+                                                   Text="{Binding Album}"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,16,0" />
+
+                                        <!-- 喜欢按钮列 -->
+                                        <Button Grid.Column="4"
+                                                Theme="{StaticResource TransparentIconButtonTheme}"
+                                                Command="{Binding $parent[ListBox].DataContext.ToggleFavoriteCommand}"
+                                                CommandParameter="{Binding FilePath}"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Padding="8">
+                                            <Grid>
+                                                <!-- 未喜欢：空心心 -->
+                                                <TextBlock Text="&#xE87C;"
+                                                           FontFamily="Segoe Fluent Icons"
+                                                           FontSize="16"
+                                                           Foreground="{StaticResource HeartInactiveBrush}"
+                                                           VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"
+                                                           IsVisible="{Binding IsFavorite, Converter={StaticResource BoolToColorConverter}, ConverterParameter=invert|invert}" />
+
+                                                <!-- 已喜欢：实心心 -->
+                                                <TextBlock Text="&#xE87D;"
+                                                           FontFamily="Segoe Fluent Icons"
+                                                           FontSize="16"
+                                                           Foreground="{StaticResource AccentPinkBrush}"
+                                                           VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"
+                                                           IsVisible="{Binding IsFavorite}" />
+                                            </Grid>
+                                        </Button>
+
+                                        <!-- 时长列 -->
+                                        <TextBlock Grid.Column="5"
+                                                   Text="{Binding Duration, Converter={StaticResource TimeSpanToStringConverter}}"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,12,0"
+                                                   FontFamily="{StaticResource FontFamilyMono}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <Grid Grid.Row="1"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          IsVisible="{Binding Songs.Count, Converter={StaticResource CountToBoolConverter}, ConverterParameter=invert}">
+                        <StackPanel Spacing="16" HorizontalAlignment="Center">
+                            <TextBlock Text="&#xE8D6;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="48"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="暂无歌曲"
+                                       FontSize="16"
+                                       FontWeight="Medium"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="请前往设置添加音乐文件夹"
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
+

@@ -1,7 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
@@ -11,8 +14,11 @@ namespace LocalMusicPlayer.ViewModels;
 
 public enum NavigationPage
 {
+    None,
     Home,
     Library,
+    Artists,
+    Albums,
     Favorites,
     Statistics,
     Settings,
@@ -32,29 +38,26 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private readonly IUserPlaylistService _userPlaylistService;
     private readonly ISystemTrayService _systemTrayService;
     private readonly IPlayHistoryService _playHistoryService;
+    private readonly IDialogService _dialogService;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsPlayerPageVisible))]
-    [NotifyPropertyChangedFor(nameof(SidebarWidth))]
-    private ViewModelBase _currentPage = null!;
+    [ObservableProperty] private ViewModelBase _currentPage = null!;
 
-    public bool IsPlayerPageVisible => CurrentPage is PlayerPageViewModel;
-    public int SidebarWidth => IsPlayerPageVisible ? 0 : 72;
+    [ObservableProperty] private bool _isPlayerOverlayOpen;
+
+    public const int SidebarWidth = 220;
 
     [ObservableProperty] private NavigationPage _currentNavPage = NavigationPage.Home;
 
+    [ObservableProperty] private BrowserCategory _currentLibraryCategory = BrowserCategory.Artists;
+
     public IMusicLibraryService Library => _musicLibraryService;
 
-    [ObservableProperty] private string _libraryStats = "0 songs · 0 albums · 0h 0m";
+    [ObservableProperty] private string _libraryStats = "本地: 0 首";
 
     private void UpdateLibraryStats()
     {
         var songCount = Library.Songs.Count;
-        var albumCount = Library.Songs.Select(s => s.Album).Distinct().Count();
-        var totalDuration = Library.Songs.Aggregate(TimeSpan.Zero, (acc, s) => acc + s.Duration);
-        var hours = (int)totalDuration.TotalHours;
-        var minutes = totalDuration.Minutes;
-        LibraryStats = $"{songCount} songs · {albumCount} albums · {hours}h {minutes}m";
+        LibraryStats = $"本地: {songCount} 首";
     }
 
     [ObservableProperty] private Playlist? _currentPlaylist;
@@ -193,15 +196,20 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private void NavigateToLibrary()
     {
         CurrentNavPage = NavigationPage.Home;
-        CurrentPage = this;
-        _navigationService.NavigateTo<MainWindowViewModel>();
+        CurrentPage = HomeViewModel;
+        _navigationService.NavigateTo<HomeViewModel>();
     }
 
     [RelayCommand]
     private void NavigateToPlayer()
     {
-        CurrentPage = PlayerPageViewModel;
-        _navigationService.NavigateTo<PlayerPageViewModel>();
+        IsPlayerOverlayOpen = true;
+    }
+
+    [RelayCommand]
+    private void ClosePlayerOverlay()
+    {
+        IsPlayerOverlayOpen = false;
     }
 
     [RelayCommand]
@@ -216,9 +224,28 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     [RelayCommand]
     private void NavigateToPlaylist()
     {
+        PlaylistListViewModel = _viewModelFactory.CreatePlaylistListViewModel();
+        PlaylistListViewModel.OnPlaylistSelected = NavigateToPlaylistDetail;
+        CurrentPage = PlaylistListViewModel;
+        _navigationService.NavigateTo<PlaylistListViewModel>();
+    }
+
+    private void NavigateToPlaylistDetail(UserPlaylist playlist)
+    {
         PlaylistManagementViewModel = _viewModelFactory.CreatePlaylistManagementViewModel();
+        PlaylistManagementViewModel.SetSelectedPlaylist(playlist);
         CurrentPage = PlaylistManagementViewModel;
         _navigationService.NavigateTo<PlaylistManagementViewModel>();
+    }
+
+    [RelayCommand]
+    private async Task CreatePlaylistAsync()
+    {
+        var name = await _dialogService.ShowInputDialogAsync("New Playlist", "");
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            await _userPlaylistService.CreatePlaylistAsync(name);
+        }
     }
 
     [RelayCommand]
@@ -244,10 +271,31 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     }
 
     [RelayCommand]
-    private void NavigateToLibraryBrowser()
+    private void NavigateToArtistsPage()
+    {
+        CurrentNavPage = NavigationPage.Artists;
+        ArtistsPageViewModel = _viewModelFactory.CreateArtistsPageViewModel();
+        ArtistsPageViewModel.OnNavigateToDetail = NavigateToArtistDetail;
+        CurrentPage = ArtistsPageViewModel;
+        _navigationService.NavigateTo<ArtistsPageViewModel>();
+    }
+
+    [RelayCommand]
+    private void NavigateToAlbumsPage()
+    {
+        CurrentNavPage = NavigationPage.Albums;
+        AlbumsPageViewModel = _viewModelFactory.CreateAlbumsPageViewModel();
+        AlbumsPageViewModel.OnNavigateToDetail = NavigateToAlbumDetail;
+        CurrentPage = AlbumsPageViewModel;
+        _navigationService.NavigateTo<AlbumsPageViewModel>();
+    }
+
+    [RelayCommand]
+    private void NavigateToLibraryBrowser(BrowserCategory? category = null)
     {
         CurrentNavPage = NavigationPage.Library;
-        LibraryBrowserViewModel = _viewModelFactory.CreateLibraryBrowserViewModel();
+        CurrentLibraryCategory = category ?? BrowserCategory.Artists;
+        LibraryBrowserViewModel = _viewModelFactory.CreateLibraryBrowserViewModel(CurrentLibraryCategory);
         CurrentPage = LibraryBrowserViewModel;
         _navigationService.NavigateTo<LibraryBrowserViewModel>();
     }
@@ -264,6 +312,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     [RelayCommand]
     public void NavigateToArtistDetail(ArtistGroup artistGroup)
     {
+        CurrentNavPage = NavigationPage.None;
         ArtistDetailViewModel = _viewModelFactory.CreateArtistDetailViewModel(artistGroup);
         ArtistDetailViewModel.OnNavigateBack = () => CurrentPage = LibraryCategoryViewModel!;
         CurrentPage = ArtistDetailViewModel;
@@ -272,6 +321,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
 
     public void NavigateToAlbumDetail(AlbumGroup albumGroup)
     {
+        CurrentNavPage = NavigationPage.None;
         AlbumDetailViewModel = _viewModelFactory.CreateAlbumDetailViewModel(albumGroup);
         AlbumDetailViewModel.OnNavigateBack = () => CurrentPage = LibraryCategoryViewModel!;
         CurrentPage = AlbumDetailViewModel;
@@ -280,6 +330,23 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
 
     [RelayCommand]
     private void ToggleQueuePanel() => _navigationService.ToggleQueuePanel();
+
+    [RelayCommand]
+    private void GoBack() => NavigateToLibrary();
+
+    [RelayCommand]
+    private void ToggleFullScreen()
+    {
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+            {
+                MainWindow: var window
+            })
+        {
+            window.WindowState = window.WindowState == WindowState.FullScreen
+                ? WindowState.Normal
+                : WindowState.FullScreen;
+        }
+    }
 
     [RelayCommand]
     private void PlayAll()
@@ -359,12 +426,16 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     public QueueViewModel QueueViewModel { get; }
     public SettingsViewModel? SettingsViewModel { get; private set; }
     public PlaylistManagementViewModel? PlaylistManagementViewModel { get; private set; }
+    public PlaylistListViewModel? PlaylistListViewModel { get; private set; }
     public LibraryCategoryViewModel? LibraryCategoryViewModel { get; private set; }
     public StatisticsViewModel? StatisticsViewModel { get; private set; }
     public ArtistDetailViewModel? ArtistDetailViewModel { get; private set; }
     public AlbumDetailViewModel? AlbumDetailViewModel { get; private set; }
     public LibraryBrowserViewModel? LibraryBrowserViewModel { get; private set; }
     public StatisticsReportViewModel? StatisticsReportViewModel { get; private set; }
+    public HomeViewModel HomeViewModel { get; }
+    public ArtistsPageViewModel? ArtistsPageViewModel { get; private set; }
+    public AlbumsPageViewModel? AlbumsPageViewModel { get; private set; }
 
     public MainWindowViewModel(
         IPlaybackStateService playbackStateService,
@@ -378,7 +449,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         IUserPlaylistService userPlaylistService,
         IScanService scanService,
         ISystemTrayService systemTrayService,
-        IPlayHistoryService playHistoryService)
+        IPlayHistoryService playHistoryService,
+        IDialogService dialogService)
     {
         _playbackStateService = playbackStateService;
         _navigationService = navigationService;
@@ -391,14 +463,19 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         _userPlaylistService = userPlaylistService;
         _systemTrayService = systemTrayService;
         _playHistoryService = playHistoryService;
+        _dialogService = dialogService;
 
         CurrentPlaylist = _playlistService.CreatePlaylist("DefaultPlaylist");
         _playlistService.SetCurrentPlaylist(CurrentPlaylist);
 
         QueueViewModel = _viewModelFactory.CreateQueueViewModel();
         PlayerPageViewModel = _viewModelFactory.CreatePlayerPageViewModel();
-        CurrentPage = this;
-        _navigationService.NavigateTo<MainWindowViewModel>();
+        PlayerPageViewModel.OnClose = () => IsPlayerOverlayOpen = false;
+        PlayerPageViewModel.OnToggleFullScreen = () => ToggleFullScreenCommand.Execute(null);
+        HomeViewModel = _viewModelFactory.CreateHomeViewModel();
+        HomeViewModel.CurrentPlaylist = CurrentPlaylist;
+        CurrentPage = HomeViewModel;
+        _navigationService.NavigateTo<HomeViewModel>();
 
         _playbackStateService.PlaybackStateChanged += OnPlaybackStateChanged;
         _playbackStateService.CurrentSongChanged += OnCurrentSongChanged;
@@ -443,8 +520,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
 
     private void OnCurrentPageChanged(object? sender, Type? pageType)
     {
-        if (pageType == typeof(MainWindowViewModel))
-            CurrentPage = this;
+        if (pageType == typeof(HomeViewModel))
+            CurrentPage = HomeViewModel;
         else if (pageType == typeof(PlayerPageViewModel))
             CurrentPage = PlayerPageViewModel;
         else if (pageType == typeof(SettingsViewModel) && SettingsViewModel != null)
@@ -453,6 +530,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             CurrentPage = StatisticsViewModel;
         else if (pageType == typeof(PlaylistManagementViewModel) && PlaylistManagementViewModel != null)
             CurrentPage = PlaylistManagementViewModel;
+        else if (pageType == typeof(PlaylistListViewModel) && PlaylistListViewModel != null)
+            CurrentPage = PlaylistListViewModel;
         else if (pageType == typeof(LibraryCategoryViewModel) && LibraryCategoryViewModel != null)
             CurrentPage = LibraryCategoryViewModel;
         else if (pageType == typeof(ArtistDetailViewModel) && ArtistDetailViewModel != null)
@@ -463,11 +542,16 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             CurrentPage = PlayHistoryViewModel;
         else if (pageType == typeof(LibraryBrowserViewModel) && LibraryBrowserViewModel != null)
             CurrentPage = LibraryBrowserViewModel;
+        else if (pageType == typeof(ArtistsPageViewModel) && ArtistsPageViewModel != null)
+            CurrentPage = ArtistsPageViewModel;
+        else if (pageType == typeof(AlbumsPageViewModel) && AlbumsPageViewModel != null)
+            CurrentPage = AlbumsPageViewModel;
         else if (pageType == typeof(StatisticsReportViewModel) && StatisticsReportViewModel != null)
             CurrentPage = StatisticsReportViewModel;
     }
 
-    private void OnSongsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void OnSongsCollectionChanged(object? sender,
+        System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
         UpdateLibraryStats();
         FilterSongs();

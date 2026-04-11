@@ -47,14 +47,18 @@ public partial class PlaylistManagementViewModel : ViewModelBase
         SelectedPlaylist = playlist;
     }
 
+    public void SetSelectedPlaylist(UserPlaylist playlist)
+    {
+        SelectPlaylist(playlist);
+    }
+
     [RelayCommand]
     private async Task CreatePlaylistAsync()
     {
-        if (!string.IsNullOrWhiteSpace(NewPlaylistName))
+        var name = await _dialogService.ShowInputDialogAsync("New Playlist", "");
+        if (!string.IsNullOrWhiteSpace(name))
         {
-            await _playlistService.CreatePlaylistAsync(NewPlaylistName);
-            NewPlaylistName = string.Empty;
-            IsCreatingPlaylist = false;
+            await _playlistService.CreatePlaylistAsync(name);
         }
     }
 
@@ -176,6 +180,16 @@ public partial class PlaylistManagementViewModel : ViewModelBase
         await _dialogService.ShowBatchMetadataEditorDialogAsync(songs, () => { UpdatePlaylistSongs(SelectedPlaylist); });
     }
 
+    [RelayCommand]
+    private async Task AddToPlaylistAsync(string filePath)
+    {
+        var song = PlaylistSongs.FirstOrDefault(s => s.FilePath == filePath);
+        if (song != null)
+        {
+            await _dialogService.ShowAddToPlaylistDialogAsync(song);
+        }
+    }
+
     public PlaylistManagementViewModel(
         IUserPlaylistService playlistService,
         IMusicPlayerService musicPlayerService,
@@ -199,6 +213,12 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     private void OnPlaylistsChanged(object? sender, EventArgs e)
     {
         OnPropertyChanged(nameof(UserPlaylists));
+        if (SelectedPlaylist != null)
+        {
+            var updated = _playlistService.UserPlaylists.FirstOrDefault(p => p.Id == SelectedPlaylist.Id);
+            if (updated != null)
+                UpdatePlaylistSongs(updated);
+        }
     }
 
     protected override void DisposeCore()

@@ -1,6 +1,5 @@
 ---
-alwaysApply: false
-description: 
+alwaysApply: true
 ---
 # 项目规则指南
 

@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LocalMusicPlayer.ViewModels;
 
-public abstract partial class ViewModelBase : ObservableObject, IDisposable
+public abstract class ViewModelBase : ObservableObject, IDisposable
 {
     private readonly List<IDisposable> _disposables = new();
     private bool _disposed;

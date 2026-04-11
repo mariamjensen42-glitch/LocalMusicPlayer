@@ -1,6 +1,5 @@
 ---
-alwaysApply: false
-description: 
+alwaysApply: true
 ---
 # 异步编程规范
 

@@ -99,9 +99,9 @@
     <x:Double x:Key="IconButtonSizeSmall">34</x:Double>
     <x:Double x:Key="IconButtonSizeTiny">24</x:Double>
 
-    <CornerRadius x:Key="DefaultCornerRadius">20</CornerRadius>
-    <CornerRadius x:Key="CardCornerRadius">10</CornerRadius>
-    <CornerRadius x:Key="SmallCornerRadius">8</CornerRadius>
+    <CornerRadius x:Key="DefaultCornerRadius">12</CornerRadius>
+    <CornerRadius x:Key="CardCornerRadius">8</CornerRadius>
+    <CornerRadius x:Key="SmallCornerRadius">6</CornerRadius>
     <CornerRadius x:Key="TinyCornerRadius">4</CornerRadius>
 
     <x:Double x:Key="FontSizeSmall">11</x:Double>
@@ -573,6 +573,193 @@
             </ControlTemplate>
         </Setter>
     </ControlTheme>
+
+    <!-- ==================== 首页UI重构 - 新增颜色 ==================== -->
+
+    <!-- 导航项状态颜色 -->
+    <Color x:Key="NavHover">#FF1A1A1A</Color>
+    <Color x:Key="NavSelected">#20A855F7</Color>
+
+    <!-- 播放控制栏颜色 -->
+    <Color x:Key="PlayButtonGradientStart">#FFA855F7</Color>
+    <Color x:Key="PlayButtonGradientEnd">#FFEC4899</Color>
+
+    <!-- 专辑封面卡片阴影 -->
+    <Color x:Key="AlbumCardShadow">#40000000</Color>
+    <Color x:Key="AlbumCardShadowBlur">#26000000</Color>
+
+    <!-- 新增画刷 -->
+    <SolidColorBrush x:Key="NavHoverBrush" Color="{StaticResource NavHover}" />
+    <SolidColorBrush x:Key="NavSelectedBrush" Color="{StaticResource NavSelected}" />
+    <SolidColorBrush x:Key="AlbumCardShadowBrush" Color="{StaticResource AlbumCardShadow}" />
+
+    <LinearGradientBrush x:Key="PlayButtonLargeGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Offset="0" Color="#FFA855F7" />
+        <GradientStop Offset="1" Color="#FFEC4899" />
+    </LinearGradientBrush>
+
+    <!-- ==================== 首页UI重构 - 新增样式 ==================== -->
+
+    <!-- 侧边栏导航项样式 -->
+    <ControlTheme x:Key="SidebarNavItemTheme" TargetType="ToggleButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="12,10" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeNormal}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="10"
+                                VerticalAlignment="Center">
+                        <ContentPresenter Content="{TemplateBinding (Button.Tag)}"
+                                          VerticalAlignment="Center" />
+                        <TextBlock Text="{TemplateBinding Content}"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   FontSize="{TemplateBinding FontSize}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource NavHoverBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="^:checked /template/ Border">
+            <Setter Property="Background" Value="{StaticResource NavSelectedBrush}" />
+        </Style>
+        <Style Selector="^:checked">
+            <Setter Property="Foreground" Value="{StaticResource AccentPurpleBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- 歌曲列表行容器样式 -->
+    <ControlTheme x:Key="SongListItemRowTheme" TargetType="Border">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="MinHeight" Value="56" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- 当前播放行特殊标识 -->
+    <ControlTheme x:Key="SongListActiveRowTheme" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource BgActiveRowBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="MinHeight" Value="56" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource ActiveRowBorderBrush}" />
+    </ControlTheme>
+
+    <!-- 播放大按钮样式 (48x48 渐变背景 圆形) -->
+    <ControlTheme x:Key="PlayButtonLargeTheme" TargetType="Button">
+        <Setter Property="Width" Value="48" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Background" Value="{StaticResource PlayButtonLargeGradient}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="24" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}">
+                    <Border.RenderTransform>
+                        <ScaleTransform ScaleX="1"
+                                        ScaleY="1" />
+                    </Border.RenderTransform>
+                    <Border.Transitions>
+                        <Transitions>
+                            <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
+                        </Transitions>
+                    </Border.Transitions>
+                    <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Content="{TemplateBinding Content}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Opacity" Value="0.9" />
+            <Style.Animations>
+                <Animation Duration="0:0:0.2"
+                           FillMode="Forward"
+                           IterationCount="1">
+                    <KeyFrame Cue="100%">
+                        <Setter Property="ScaleTransform.ScaleX"
+                                Value="1.05" />
+                        <Setter Property="ScaleTransform.ScaleY"
+                                Value="1.05" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </ControlTheme>
+
+    <!-- 控制按钮样式 (透明背景 32x32) -->
+    <ControlTheme x:Key="PlayerControlButtonTheme" TargetType="Button">
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Padding" Value="6" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <Border.Transitions>
+                        <Transitions>
+                            <BrushTransition Property="Background" Duration="0:0:0.15" />
+                            <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
+                        </Transitions>
+                    </Border.Transitions>
+                    <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Content="{TemplateBinding Content}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource NavHoverBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- 专辑封面卡片样式 (180x180 圆角12px 带阴影) -->
+    <ControlTheme x:Key="AlbumCoverCardTheme" TargetType="Border">
+        <Setter Property="Width" Value="180" />
+        <Setter Property="Height" Value="180" />
+        <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
+        <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BoxShadow" Value="0 4 16 0 #26000000" />
+        <Style Selector="^:pointerover">
+            <Setter Property="BorderBrush" Value="{StaticResource AccentPurpleBorderBrush}" />
+        </Style>
+    </ControlTheme>
+
 
 </ResourceDictionary>
 

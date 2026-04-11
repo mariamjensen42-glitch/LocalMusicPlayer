@@ -1,0 +1,339 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:player="using:LocalMusicPlayer.Views.Player"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="LocalMusicPlayer.Views.Player.PlayerView"
+             x:DataType="vm:MainWindowViewModel">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Grid>
+        <!-- Main Content Area -->
+        <Grid Grid.Row="0" RowDefinitions="Auto,*">
+            <!-- Header Area -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
+                <!-- Left: Title and Stats -->
+                <StackPanel Grid.Column="0" Spacing="4">
+                    <TextBlock Text="{StaticResource String_Library}"
+                               FontSize="32"
+                               FontWeight="ExtraBold"
+                               FontFamily="{StaticResource FontFamilyPrimary}"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock Text="{Binding LibraryStats}"
+                               FontSize="14"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+                </StackPanel>
+
+                <!-- Right: Play All Button and Batch Operations -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
+                    <!-- Batch Operations -->
+                    <StackPanel Orientation="Horizontal" Spacing="4"
+                                IsVisible="{Binding SelectedSongs.Count, Converter={StaticResource CountToBoolConverter}}">
+                        <Button Height="38"
+                                Command="{Binding PlaySelectedCommand}"
+                                CornerRadius="8"
+                                Padding="12,0"
+                                Cursor="Hand"
+                                Background="{StaticResource PurplePinkVerticalGradientBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="&#xE768;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="14"
+                                           Foreground="White"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="{DynamicResource String_PlaySelected}"
+                                           FontSize="13"
+                                           FontWeight="Medium"
+                                           Foreground="White"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Height="38"
+                                Command="{Binding AddSelectedToPlaylistCommand}"
+                                CornerRadius="8"
+                                Padding="12,0"
+                                Cursor="Hand"
+                                Background="{StaticResource BgCardBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="&#xE710;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="添加到播放列表"
+                                           FontSize="13"
+                                           FontWeight="Medium"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Height="38"
+                                Command="{Binding RemoveSelectedFromLibraryCommand}"
+                                CornerRadius="8"
+                                Padding="12,0"
+                                Cursor="Hand"
+                                Background="{StaticResource BgCardBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="&#xE74D;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="移除"
+                                           FontSize="13"
+                                           FontWeight="Medium"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Play All Button -->
+                    <Button Height="38"
+                            Command="{Binding PlayAllCommand}"
+                            CornerRadius="8"
+                            Padding="12,0"
+                            Cursor="Hand"
+                            Background="{StaticResource PurplePinkVerticalGradientBrush}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="&#xE768;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="White"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{StaticResource String_PlayAll}"
+                                       FontSize="13"
+                                       FontWeight="Medium"
+                                       Foreground="White"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Song List Table Area -->
+            <Grid Grid.Row="1" Margin="32,24,24,24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Table Header -->
+                <Border Grid.Row="0"
+                        Background="{StaticResource BgTableHeaderBrush}"
+                        CornerRadius="8"
+                        Padding="16,12"
+                        BorderBrush="{StaticResource BorderSubtleBrush}"
+                        BorderThickness="1"
+                        Margin="0,0,0,6">
+                    <Grid ColumnDefinitions="24,30,*,180,70,60">
+                        <CheckBox Grid.Column="0"
+                                  IsChecked="{Binding IsSelectAll}"
+                                  VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{StaticResource String_Number}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{StaticResource String_Title}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="3"
+                                   Text="{StaticResource String_Album}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="4"
+                                   Text="{StaticResource String_Duration}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                        <TextBlock Grid.Column="5"
+                                   Text="{StaticResource String_Plays}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}" />
+                    </Grid>
+                </Border>
+
+                <!-- Song List -->
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Library.FilteredSongs}"
+                         SelectedItem="{Binding CurrentSong}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ItemContainerTheme="{StaticResource SongListItemTheme}">
+                    <ListBox.DataTemplates>
+                        <DataTemplate x:DataType="models:Song">
+                            <Border x:Name="SongRow"
+                                    CornerRadius="8"
+                                    Padding="16,12"
+                                    BorderThickness="1">
+                                <Border.Background>
+                                    <MultiBinding Converter="{StaticResource SongIsPlayingConverter}">
+                                        <Binding Path="." />
+                                        <Binding
+                                            Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).CurrentSong" />
+                                    </MultiBinding>
+                                </Border.Background>
+                                <Border.BorderBrush>
+                                    <MultiBinding Converter="{StaticResource SongIsPlayingConverter}"
+                                                  ConverterParameter="Border">
+                                        <Binding Path="." />
+                                        <Binding
+                                            Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).CurrentSong" />
+                                    </MultiBinding>
+                                </Border.BorderBrush>
+                                <Grid ColumnDefinitions="24,30,*,180,70,60,Auto,Auto">
+                                    <!-- Selection Checkbox -->
+                                    <CheckBox Grid.Column="0"
+                                              Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).ToggleSongSelectionCommand}"
+                                              CommandParameter="{Binding}"
+                                              VerticalAlignment="Center" />
+                                    <!-- Row Number -->
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding TrackNumber}"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               FontFamily="Consolas"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Title + Artist -->
+                                    <StackPanel Grid.Column="2"
+                                                Spacing="2"
+                                                VerticalAlignment="Center"
+                                                Margin="0,0,16,0">
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Artist}"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <!-- Album -->
+                                    <TextBlock Grid.Column="3"
+                                               Text="{Binding Album}"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Duration -->
+                                    <TextBlock Grid.Column="4"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               FontFamily="Consolas"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right">
+                                        <TextBlock.Text>
+                                            <Binding Path="Duration"
+                                                     Converter="{StaticResource TimeSpanToStringConverter}" />
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- Plays -->
+                                    <TextBlock Grid.Column="5"
+                                               FontSize="13"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               FontFamily="Consolas"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right">
+                                        <TextBlock.Text>
+                                            <Binding Path="PlayCount" Converter="{StaticResource PlayCountConverter}" />
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- Play/Pause Button Panel -->
+                                    <Panel Grid.Column="6" Margin="12,0,0,0">
+                                        <!-- Play Button (visible when NOT playing this song) -->
+                                        <Button Width="34" Height="34" CornerRadius="9999"
+                                                Background="{StaticResource BgCardHoverBrush}"
+                                                BorderBrush="{StaticResource SongRowBorderBrush}" BorderThickness="1"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).PlaySongCommand}"
+                                                CommandParameter="{Binding FilePath}">
+                                            <Button.IsVisible>
+                                                <MultiBinding Converter="{StaticResource SongIsPlayingConverter}"
+                                                              ConverterParameter="invert">
+                                                    <Binding Path="FilePath" />
+                                                    <Binding
+                                                        Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).CurrentSong.FilePath" />
+                                                    <Binding
+                                                        Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).IsPlaying" />
+                                                </MultiBinding>
+                                            </Button.IsVisible>
+                                            <TextBlock Text="&#xE768;" FontFamily="Segoe Fluent Icons" FontSize="14"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                        <!-- Pause Button (visible when playing this song) -->
+                                        <Button Width="34" Height="34" CornerRadius="9999"
+                                                Background="{StaticResource AccentPurpleBrush}"
+                                                BorderThickness="0"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).PauseCommand}">
+                                            <Button.IsVisible>
+                                                <MultiBinding Converter="{StaticResource SongIsPlayingConverter}">
+                                                    <Binding Path="FilePath" />
+                                                    <Binding
+                                                        Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).CurrentSong.FilePath" />
+                                                    <Binding
+                                                        Path="$parent[ListBox].((vm:MainWindowViewModel)DataContext).IsPlaying" />
+                                                </MultiBinding>
+                                            </Button.IsVisible>
+                                            <TextBlock Text="&#xE769;" FontFamily="Segoe Fluent Icons" FontSize="14"
+                                                       Foreground="White"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                    </Panel>
+
+                                    <!-- Heart Icon -->
+                                    <Button Grid.Column="7"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="0"
+                                            Margin="12,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Cursor="Hand"
+                                            Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).ToggleFavoriteCommand}"
+                                            CommandParameter="{Binding FilePath}">
+                                        <Panel>
+                                            <!-- Filled heart when favorite -->
+                                            <TextBlock Text="&#xEB52;"
+                                                       FontFamily="Segoe Fluent Icons"
+                                                       FontSize="16"
+                                                       Foreground="{StaticResource AccentPinkBrush}"
+                                                       IsVisible="{Binding IsFavorite}" />
+                                            <!-- Empty heart when not favorite -->
+                                            <TextBlock Text="&#xEB51;"
+                                                       FontFamily="Segoe Fluent Icons"
+                                                       FontSize="16"
+                                                       Foreground="{StaticResource HeartInactiveBrush}"
+                                                       IsVisible="{Binding !IsFavorite}" />
+                                        </Panel>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.DataTemplates>
+                </ListBox>
+            </Grid>
+        </Grid>
+
+    </Grid>
+</UserControl>
+

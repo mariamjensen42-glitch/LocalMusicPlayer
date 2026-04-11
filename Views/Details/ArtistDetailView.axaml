@@ -1,0 +1,196 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+             xmlns:shared="using:LocalMusicPlayer.Views.Shared"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+             x:Class="LocalMusicPlayer.Views.Details.ArtistDetailView"
+             x:DataType="vm:ArtistDetailViewModel"
+             x:CompileBindings="True">
+
+    <UserControl.Resources>
+        <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
+        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+        <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="24" Margin="32">
+            <!-- 顶部区域：复用 DetailHeader -->
+            <shared:DetailHeaderView Title="{Binding ArtistName}"
+                                     Subtitle="{Binding Subtitle}"
+                                     CoverImageSource="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                     PlayAllCommand="{Binding PlayAllCommand}"
+                                     ShufflePlayCommand="{Binding ShufflePlayCommand}" />
+
+            <!-- 歌曲列表 -->
+            <Border Background="{StaticResource BgTableHeaderBrush}"
+                    CornerRadius="12"
+                    Padding="0,0,0,0">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- 表头 -->
+                    <Border Grid.Row="0"
+                            Background="{StaticResource BgTableHeaderBrush}"
+                            Padding="20,10"
+                            CornerRadius="12,12,0,0">
+                        <Grid ColumnDefinitions="40,*,150,80">
+                            <TextBlock Grid.Column="0"
+                                       Text="#"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextMutedBrush}" />
+                            <TextBlock Grid.Column="1"
+                                       Text="标题 / 艺术家"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextMutedBrush}" />
+                            <TextBlock Grid.Column="2"
+                                       Text="专辑"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextMutedBrush}" />
+                            <TextBlock Grid.Column="3"
+                                       Text="时长"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Right" />
+                        </Grid>
+                    </Border>
+
+                    <!-- 列表 -->
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding Songs}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerTheme>
+                            <ControlTheme TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Margin" Value="0" />
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Style Selector="^:pointerover">
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                                <Style Selector="^:selected">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                                <Style Selector="^:pressed">
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                                <Setter Property="Template">
+                                    <ControlTemplate>
+                                        <ContentPresenter Content="{TemplateBinding Content}"
+                                                          ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                    </ControlTemplate>
+                                </Setter>
+                            </ControlTheme>
+                        </ListBox.ItemContainerTheme>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:Song">
+                                <Border Theme="{StaticResource SongListItemRowTheme}"
+                                        Cursor="Hand">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:TapCommandBehavior
+                                            Command="{Binding $parent[ListBox].DataContext.PlaySongCommand}"
+                                            CommandParameter="{Binding FilePath}" />
+                                    </i:Interaction.Behaviors>
+                                    <Border.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="{DynamicResource String_AddToPlaylist}"
+                                                      Command="{Binding $parent[ListBox].DataContext.AddToPlaylistCommand}"
+                                                      CommandParameter="{Binding FilePath}">
+                                                <MenuItem.Icon>
+                                                    <TextBlock Text="&#xE710;" FontFamily="Segoe Fluent Icons" FontSize="12" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </Border.ContextMenu>
+                                    <Grid ColumnDefinitions="40,*,150,80">
+                                        <Border Grid.Column="0"
+                                                Width="40"
+                                                Height="40"
+                                                CornerRadius="8"
+                                                Background="{StaticResource BgElement2Brush}"
+                                                BorderBrush="{StaticResource BorderSubtleBrush}"
+                                                BorderThickness="1"
+                                                ClipToBounds="True"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+                                            <Image
+                                                Source="{Binding AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                                Stretch="UniformToFill" />
+                                        </Border>
+
+                                        <StackPanel Grid.Column="1"
+                                                    Spacing="4"
+                                                    Margin="12,0"
+                                                    VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Title}"
+                                                       FontSize="14"
+                                                       FontWeight="Medium"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Artist}"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource TextMutedBrush}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding Album}"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   VerticalAlignment="Center" />
+
+                                        <TextBlock Grid.Column="3"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   FontFamily="{StaticResource FontFamilyMono}"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Right">
+                                            <TextBlock.Text>
+                                                <Binding Path="Duration"
+                                                         Converter="{StaticResource TimeSpanToStringConverter}" />
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <Grid Grid.Row="1"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          IsVisible="{Binding Songs.Count, Converter={StaticResource CountToBoolConverter}, ConverterParameter=invert}">
+                        <StackPanel Spacing="16" HorizontalAlignment="Center">
+                            <TextBlock Text="&#xE77B;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="48"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="暂无歌曲"
+                                       FontSize="16"
+                                       FontWeight="Medium"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="该艺术家暂无歌曲"
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

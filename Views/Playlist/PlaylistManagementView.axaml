@@ -1,0 +1,229 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+             x:Class="LocalMusicPlayer.Views.Playlist.PlaylistManagementView"
+             x:DataType="vm:PlaylistManagementViewModel">
+
+    <Design.DataContext>
+        <vm:PlaylistManagementViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
+        <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0"
+                Background="{StaticResource BgCardBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="24,16">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
+                    <ComboBox Width="200"
+                              ItemsSource="{Binding UserPlaylists}"
+                              SelectedItem="{Binding SelectedPlaylist}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:UserPlaylist">
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock Text="{Binding PlaylistSongs.Count}"
+                               FontSize="14"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                        <Button Theme="{StaticResource PrimaryButtonTheme}"
+                                Height="32"
+                                FontSize="12"
+                                Command="{Binding PlayAllCommand}"
+                                IsEnabled="{Binding PlaylistSongs.Count, Converter={StaticResource CountToBoolConverter}}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="&#xE768;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="12"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="Play All" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Theme="{StaticResource SecondaryButtonTheme}"
+                                Height="32"
+                                FontSize="12"
+                                Command="{Binding RenamePlaylistCommand}"
+                                IsEnabled="{Binding CanRenamePlaylist}"
+                                Margin="0,0,8,0">
+                            <TextBlock Text="&#xE8AC;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       VerticalAlignment="Center" />
+                        </Button>
+                        <Button Theme="{StaticResource SecondaryButtonTheme}"
+                                Height="32"
+                                FontSize="12"
+                                Command="{Binding ExportPlaylistCommand}"
+                                IsEnabled="{Binding SelectedPlaylist}"
+                                Margin="0,0,8,0">
+                            <TextBlock Text="&#xE792;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       VerticalAlignment="Center" />
+                        </Button>
+                        <Button Theme="{StaticResource SecondaryButtonTheme}"
+                                Height="32"
+                                FontSize="12"
+                                Command="{Binding ImportPlaylistCommand}"
+                                Margin="0,0,8,0">
+                            <TextBlock Text="&#xE78F;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       VerticalAlignment="Center" />
+                        </Button>
+                        <Button Theme="{StaticResource SecondaryButtonTheme}"
+                                Height="32"
+                                FontSize="12"
+                                Command="{Binding DeletePlaylistCommand}"
+                                IsEnabled="{Binding CanDeletePlaylist}">
+                            <TextBlock Text="&#xE74D;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       VerticalAlignment="Center" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <ListBox Grid.Row="1"
+                     x:Name="SongsListBox"
+                     ItemsSource="{Binding PlaylistSongs}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     SelectionMode="Multiple"
+                     IsVisible="{Binding PlaylistSongs.Count, Converter={StaticResource CountToBoolConverter}}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="models:Song">
+                        <Border Background="Transparent"
+                                BorderBrush="{StaticResource BorderSubtleBrush}"
+                                BorderThickness="0,0,0,1"
+                                Padding="24,12">
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+                                <Grid.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Play"
+                                                  x:DataType="models:Song"
+                                                  Command="{Binding $parent[ListBox].DataContext.PlaySongCommand}"
+                                                  CommandParameter="{Binding FilePath}">
+                                            <MenuItem.Icon>
+                                                <TextBlock Text="&#xE768;" FontFamily="Segoe Fluent Icons"
+                                                           FontSize="12" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="{DynamicResource String_EditInfo}"
+                                                  x:DataType="models:Song"
+                                                  Command="{Binding $parent[ListBox].DataContext.EditSongMetadataCommand}"
+                                                  CommandParameter="{Binding}">
+                                            <MenuItem.Icon>
+                                                <TextBlock Text="&#xE70F;" FontFamily="Segoe Fluent Icons"
+                                                           FontSize="12" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="{DynamicResource String_BatchEdit}"
+                                                  x:DataType="models:Song"
+                                                  Command="{Binding $parent[ListBox].DataContext.BatchEditMetadataCommand}"
+                                                  CommandParameter="{Binding $parent[ListBox].SelectedItems}">
+                                            <MenuItem.Icon>
+                                                <TextBlock Text="&#xE8AC;" FontFamily="Segoe Fluent Icons"
+                                                           FontSize="12" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator />
+                                        <MenuItem Header="{DynamicResource String_AddToPlaylist}"
+                                                  x:DataType="models:Song"
+                                                  Command="{Binding $parent[ListBox].DataContext.AddToPlaylistCommand}"
+                                                  CommandParameter="{Binding FilePath}">
+                                            <MenuItem.Icon>
+                                                <TextBlock Text="&#xE710;" FontFamily="Segoe Fluent Icons"
+                                                           FontSize="12" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator />
+                                        <MenuItem Header="{DynamicResource String_RemoveFromPlaylist}"
+                                                  x:DataType="models:Song"
+                                                  Command="{Binding $parent[ListBox].DataContext.RemoveSongCommand}"
+                                                  CommandParameter="{Binding FilePath}">
+                                            <MenuItem.Icon>
+                                                <TextBlock Text="&#xE74D;" FontFamily="Segoe Fluent Icons"
+                                                           FontSize="12" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </Grid.ContextMenu>
+                                <Border Grid.Column="0"
+                                        Width="48"
+                                        Height="48"
+                                        CornerRadius="8"
+                                        Background="{StaticResource BgElement2Brush}">
+                                    <Image Source="{Binding AlbumArtPath}"
+                                           Stretch="UniformToFill" />
+                                </Border>
+
+                                <StackPanel Grid.Column="1" Margin="16,0" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Title}"
+                                               FontSize="14"
+                                               FontWeight="Medium"
+                                               Foreground="{StaticResource TextPrimaryBrush}" />
+                                    <TextBlock Text="{Binding Artist}"
+                                               FontSize="12"
+                                               Foreground="{StaticResource TextMutedBrush}" />
+                                </StackPanel>
+
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding Album}"
+                                           FontSize="13"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           VerticalAlignment="Center"
+                                           Width="150"
+                                           TextTrimming="CharacterEllipsis" />
+
+                                <TextBlock Grid.Column="3"
+                                           Text="{Binding Duration, Converter={StaticResource TimeSpanToStringConverter}}"
+                                           FontSize="13"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{StaticResource FontFamilyMono}"
+                                           Margin="16,0" />
+
+                                <Button Grid.Column="4"
+                                        Theme="{StaticResource CardButtonTheme}"
+                                        Width="32"
+                                        Height="32"
+                                        x:DataType="models:Song"
+                                        Command="{Binding $parent[ListBox].DataContext.PlaySongCommand}"
+                                        CommandParameter="{Binding FilePath}">
+                                    <TextBlock Text="&#xE768;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="12"
+                                               Foreground="{StaticResource AccentPurpleBrush}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <i:Interaction.Behaviors>
+                    <behaviors:DragDropSortBehavior />
+                </i:Interaction.Behaviors>
+            </ListBox>
+        </Grid>
+</UserControl>
+

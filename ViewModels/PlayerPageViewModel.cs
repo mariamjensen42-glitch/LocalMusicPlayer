@@ -17,8 +17,13 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     private readonly IMusicLibraryService _musicLibraryService;
     private readonly IAlbumArtService _albumArtService;
     private readonly IConfigurationService _configService;
+    private readonly IUserPlaylistService _userPlaylistService;
 
     public Action<int>? OnScrollToLyric { get; set; }
+
+    public Action? OnClose { get; set; }
+
+    public Action? OnToggleFullScreen { get; set; }
 
     [ObservableProperty] private ObservableCollection<LyricLine> _lyrics = new();
 
@@ -53,7 +58,10 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     public int Volume => _playbackStateService.Volume;
     public bool IsMuted => _playbackStateService.IsMuted;
     public bool IsShuffle => _playbackStateService.PlaybackMode == PlaybackMode.Shuffle;
-    public bool IsRepeat => _playbackStateService.PlaybackMode == PlaybackMode.Loop || _playbackStateService.PlaybackMode == PlaybackMode.SingleLoop;
+
+    public bool IsRepeat => _playbackStateService.PlaybackMode == PlaybackMode.Loop ||
+                            _playbackStateService.PlaybackMode == PlaybackMode.SingleLoop;
+
     public bool IsSingleLoop => _playbackStateService.PlaybackMode == PlaybackMode.SingleLoop;
 
     public PlayerPageViewModel(
@@ -62,7 +70,8 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
         ILyricsService lyricsService,
         IMusicLibraryService musicLibraryService,
         IAlbumArtService albumArtService,
-        IConfigurationService configService)
+        IConfigurationService configService,
+        IUserPlaylistService userPlaylistService)
     {
         _playbackStateService = playbackStateService;
         _navigationService = navigationService;
@@ -70,6 +79,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
         _musicLibraryService = musicLibraryService;
         _albumArtService = albumArtService;
         _configService = configService;
+        _userPlaylistService = userPlaylistService;
 
         LoadLyricSettings();
 
@@ -178,18 +188,27 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     }
 
     [RelayCommand]
-    private void ToggleFavorite()
+    private async Task ToggleFavoriteAsync()
     {
         if (CurrentSong != null)
         {
-            CurrentSong.IsFavorite = !CurrentSong.IsFavorite;
+            if (CurrentSong.IsFavorite)
+                await _userPlaylistService.RemoveFromFavoritesAsync(CurrentSong);
+            else
+                await _userPlaylistService.AddToFavoritesAsync(CurrentSong);
         }
     }
 
     [RelayCommand]
     private void NavigateBack()
     {
-        _navigationService.NavigateBack();
+        OnClose?.Invoke();
+    }
+
+    [RelayCommand]
+    private void ToggleFullScreen()
+    {
+        OnToggleFullScreen?.Invoke();
     }
 
     [RelayCommand]

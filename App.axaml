@@ -1,7 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="LocalMusicPlayer.App"
-             xmlns:local="using:LocalMusicPlayer"
+             xmlns:local="using:LocalMusicPlayer.ViewModels"
              xmlns:converters="using:LocalMusicPlayer.Converters"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
@@ -22,7 +22,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- 全局转换器 -->
-            <converters:TimeSpanToStringConverter x:Key="TimeSpanConverter" />
+            <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
             <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
             <converters:SongIsPlayingConverter x:Key="SongIsPlayingConverter" />
             <converters:AlbumArtConverter x:Key="AlbumArtConverter" />

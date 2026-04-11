@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <ApplicationManifest>Configs\app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
 
@@ -15,7 +15,6 @@
         <Folder Include="Helpers\"/>
         <Folder Include="Behaviors\"/>
         <AvaloniaResource Include="Assets\**"/>
-        <AvaloniaResource Include="Styles\**"/>
     </ItemGroup>
 
     <ItemGroup>

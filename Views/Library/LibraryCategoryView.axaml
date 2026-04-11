@@ -1,0 +1,285 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
+             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+             x:Class="LocalMusicPlayer.Views.Library.LibraryCategoryView"
+             x:DataType="vm:LibraryCategoryViewModel">
+
+    <Design.DataContext>
+        <vm:LibraryCategoryViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
+        <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
+        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0"
+                Background="{StaticResource BgCardBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="24,16">
+            <TextBlock Text="Favorites"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource TextPrimaryBrush}" />
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+            <ScrollViewer Grid.Column="0">
+                <StackPanel Margin="24,16">
+                    <ItemsControl ItemsSource="{Binding ArtistGroups}" IsVisible="{Binding ShowArtistGroups}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:ArtistGroup">
+                                <Border Background="{StaticResource BgCardBrush}"
+                                        CornerRadius="12"
+                                        Margin="0,0,16,16"
+                                        Width="160"
+                                        Cursor="Hand">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:TapCommandBehavior Command="{Binding $parent[ItemsControl].DataContext.SelectItemCommand}" CommandParameter="{Binding}" />
+                                    </i:Interaction.Behaviors>
+                                    <StackPanel Spacing="8" Margin="12">
+                                        <Border Width="120"
+                                                Height="120"
+                                                CornerRadius="60"
+                                                Background="{StaticResource BgElement2Brush}">
+                                            <Image
+                                                Source="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                                Stretch="UniformToFill" />
+                                        </Border>
+                                        <TextBlock Text="{Binding ArtistName}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding SongCount}"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding AlbumGroups}" IsVisible="{Binding ShowAlbumGroups}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:AlbumGroup">
+                                <Border Background="{StaticResource BgCardBrush}"
+                                        CornerRadius="12"
+                                        Margin="0,0,16,16"
+                                        Width="160"
+                                        Cursor="Hand">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:TapCommandBehavior Command="{Binding $parent[ItemsControl].DataContext.SelectItemCommand}" CommandParameter="{Binding}" />
+                                    </i:Interaction.Behaviors>
+                                    <StackPanel Spacing="8" Margin="12">
+                                        <Border Width="136"
+                                                Height="136"
+                                                CornerRadius="8"
+                                                Background="{StaticResource BgElement2Brush}">
+                                            <Image
+                                                Source="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                                Stretch="UniformToFill" />
+                                        </Border>
+                                        <TextBlock Text="{Binding AlbumName}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding ArtistName}"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding FolderGroups}" IsVisible="{Binding ShowFolderGroups}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:FolderGroup">
+                                <Border Background="{StaticResource BgCardBrush}"
+                                        CornerRadius="8"
+                                        BorderBrush="{StaticResource BorderSubtleBrush}"
+                                        BorderThickness="1"
+                                        Margin="0,0,0,8"
+                                        Padding="16"
+                                        Cursor="Hand">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:TapCommandBehavior Command="{Binding $parent[ItemsControl].DataContext.SelectItemCommand}" CommandParameter="{Binding}" />
+                                    </i:Interaction.Behaviors>
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="&#xE8B7;"
+                                                   FontFamily="Segoe Fluent Icons"
+                                                   FontSize="20"
+                                                   Foreground="{StaticResource AccentPurpleBrush}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,12,0" />
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding FolderName}"
+                                                       FontSize="14"
+                                                       FontWeight="Medium"
+                                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding FolderPath}"
+                                                       FontSize="11"
+                                                       Foreground="{StaticResource TextMutedBrush}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding SongCount}"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   VerticalAlignment="Center" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding FavoriteSongs}" IsVisible="{Binding ShowFavorites}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:Song">
+                                <Border Background="Transparent"
+                                        BorderBrush="{StaticResource BorderSubtleBrush}"
+                                        BorderThickness="0,0,0,1"
+                                        Padding="16,12">
+                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                        <Border Grid.Column="0"
+                                                Width="48"
+                                                Height="48"
+                                                CornerRadius="8"
+                                                Background="{StaticResource BgElement2Brush}">
+                                            <Image
+                                                Source="{Binding AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                                Stretch="UniformToFill" />
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Title}"
+                                                       FontSize="14"
+                                                       FontWeight="Medium"
+                                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding Artist}"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource TextMutedBrush}" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding Duration, Converter={StaticResource TimeSpanToStringConverter}}"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource FontFamilyMono}" />
+                                        <Button Grid.Column="3"
+                                                Theme="{StaticResource CardButtonTheme}"
+                                                Width="32"
+                                                Height="32"
+                                                Margin="8,0,0,0"
+                                                Command="{Binding $parent[ItemsControl].DataContext.PlaySongCommand}"
+                                                CommandParameter="{Binding FilePath}">
+                                            <TextBlock Text="&#xE768;"
+                                                       FontFamily="Segoe Fluent Icons"
+                                                       FontSize="12"
+                                                       Foreground="{StaticResource AccentPurpleBrush}" />
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border Grid.Column="1"
+                    Width="320"
+                    Background="{StaticResource BgSidebarBrush}"
+                    BorderBrush="{StaticResource BorderSubtleBrush}"
+                    BorderThickness="1,0,0,0"
+                    IsVisible="{Binding SelectedGroupSongs.Count, Converter={StaticResource CountToBoolConverter}}">
+                <Grid RowDefinitions="Auto,*">
+                    <Border Grid.Row="0"
+                            Background="{StaticResource BgCardBrush}"
+                            Padding="16,12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding SelectedGroupSongs.Count}"
+                                       FontSize="14"
+                                       FontWeight="Medium"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                            <Button Grid.Column="1"
+                                    Theme="{StaticResource PrimaryButtonTheme}"
+                                    Height="28"
+                                    FontSize="11"
+                                    Command="{Binding PlayAllSelectedCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="&#xE768;"
+                                               FontFamily="Segoe Fluent Icons"
+                                               FontSize="10" />
+                                    <TextBlock Text="Play All" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    <ScrollViewer Grid.Row="1">
+                        <ItemsControl ItemsSource="{Binding SelectedGroupSongs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:Song">
+                                    <Border Background="Transparent"
+                                            BorderBrush="{StaticResource BorderSubtleBrush}"
+                                            BorderThickness="0,0,0,1"
+                                            Padding="12,8">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Title}"
+                                                           FontSize="13"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Artist}"
+                                                           FontSize="11"
+                                                           Foreground="{StaticResource TextMutedBrush}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                            <Button Grid.Column="1"
+                                                    Theme="{StaticResource CardButtonTheme}"
+                                                    Width="28"
+                                                    Height="28"
+                                                    Command="{Binding $parent[ItemsControl].DataContext.PlaySongCommand}"
+                                                    CommandParameter="{Binding FilePath}">
+                                                <TextBlock Text="&#xE768;"
+                                                           FontFamily="Segoe Fluent Icons"
+                                                           FontSize="10"
+                                                           Foreground="{StaticResource AccentPurpleBrush}" />
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -10,14 +10,16 @@ public partial class ArtistDetailViewModel : DetailViewModelBase
     public override string? CoverArtPath { get; }
 
     public string ArtistName { get; }
+    public string Subtitle => $"本地: {SongCount} 首";
 
     public ArtistDetailViewModel(
         ArtistGroup artistGroup,
         IMusicPlayerService musicPlayerService,
         IPlaylistService playlistService,
         IStatisticsService statisticsService,
-        INavigationService navigationService)
-        : base(musicPlayerService, playlistService, statisticsService, navigationService)
+        INavigationService navigationService,
+        IDialogService dialogService)
+        : base(musicPlayerService, playlistService, statisticsService, navigationService, dialogService)
     {
         ArtistName = artistGroup.ArtistName;
         CoverArtPath = artistGroup.CoverArtPath;
