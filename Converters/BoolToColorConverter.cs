@@ -7,8 +7,12 @@ namespace LocalMusicPlayer.Converters;
 
 public class BoolToColorConverter : IValueConverter
 {
-    private static readonly SolidColorBrush AccentBrush = new SolidColorBrush(Color.Parse("#A855F7"));
-    private static readonly SolidColorBrush MutedBrush = new SolidColorBrush(Color.Parse("#808080"));
+    private const string AccentColor = "#A855F7";
+    private const string MutedColor = "#808080";
+
+    private static readonly SolidColorBrush AccentBrush = new(Color.Parse(AccentColor));
+    private static readonly SolidColorBrush MutedBrush = new(Color.Parse(MutedColor));
+    private static readonly SolidColorBrush TransparentBrush = new(Colors.Transparent);
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
@@ -30,11 +34,11 @@ public class BoolToColorConverter : IValueConverter
             }
         }
 
-        return new SolidColorBrush(Colors.Transparent);
+        return TransparentBrush;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 }

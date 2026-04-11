@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -7,7 +8,6 @@ using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
 using LocalMusicPlayer.Models;
-using LocalMusicPlayer.ViewModels;
 
 namespace LocalMusicPlayer.Behaviors;
 
@@ -15,6 +15,15 @@ public class DragDropSortBehavior : Behavior<ListBox>
 {
     private int _dragStartIndex = -1;
     private bool _isDragging;
+
+    public static readonly StyledProperty<ICommand> MoveCommandProperty =
+        AvaloniaProperty.Register<DragDropSortBehavior, ICommand>(nameof(MoveCommand));
+
+    public ICommand MoveCommand
+    {
+        get => GetValue(MoveCommandProperty);
+        set => SetValue(MoveCommandProperty, value);
+    }
 
     protected override void OnAttached()
     {
@@ -69,14 +78,9 @@ public class DragDropSortBehavior : Behavior<ListBox>
 
         if (targetIndex >= 0 && targetIndex != _dragStartIndex)
         {
-            var viewModel = AssociatedObject.DataContext as QueueViewModel;
-            if (viewModel != null)
+            if (MoveCommand != null && MoveCommand.CanExecute((_dragStartIndex, targetIndex)))
             {
-                viewModel.MoveSongInQueue(_dragStartIndex, targetIndex);
-            }
-            else if (AssociatedObject.DataContext is PlaylistManagementViewModel playlistVm)
-            {
-                playlistVm.MoveSongCommand.Execute((_dragStartIndex, targetIndex));
+                MoveCommand.Execute((_dragStartIndex, targetIndex));
             }
             else
             {

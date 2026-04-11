@@ -6,19 +6,29 @@ namespace LocalMusicPlayer.Converters;
 
 public class EnumToBoolConverter : IValueConverter
 {
+    public static readonly EnumToBoolConverter Instance = new();
+
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value == null || parameter == null)
             return false;
 
-        return value.Equals(parameter);
+        var enumValue = value.ToString();
+        var targetValue = parameter.ToString();
+
+        return string.Equals(enumValue, targetValue, StringComparison.OrdinalIgnoreCase);
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is true && parameter != null)
-            return parameter;
+        if (value is bool boolValue && boolValue && parameter != null)
+        {
+            var paramStr = parameter.ToString();
+            if (targetType.IsEnum && paramStr != null)
+                return Enum.Parse(targetType, paramStr, true);
+            return paramStr;
+        }
 
-        return null;
+        return Avalonia.Data.BindingOperations.DoNothing;
     }
 }

@@ -1,0 +1,13 @@
+- [x] AppDbContext 包含 SongEntity、FavoriteEntity、PlayHistoryEntity、AppSettingsEntity、PlaylistEntity、PlaylistSongEntity
+- [x] EF Core 迁移已生成且可正确应用
+- [x] App.axaml.cs 注册了 AppDbContext 和 IDatabaseService
+- [x] 应用启动时自动初始化数据库（创建/迁移）
+- [x] ConfigurationService 使用 SQLite 存储设置，CurrentSettings 正确加载
+- [x] ConfigurationService 包含 JSON 到 SQLite 的数据迁移逻辑
+- [x] UserPlaylistService 收藏功能使用 SQLite，添加/移除收藏立即持久化
+- [x] UserPlaylistService 播放列表功能使用 SQLite，CRUD 操作立即持久化
+- [x] PlayHistoryService 使用 SQLite，添加历史记录立即持久化
+- [x] 播放历史最多保留 200 条记录
+- [x] 应用重启后收藏、播放历史、设置均正确恢复
+- [x] 所有数据库操作不阻塞 UI 线程
+- [x] 编译通过无错误

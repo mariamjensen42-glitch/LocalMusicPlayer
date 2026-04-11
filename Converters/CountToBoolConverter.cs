@@ -4,10 +4,6 @@ using Avalonia.Data.Converters;
 
 namespace LocalMusicPlayer.Converters;
 
-/// <summary>
-/// 将集合数量转换为布尔值，用于控制无数据提示的显示
-/// 当数量等于指定参数值时返回 true
-/// </summary>
 public class CountToBoolConverter : IValueConverter
 {
     public static readonly CountToBoolConverter Instance = new();
@@ -16,7 +12,7 @@ public class CountToBoolConverter : IValueConverter
     {
         if (value is int count && parameter is string paramValue)
         {
-            var targetCount = int.Parse(paramValue);
+            var targetCount = int.TryParse(paramValue, out var tc) ? tc : 0;
             return count == targetCount;
         }
 
@@ -30,6 +26,6 @@ public class CountToBoolConverter : IValueConverter
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 }

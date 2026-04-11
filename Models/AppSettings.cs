@@ -49,4 +49,19 @@ public class AppSettings
     /// 播放历史记录
     /// </summary>
     public List<PlayHistoryRecord> PlayHistory { get; set; } = new();
+
+    /// <summary>
+    /// 上次播放的歌曲文件路径
+    /// </summary>
+    public string? LastSongFilePath { get; set; }
+
+    /// <summary>
+    /// 上次播放队列的文件路径列表
+    /// </summary>
+    public List<string> QueueFilePaths { get; set; } = new();
+
+    /// <summary>
+    /// 上次播放位置（秒）
+    /// </summary>
+    public double LastPlaybackPosition { get; set; }
 }

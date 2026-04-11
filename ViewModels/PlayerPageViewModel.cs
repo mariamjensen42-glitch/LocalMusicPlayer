@@ -1,9 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia;
-using Avalonia.Media;
-using Avalonia.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
@@ -19,9 +17,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     private readonly IMusicLibraryService _musicLibraryService;
     private readonly IAlbumArtService _albumArtService;
     private readonly IConfigurationService _configService;
-    private readonly DispatcherTimer _timer;
 
-    public Action? OnNavigateBack { get; set; }
     public Action<int>? OnScrollToLyric { get; set; }
 
     [ObservableProperty] private ObservableCollection<LyricLine> _lyrics = new();
@@ -34,7 +30,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
 
     public static float[] AvailablePlaybackRates => [0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f];
 
-    [ObservableProperty] private IBrush _gradientBackground = new SolidColorBrush(Color.FromRgb(30, 30, 46));
+    [ObservableProperty] private string _gradientBackground = "#1E1E2E";
 
     [ObservableProperty] private double _lyricFontSize = 28;
 
@@ -77,39 +73,49 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
 
         LoadLyricSettings();
 
-        _timer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMilliseconds(250)
-        };
-        _timer.Tick += Timer_Tick;
+        _playbackStateService.CurrentSongChanged += OnCurrentSongChanged;
+        _playbackStateService.PlaybackStateChanged += OnPlaybackStateChanged;
+        _playbackStateService.PlaybackModeChanged += OnPlaybackModeChanged;
+        _playbackStateService.PositionChanged += OnPositionChanged;
 
-        _playbackStateService.CurrentSongChanged += (_, _) =>
-        {
-            OnPropertyChanged(nameof(CurrentSong));
-            LoadLyrics();
-            UpdateGradientBackground();
-        };
-
-        _playbackStateService.PlaybackStateChanged += (_, _) => { OnPropertyChanged(nameof(IsPlaying)); };
-
-        _playbackStateService.PlaybackModeChanged += (_, _) =>
-        {
-            OnPropertyChanged(nameof(IsShuffle));
-            OnPropertyChanged(nameof(IsRepeat));
-            OnPropertyChanged(nameof(IsSingleLoop));
-        };
-
-        _timer.Start();
         LoadLyrics();
     }
 
-    private void Timer_Tick(object? sender, EventArgs e)
+    private void OnCurrentSongChanged(object? sender, Song? song)
+    {
+        OnPropertyChanged(nameof(CurrentSong));
+        LoadLyrics();
+        _ = UpdateGradientBackgroundAsync();
+    }
+
+    private void OnPlaybackStateChanged(object? sender, PlayState state)
+    {
+        OnPropertyChanged(nameof(IsPlaying));
+    }
+
+    private void OnPlaybackModeChanged(object? sender, PlaybackMode mode)
+    {
+        OnPropertyChanged(nameof(IsShuffle));
+        OnPropertyChanged(nameof(IsRepeat));
+        OnPropertyChanged(nameof(IsSingleLoop));
+    }
+
+    private void OnPositionChanged(object? sender, TimeSpan position)
     {
         OnPropertyChanged(nameof(Position));
         OnPropertyChanged(nameof(Duration));
         OnPropertyChanged(nameof(PositionSeconds));
         OnPropertyChanged(nameof(DurationSeconds));
         UpdateCurrentLyricIndex();
+    }
+
+    protected override void DisposeCore()
+    {
+        _playbackStateService.CurrentSongChanged -= OnCurrentSongChanged;
+        _playbackStateService.PlaybackStateChanged -= OnPlaybackStateChanged;
+        _playbackStateService.PlaybackModeChanged -= OnPlaybackModeChanged;
+        _playbackStateService.PositionChanged -= OnPositionChanged;
+        base.DisposeCore();
     }
 
     [RelayCommand]
@@ -183,7 +189,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     [RelayCommand]
     private void NavigateBack()
     {
-        OnNavigateBack?.Invoke();
+        _navigationService.NavigateBack();
     }
 
     [RelayCommand]
@@ -209,19 +215,19 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     partial void OnLyricFontSizeChanged(double value)
     {
         _configService.CurrentSettings.LyricFontSize = value;
-        _ = _configService.SaveSettingsAsync();
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     partial void OnLyricLineSpacingChanged(double value)
     {
         _configService.CurrentSettings.LyricLineSpacing = value;
-        _ = _configService.SaveSettingsAsync();
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     partial void OnShowTranslationChanged(bool value)
     {
         _configService.CurrentSettings.ShowTranslation = value;
-        _ = _configService.SaveSettingsAsync();
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     [RelayCommand]
@@ -260,44 +266,33 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
         }
     }
 
-    private async void UpdateGradientBackground()
+    private async Task UpdateGradientBackgroundAsync()
     {
         if (CurrentSong == null)
         {
-            GradientBackground = new SolidColorBrush(Color.FromRgb(30, 30, 46));
+            GradientBackground = "#1E1E2E";
             return;
         }
 
-        var dominantColor = await _albumArtService.ExtractDominantColorAsync(CurrentSong.AlbumArtPath);
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        try
         {
+            var dominantColor = await _albumArtService.ExtractDominantColorAsync(CurrentSong.AlbumArtPath);
+
             if (dominantColor.HasValue)
             {
                 var color = dominantColor.Value;
-                var darkColor = Color.FromRgb(
-                    (byte)(color.R * 0.15),
-                    (byte)(color.G * 0.15),
-                    (byte)(color.B * 0.15));
-                var midColor = Color.FromArgb(80, color.R, color.G, color.B);
-
-                GradientBackground = new LinearGradientBrush
-                {
-                    StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
-                    EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
-                    GradientStops = new GradientStops
-                    {
-                        new GradientStop(midColor, 0),
-                        new GradientStop(darkColor, 0.6),
-                        new GradientStop(Color.FromRgb(30, 30, 46), 1)
-                    }
-                };
+                var darkColor = $"#{(byte)(color.R * 0.15):X2}{(byte)(color.G * 0.15):X2}{(byte)(color.B * 0.15):X2}";
+                GradientBackground = darkColor;
             }
             else
             {
-                GradientBackground = new SolidColorBrush(Color.FromRgb(30, 30, 46));
+                GradientBackground = "#1E1E2E";
             }
-        });
+        }
+        catch
+        {
+            GradientBackground = "#1E1E2E";
+        }
     }
 
     private void UpdateCurrentLyricIndex()

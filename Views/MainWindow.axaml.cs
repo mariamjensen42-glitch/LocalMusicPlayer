@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -15,6 +14,7 @@ namespace LocalMusicPlayer.Views;
 public partial class MainWindow : Window
 {
     private IKeyboardShortcutService? _keyboardShortcutService;
+    private IDropHandlerService? _dropHandlerService;
     private MainWindowViewModel? _mainWindowViewModel;
 
     public MainWindow()
@@ -26,15 +26,6 @@ public partial class MainWindow : Window
         UpdateMaximizeRestoreIcons();
         DataContextChanged += OnDataContextChanged;
         KeyDown += OnKeyDown;
-        
-        // 绑定搜索框
-        SearchTextBox.TextChanged += (_, e) =>
-        {
-            if (DataContext is ViewModels.MainWindowViewModel vm)
-            {
-                vm.SearchText = SearchTextBox.Text ?? string.Empty;
-            }
-        };
 
         AddHandler(DragDrop.DragOverEvent, OnDragOver);
         AddHandler(DragDrop.DropEvent, OnDrop);
@@ -42,7 +33,7 @@ public partial class MainWindow : Window
 
     private void OnDragOver(object? sender, DragEventArgs e)
     {
-#pragma warning disable CS0618 // DataFormats is obsolete
+#pragma warning disable CS0618
         if (e.Data.Contains(DataFormats.FileNames))
 #pragma warning restore CS0618
         {
@@ -58,7 +49,7 @@ public partial class MainWindow : Window
 
     private async void OnDrop(object? sender, DragEventArgs e)
     {
-#pragma warning disable CS0618 // DataFormats and GetFileNames are obsolete
+#pragma warning disable CS0618
         if (!e.Data.Contains(DataFormats.FileNames))
             return;
 
@@ -67,70 +58,11 @@ public partial class MainWindow : Window
         if (files == null || !files.Any())
             return;
 
-        var app = Avalonia.Application.Current as App;
-        if (app?.Services == null)
+        _dropHandlerService ??= ((App.Current as App)?.Services?.GetService<IDropHandlerService>());
+        if (_dropHandlerService == null)
             return;
 
-        var fileScannerService = app.Services.GetService(typeof(IFileScannerService)) as IFileScannerService;
-        var musicLibraryService = app.Services.GetService(typeof(IMusicLibraryService)) as IMusicLibraryService;
-
-        if (fileScannerService == null || musicLibraryService == null)
-            return;
-
-        foreach (var path in files)
-        {
-            if (string.IsNullOrEmpty(path))
-                continue;
-
-            if (File.Exists(path) && fileScannerService.SupportedExtensions.Contains(
-                    Path.GetExtension(path).ToLowerInvariant()))
-            {
-                await AddSingleFileAsync(path, fileScannerService, musicLibraryService);
-            }
-            else if (Directory.Exists(path))
-            {
-                await AddFolderAsync(path, fileScannerService, musicLibraryService);
-            }
-        }
-    }
-
-    private async System.Threading.Tasks.Task AddSingleFileAsync(string filePath,
-        IFileScannerService fileScannerService, IMusicLibraryService musicLibraryService)
-    {
-        try
-        {
-            var directory = Path.GetDirectoryName(filePath);
-            if (directory == null) return;
-
-            var songs = await fileScannerService.ScanDirectoryAsync(directory, false);
-            var song = songs.FirstOrDefault(s => s.FilePath == filePath);
-            if (song != null && !musicLibraryService.Songs.Any(s => s.FilePath == filePath))
-            {
-                musicLibraryService.AddSong(song);
-            }
-        }
-        catch
-        {
-        }
-    }
-
-    private async System.Threading.Tasks.Task AddFolderAsync(string folderPath, IFileScannerService fileScannerService,
-        IMusicLibraryService musicLibraryService)
-    {
-        try
-        {
-            var songs = await fileScannerService.ScanDirectoryAsync(folderPath, true);
-            foreach (var song in songs)
-            {
-                if (!musicLibraryService.Songs.Any(s => s.FilePath == song.FilePath))
-                {
-                    musicLibraryService.AddSong(song);
-                }
-            }
-        }
-        catch
-        {
-        }
+        await _dropHandlerService.HandleDroppedFilesAsync(files);
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
@@ -206,14 +138,12 @@ public partial class MainWindow : Window
 
     private void UpdateTitleBarChrome(bool isPlayerPage)
     {
-        ExtendClientAreaChromeHints = isPlayerPage
-            ? Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome
-            : Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
+        ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
         ExtendClientAreaToDecorationsHint = true;
 
         TitleBar.Background = isPlayerPage
-            ? new SolidColorBrush(Color.FromRgb(30, 30, 46))
-            : new SolidColorBrush(Color.FromRgb(10, 10, 10));
+            ? FindResource<SolidColorBrush>("BgSidebarBrush")
+            : FindResource<SolidColorBrush>("BgPrimaryBrush");
     }
 
     private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
@@ -283,5 +213,10 @@ public partial class MainWindow : Window
         {
             vm.PreviousCommand.Execute(null);
         }
+    }
+
+    private T? FindResource<T>(string key) where T : class
+    {
+        return (T?)this.FindResource(key);
     }
 }

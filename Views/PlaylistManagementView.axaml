@@ -27,7 +27,7 @@
                 BorderThickness="0,0,1,0">
             <Grid RowDefinitions="Auto,*">
                 <StackPanel Grid.Row="0" Margin="16,16,16,12">
-                    <TextBlock Text="Playlists"
+                    <TextBlock Text="{DynamicResource String_Playlists}"
                                FontSize="18"
                                FontWeight="SemiBold"
                                Foreground="{StaticResource TextPrimaryBrush}" />
@@ -40,7 +40,7 @@
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="14"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="New Playlist" VerticalAlignment="Center" />
+                            <TextBlock Text="{DynamicResource String_NewPlaylist}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -53,8 +53,10 @@
                                         BorderBrush="{StaticResource BorderSubtleBrush}"
                                         BorderThickness="0,0,0,1"
                                         Padding="16,12"
-                                        Cursor="Hand"
-                                        Tapped="PlaylistItem_Tapped">
+                                        Cursor="Hand">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:TapCommandBehavior Command="{Binding $parent[ItemsControl].DataContext.SelectPlaylistCommand}" CommandParameter="{Binding}" />
+                                    </i:Interaction.Behaviors>
                                     <Grid ColumnDefinitions="Auto,*">
                                         <TextBlock Grid.Column="0"
                                                    Text="&#xE8FA;"
@@ -180,7 +182,7 @@
                                                            FontSize="12" />
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Header="Edit Info"
+                                        <MenuItem Header="{DynamicResource String_EditInfo}"
                                                   x:DataType="models:Song"
                                                   Command="{Binding $parent[ListBox].DataContext.EditSongMetadataCommand}"
                                                   CommandParameter="{Binding}">
@@ -189,7 +191,7 @@
                                                            FontSize="12" />
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Header="Batch Edit"
+                                        <MenuItem Header="{DynamicResource String_BatchEdit}"
                                                   x:DataType="models:Song"
                                                   Command="{Binding $parent[ListBox].DataContext.BatchEditMetadataCommand}"
                                                   CommandParameter="{Binding $parent[ListBox].SelectedItems}">
@@ -199,7 +201,7 @@
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <Separator />
-                                        <MenuItem Header="Remove from Playlist"
+                                        <MenuItem Header="{DynamicResource String_RemoveFromPlaylist}"
                                                   x:DataType="models:Song"
                                                   Command="{Binding $parent[ListBox].DataContext.RemoveSongCommand}"
                                                   CommandParameter="{Binding FilePath}">
@@ -242,7 +244,7 @@
                                            FontSize="13"
                                            Foreground="{StaticResource TextMutedBrush}"
                                            VerticalAlignment="Center"
-                                           FontFamily="Consolas, monospace"
+                                           FontFamily="{StaticResource FontFamilyMono}"
                                            Margin="16,0" />
 
                                 <Button Grid.Column="4"

@@ -4,6 +4,7 @@
              xmlns:services="using:LocalMusicPlayer.Services"
              xmlns:views="using:LocalMusicPlayer.Views"
              xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+             xmlns:converters="using:LocalMusicPlayer.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
@@ -15,7 +16,11 @@
         <vm:PlayerPageViewModel />
     </Design.DataContext>
 
-    <Grid Background="{Binding GradientBackground}" Margin="0,-48,0,0">
+    <UserControl.Resources>
+        <converters:StringToBrushConverter x:Key="StringToBrushConverter" />
+    </UserControl.Resources>
+
+    <Grid Background="{Binding GradientBackground, Converter={StaticResource StringToBrushConverter}}" Margin="0,-48,0,0">
         <Grid RowDefinitions="Auto,*" Margin="0,48,0,0">
             <!-- Header -->
             <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="32,24,32,0">
@@ -221,7 +226,7 @@
                                             Padding="8"
                                             BoxShadow="0 8 32 0 #00000060">
                                         <StackPanel Spacing="2">
-                                            <TextBlock Text="播放速度"
+                                            <TextBlock Text="{DynamicResource String_PlaybackSpeed}"
                                                        FontSize="12"
                                                        Foreground="{StaticResource TextMutedBrush}"
                                                        Margin="8,4,8,8"
@@ -338,7 +343,7 @@
                                             <TextBlock Text="{Binding Text}"
                                                        FontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize}"
                                                        FontWeight="{Binding IsActive, Converter={StaticResource BoolToFontWeightConverter}}"
-                                                       FontFamily="Inter"
+                                                       FontFamily="{StaticResource FontFamilyPrimary}"
                                                        Foreground="{Binding IsActive, Converter={StaticResource BoolToLyricColorConverter}}"
                                                        TextAlignment="Center"
                                                        TextWrapping="Wrap" />
@@ -347,7 +352,7 @@
                                                 IsVisible="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).ShowTranslation, Mode=OneWay}"
                                                 Text="{Binding Translation}"
                                                 FontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize, Converter={StaticResource LyricTranslationFontSizeConverter}}"
-                                                FontFamily="Inter"
+                                                FontFamily="{StaticResource FontFamilyPrimary}"
                                                 Foreground="{StaticResource TextMutedBrush}"
                                                 TextAlignment="Center"
                                                 TextWrapping="Wrap"
@@ -363,7 +368,7 @@
                     <TextBlock IsVisible="{Binding !HasLyrics}"
                                Text="{StaticResource String_NoLyrics}"
                                FontSize="16"
-                               FontFamily="Inter"
+                               FontFamily="{StaticResource FontFamilyPrimary}"
                                Foreground="{StaticResource TextMutedBrush}"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center" />

@@ -1,3 +1,4 @@
+using LocalMusicPlayer.Models;
 using LocalMusicPlayer.ViewModels;
 
 namespace LocalMusicPlayer.Services;
@@ -79,7 +80,7 @@ public class ViewModelFactory : IViewModelFactory
     public SettingsViewModel CreateSettingsViewModel()
     {
         return new SettingsViewModel(
-            _windowProvider,
+            _dialogService,
             _scanService,
             _musicLibraryService,
             _configService,
@@ -116,7 +117,8 @@ public class ViewModelFactory : IViewModelFactory
             _playHistoryService,
             _playbackStateService,
             _playlistService,
-            _statisticsService);
+            _statisticsService,
+            _navigationService);
     }
 
     public LibraryBrowserViewModel CreateLibraryBrowserViewModel()
@@ -131,5 +133,25 @@ public class ViewModelFactory : IViewModelFactory
     public StatisticsReportViewModel CreateStatisticsReportViewModel()
     {
         return new StatisticsReportViewModel(_statisticsService);
+    }
+
+    public ArtistDetailViewModel CreateArtistDetailViewModel(ArtistGroup artistGroup)
+    {
+        return new ArtistDetailViewModel(
+            artistGroup,
+            _musicPlayerService,
+            _playlistService,
+            _statisticsService,
+            _navigationService);
+    }
+
+    public AlbumDetailViewModel CreateAlbumDetailViewModel(AlbumGroup albumGroup)
+    {
+        return new AlbumDetailViewModel(
+            albumGroup,
+            _musicPlayerService,
+            _playlistService,
+            _statisticsService,
+            _navigationService);
     }
 }

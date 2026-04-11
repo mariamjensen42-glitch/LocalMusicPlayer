@@ -31,20 +31,29 @@ public partial class StatisticsReportViewModel : ViewModelBase
     [ObservableProperty] private bool _isLoading;
 
     public ObservableCollection<ArtistStatistics> TopArtists { get; } = new();
-
     public ObservableCollection<AlbumStatistics> TopAlbums { get; } = new();
-
     public ObservableCollection<SongPlayRecord> TopSongs { get; } = new();
-
     public ObservableCollection<GenreDistribution> GenreDistribution { get; } = new();
-
     public ObservableCollection<ListeningHistoryItem> ListeningHistory { get; } = new();
 
     public StatisticsReportViewModel(IStatisticsService statisticsService)
     {
         _statisticsService = statisticsService;
 
-        _statisticsService.StatisticsChanged += (_, _) => _ = LoadDataAsync();
+        _statisticsService.StatisticsChanged += OnStatisticsChanged;
+
+        _ = LoadDataAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    private void OnStatisticsChanged(object? sender, EventArgs e)
+    {
+        _ = LoadDataAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    protected override void DisposeCore()
+    {
+        _statisticsService.StatisticsChanged -= OnStatisticsChanged;
+        base.DisposeCore();
     }
 
     [RelayCommand]
@@ -60,7 +69,7 @@ public partial class StatisticsReportViewModel : ViewModelBase
             TotalDuration = report.Overview.TotalPlayTime;
             TotalPlayCount = report.Overview.TotalPlayCount;
 
-            FormattedTotalDuration = FormatDuration(report.Overview.TotalPlayTime);
+            FormattedTotalDuration = FormatDuration(TotalDuration);
             FormattedTotalPlayTime = FormatDuration(report.Overview.TotalPlayTime);
 
             TopArtists.Clear();
@@ -127,17 +136,17 @@ public partial class StatisticsReportViewModel : ViewModelBase
             _ => DateTime.Now.AddDays(-30)
         };
 
-        _ = LoadListeningHistoryAsync();
+        _ = LoadListeningHistoryAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     partial void OnStartDateChanged(DateTime value)
     {
-        _ = LoadListeningHistoryAsync();
+        _ = LoadListeningHistoryAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     partial void OnEndDateChanged(DateTime value)
     {
-        _ = LoadListeningHistoryAsync();
+        _ = LoadListeningHistoryAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     private static string FormatDuration(TimeSpan duration)

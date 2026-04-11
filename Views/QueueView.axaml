@@ -60,7 +60,7 @@
                  ItemContainerTheme="{StaticResource QueueListItemTheme}"
                  DoubleTapped="QueueListBox_DoubleTapped">
             <ListBox.DataTemplates>
-                <DataTemplate DataType="models:Song">
+                <DataTemplate x:DataType="models:Song">
                     <Border Padding="12,8"
                             BorderThickness="0">
                         <Grid ColumnDefinitions="40,*,Auto,40">
@@ -101,7 +101,8 @@
 
                             <Button Grid.Column="3"
                                     Theme="{StaticResource IconTextButtonTheme}"
-                                    Click="RemoveButton_Click"
+                                    Command="{Binding $parent[ListBox].DataContext.RemoveSongByReferenceCommand}"
+                                    CommandParameter="{Binding}"
                                     Padding="4"
                                     VerticalAlignment="Center">
                                 <TextBlock Text="&#xE711;"
@@ -131,7 +132,7 @@
                                FontSize="14"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                VerticalAlignment="Center" />
-                    <TextBlock Text="Clear All"
+                    <TextBlock Text="{DynamicResource String_Clear}"
                                FontSize="13"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                VerticalAlignment="Center" />

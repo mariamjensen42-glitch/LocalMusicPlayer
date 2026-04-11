@@ -39,6 +39,16 @@ public partial class QueueViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void RemoveSongByReference(Song song)
+    {
+        var index = QueueSongs.IndexOf(song);
+        if (index >= 0 && _playlistService.CurrentPlaylist != null)
+        {
+            _playlistService.RemoveSongFromPlaylist(_playlistService.CurrentPlaylist, index);
+        }
+    }
+
+    [RelayCommand]
     private void ClearQueue()
     {
         _playlistService.ClearPlaylist();
@@ -50,10 +60,7 @@ public partial class QueueViewModel : ViewModelBase
         var index = QueueSongs.IndexOf(song);
         if (index >= 0)
         {
-            for (int i = 0; i < index; i++)
-            {
-                _playlistService.PlayNext();
-            }
+            _playlistService.PlayAtIndex(index);
             _playbackStateService.Play(song);
         }
     }
@@ -67,18 +74,40 @@ public partial class QueueViewModel : ViewModelBase
         _playbackStateService = playbackStateService;
         _navigationService = navigationService;
 
-        _playlistService.CurrentSongChanged += (_, _) => OnPropertyChanged(nameof(CurrentSong));
+        _playlistService.CurrentSongChanged += OnCurrentSongChanged;
+        _navigationService.QueuePanelChanged += OnQueuePanelChanged;
 
         if (_playlistService.CurrentPlaylist != null)
         {
-            _playlistService.CurrentPlaylist.Songs.CollectionChanged += (_, _) =>
-            {
-                OnPropertyChanged(nameof(QueueCount));
-                OnPropertyChanged(nameof(QueueSongs));
-            };
+            _playlistService.CurrentPlaylist.Songs.CollectionChanged += OnSongsCollectionChanged;
         }
+    }
 
-        _navigationService.QueuePanelChanged += (_, _) => OnPropertyChanged(nameof(IsPanelOpen));
+    private void OnCurrentSongChanged(object? sender, Song? song)
+    {
+        OnPropertyChanged(nameof(CurrentSong));
+    }
+
+    private void OnQueuePanelChanged(object? sender, bool isOpen)
+    {
+        OnPropertyChanged(nameof(IsPanelOpen));
+    }
+
+    private void OnSongsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(QueueCount));
+        OnPropertyChanged(nameof(QueueSongs));
+    }
+
+    protected override void DisposeCore()
+    {
+        _playlistService.CurrentSongChanged -= OnCurrentSongChanged;
+        _navigationService.QueuePanelChanged -= OnQueuePanelChanged;
+        if (_playlistService.CurrentPlaylist != null)
+        {
+            _playlistService.CurrentPlaylist.Songs.CollectionChanged -= OnSongsCollectionChanged;
+        }
+        base.DisposeCore();
     }
 
     public void MoveSongInQueue(int oldIndex, int newIndex)

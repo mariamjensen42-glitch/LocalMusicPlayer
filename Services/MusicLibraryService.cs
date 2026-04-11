@@ -115,44 +115,31 @@ public class MusicLibraryService : IMusicLibraryService
 
     public List<FolderNode> GetFolderStructure()
     {
-        var rootNodes = new List<FolderNode>();
+        var folderGroups = new Dictionary<string, FolderNode>();
 
         foreach (var song in Songs)
         {
             var directory = Path.GetDirectoryName(song.FilePath);
             if (string.IsNullOrEmpty(directory)) continue;
 
-            var parts = directory.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            AddToFolderTree(rootNodes, parts, 0, song);
-        }
+            // 只取最后一级文件夹名
+            var folderName = Path.GetFileName(directory);
+            if (string.IsNullOrEmpty(folderName)) folderName = directory;
 
-        return rootNodes.OrderBy(n => n.Name).ToList();
-    }
-
-    private void AddToFolderTree(List<FolderNode> nodes, string[] parts, int index, Song song)
-    {
-        if (index >= parts.Length) return;
-
-        var name = parts[index];
-        var fullPath = string.Join(Path.DirectorySeparatorChar.ToString(), parts.Take(index + 1));
-
-        var existingNode = nodes.FirstOrDefault(n => n.Name == name);
-        if (existingNode == null)
-        {
-            existingNode = new FolderNode
+            if (!folderGroups.TryGetValue(folderName, out var folderNode))
             {
-                Name = name,
-                FullPath = fullPath
-            };
-            nodes.Add(existingNode);
+                folderNode = new FolderNode
+                {
+                    Name = folderName,
+                    FullPath = directory
+                };
+                folderGroups[folderName] = folderNode;
+            }
+
+            folderNode.Songs.Add(song);
+            folderNode.SongCount = folderNode.Songs.Count;
         }
 
-        existingNode.Songs.Add(song);
-        existingNode.SongCount = existingNode.Songs.Count;
-
-        if (index < parts.Length - 1)
-        {
-            AddToFolderTree(existingNode.Children.ToList(), parts, index + 1, song);
-        }
+        return folderGroups.Values.OrderBy(n => n.Name).ToList();
     }
 }

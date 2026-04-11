@@ -7,6 +7,8 @@ namespace LocalMusicPlayer.Converters;
 
 public class QueueIndexConverter : IMultiValueConverter
 {
+    public static readonly QueueIndexConverter Instance = new();
+
     public object Convert(System.Collections.Generic.IList<object?> values, Type targetType, object? parameter,
         CultureInfo culture)
     {

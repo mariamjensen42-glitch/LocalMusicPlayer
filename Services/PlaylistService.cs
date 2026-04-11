@@ -199,4 +199,13 @@ public class PlaylistService : IPlaylistService
             CurrentSongChanged?.Invoke(this, CurrentSong);
         }
     }
+
+    public void PlayAtIndex(int index)
+    {
+        if (_currentPlaylist == null || index < 0 || index >= _currentPlaylist.Songs.Count)
+            return;
+
+        _currentIndex = index;
+        CurrentSongChanged?.Invoke(this, CurrentSong);
+    }
 }

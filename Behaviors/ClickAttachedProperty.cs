@@ -3,10 +3,10 @@ using Avalonia.Controls.Primitives;
 
 namespace LocalMusicPlayer.Behaviors;
 
-public class ClickBehavior : TemplatedControl
+public class ClickAttachedProperty : TemplatedControl
 {
     public static readonly StyledProperty<int> ClickCountProperty =
-        AvaloniaProperty.Register<ClickBehavior, int>(nameof(ClickCount));
+        AvaloniaProperty.Register<ClickAttachedProperty, int>(nameof(ClickCount));
 
     public int ClickCount
     {

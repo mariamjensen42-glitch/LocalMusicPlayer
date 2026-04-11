@@ -6,7 +6,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
 using LocalMusicPlayer.Services;
-using LocalMusicPlayer.Views;
 
 namespace LocalMusicPlayer.ViewModels;
 
@@ -19,69 +18,52 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     private readonly IMusicLibraryService _libraryService;
     private readonly IDialogService _dialogService;
 
-    private UserPlaylist? _selectedPlaylist;
-    private string _newPlaylistName = string.Empty;
-    private bool _isCreatingPlaylist;
-    private ObservableCollection<Song> _playlistSongs = new();
+    [ObservableProperty] private UserPlaylist? _selectedPlaylist;
+
+    [ObservableProperty] private string _newPlaylistName = string.Empty;
+
+    [ObservableProperty] private bool _isCreatingPlaylist;
+
+    [ObservableProperty] private ObservableCollection<Song> _playlistSongs = new();
 
     public ObservableCollection<UserPlaylist> UserPlaylists => _playlistService.UserPlaylists;
 
-    public UserPlaylist? SelectedPlaylist
+    public bool CanDeletePlaylist => SelectedPlaylist != null &&
+                                     SelectedPlaylist.Id != "favorites";
+
+    public bool CanRenamePlaylist => SelectedPlaylist != null &&
+                                     SelectedPlaylist.Id != "favorites";
+
+    partial void OnSelectedPlaylistChanged(UserPlaylist? value)
     {
-        get => _selectedPlaylist;
-        set
-        {
-            if (SetProperty(ref _selectedPlaylist, value))
-            {
-                OnPropertyChanged(nameof(PlaylistSongs));
-                OnPropertyChanged(nameof(CanDeletePlaylist));
-                OnPropertyChanged(nameof(CanRenamePlaylist));
-                UpdatePlaylistSongs(value);
-            }
-        }
-    }
-
-    public ObservableCollection<Song> PlaylistSongs
-    {
-        get => _playlistSongs;
-        private set => SetProperty(ref _playlistSongs, value);
-    }
-
-    public bool CanDeletePlaylist => _selectedPlaylist != null &&
-                                     _selectedPlaylist.Id != "favorites";
-
-    public bool CanRenamePlaylist => _selectedPlaylist != null &&
-                                     _selectedPlaylist.Id != "favorites";
-
-    public string NewPlaylistName
-    {
-        get => _newPlaylistName;
-        set => SetProperty(ref _newPlaylistName, value);
-    }
-
-    public bool IsCreatingPlaylist
-    {
-        get => _isCreatingPlaylist;
-        set => SetProperty(ref _isCreatingPlaylist, value);
+        OnPropertyChanged(nameof(CanDeletePlaylist));
+        OnPropertyChanged(nameof(CanRenamePlaylist));
+        UpdatePlaylistSongs(value);
     }
 
     [RelayCommand]
-    private void CreatePlaylist()
+    private void SelectPlaylist(UserPlaylist playlist)
     {
-        if (!string.IsNullOrWhiteSpace(_newPlaylistName))
+        SelectedPlaylist = playlist;
+    }
+
+    [RelayCommand]
+    private async Task CreatePlaylistAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(NewPlaylistName))
         {
-            _playlistService.CreatePlaylist(_newPlaylistName);
+            await _playlistService.CreatePlaylistAsync(NewPlaylistName);
             NewPlaylistName = string.Empty;
             IsCreatingPlaylist = false;
         }
     }
 
     [RelayCommand]
-    private void DeletePlaylist()
+    private async Task DeletePlaylistAsync()
     {
-        if (_selectedPlaylist != null && CanDeletePlaylist)
+        if (SelectedPlaylist != null && CanDeletePlaylist)
         {
-            _playlistService.DeletePlaylist(_selectedPlaylist.Id);
+            await _playlistService.DeletePlaylistAsync(SelectedPlaylist.Id);
             SelectedPlaylist = null;
         }
     }
@@ -89,12 +71,12 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     [RelayCommand]
     private async Task RenamePlaylistAsync()
     {
-        if (_selectedPlaylist != null && CanRenamePlaylist)
+        if (SelectedPlaylist != null && CanRenamePlaylist)
         {
-            var newName = await _dialogService.ShowInputDialogAsync("Rename Playlist", _selectedPlaylist.Name);
+            var newName = await _dialogService.ShowInputDialogAsync("Rename Playlist", SelectedPlaylist.Name);
             if (!string.IsNullOrWhiteSpace(newName))
             {
-                _playlistService.RenamePlaylist(_selectedPlaylist.Id, newName);
+                await _playlistService.RenamePlaylistAsync(SelectedPlaylist.Id, newName);
             }
         }
     }
@@ -102,20 +84,20 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     [RelayCommand]
     private async Task ExportPlaylistAsync()
     {
-        if (_selectedPlaylist == null)
+        if (SelectedPlaylist == null)
             return;
 
-        var filePath = await _dialogService.ShowSaveFileDialogAsync("导出播放列表", ["JSON Files (*.json)|*.json"]);
+        var filePath = await _dialogService.ShowSaveFileDialogAsync("ExportPlaylist", ["JSON Files (*.json)|*.json"]);
         if (!string.IsNullOrEmpty(filePath))
         {
-            await _playlistService.ExportPlaylistAsync(_selectedPlaylist.Id, filePath);
+            await _playlistService.ExportPlaylistAsync(SelectedPlaylist.Id, filePath);
         }
     }
 
     [RelayCommand]
     private async Task ImportPlaylistAsync()
     {
-        var filePath = await _dialogService.ShowOpenFileDialogAsync("导入播放列表", ["JSON Files (*.json)|*.json"]);
+        var filePath = await _dialogService.ShowOpenFileDialogAsync("ImportPlaylist", ["JSON Files (*.json)|*.json"]);
         if (!string.IsNullOrEmpty(filePath))
         {
             await _playlistService.ImportPlaylistAsync(filePath);
@@ -134,12 +116,12 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void RemoveSong(string path)
+    private async Task RemoveSongAsync(string path)
     {
-        if (_selectedPlaylist != null)
+        if (SelectedPlaylist != null)
         {
-            _playlistService.RemoveSongFromPlaylist(_selectedPlaylist.Id, path);
-            UpdatePlaylistSongs(_selectedPlaylist);
+            await _playlistService.RemoveSongFromPlaylistAsync(SelectedPlaylist.Id, path);
+            UpdatePlaylistSongs(SelectedPlaylist);
         }
     }
 
@@ -148,7 +130,7 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     {
         if (PlaylistSongs.Count == 0) return;
 
-        var currentPlaylist = _playbackService.CreatePlaylist("临时播放");
+        var currentPlaylist = _playbackService.CreatePlaylist("TempPlay");
         _playbackService.SetCurrentPlaylist(currentPlaylist);
         _playbackService.ClearPlaylist();
 
@@ -166,41 +148,32 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void MoveSong((int OldIndex, int NewIndex) param)
+    private async Task MoveSongAsync((int OldIndex, int NewIndex) param)
     {
-        if (_selectedPlaylist != null)
+        if (SelectedPlaylist != null)
         {
-            _playlistService.MoveSongInPlaylist(_selectedPlaylist.Id, param.OldIndex, param.NewIndex);
-            UpdatePlaylistSongs(_selectedPlaylist);
+            await _playlistService.MoveSongInPlaylistAsync(SelectedPlaylist.Id, param.OldIndex, param.NewIndex);
+            UpdatePlaylistSongs(SelectedPlaylist);
         }
     }
 
     [RelayCommand]
-    private void EditSongMetadata(Song song)
+    private async Task EditSongMetadataAsync(Song song)
     {
-        var dialog = new MetadataEditorView
-        {
-            DataContext =
-                new MetadataEditorViewModel(song, _dialogService, () => { UpdatePlaylistSongs(_selectedPlaylist); })
-        };
-        dialog.Show();
+        await _dialogService.ShowMetadataEditorDialogAsync(song, () => { UpdatePlaylistSongs(SelectedPlaylist); });
     }
 
     [RelayCommand]
-    private void BatchEditMetadata(System.Collections.IList selectedItems)
+    private async Task BatchEditMetadataAsync(System.Collections.IList selectedItems)
     {
         var songs = selectedItems.OfType<Song>().ToList();
         if (songs.Count < 2)
         {
-            _dialogService.ShowMessageDialogAsync("Batch Edit", "Please select at least 2 songs to batch edit.");
+            await _dialogService.ShowMessageDialogAsync("Batch Edit", "Please select at least 2 songs to batch edit.");
             return;
         }
 
-        var dialog = new BatchMetadataEditorView
-        {
-            DataContext = new BatchMetadataEditorViewModel(songs, _dialogService, () => { UpdatePlaylistSongs(_selectedPlaylist); })
-        };
-        dialog.Show();
+        await _dialogService.ShowBatchMetadataEditorDialogAsync(songs, () => { UpdatePlaylistSongs(SelectedPlaylist); });
     }
 
     public PlaylistManagementViewModel(
@@ -220,21 +193,30 @@ public partial class PlaylistManagementViewModel : ViewModelBase
 
         EnsureFavoritesPlaylist();
 
-        _playlistService.PlaylistsChanged += (_, _) => { OnPropertyChanged(nameof(UserPlaylists)); };
+        _playlistService.PlaylistsChanged += OnPlaylistsChanged;
+    }
+
+    private void OnPlaylistsChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(UserPlaylists));
+    }
+
+    protected override void DisposeCore()
+    {
+        _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
+        base.DisposeCore();
     }
 
     private void UpdatePlaylistSongs(UserPlaylist? playlist)
     {
-        var songs = new ObservableCollection<Song>();
+        PlaylistSongs.Clear();
         if (playlist != null)
         {
             foreach (var song in _playlistService.GetPlaylistSongs(playlist.Id))
             {
-                songs.Add(song);
+                PlaylistSongs.Add(song);
             }
         }
-
-        PlaylistSongs = songs;
     }
 
     private void EnsureFavoritesPlaylist()
@@ -252,12 +234,12 @@ public partial class PlaylistManagementViewModel : ViewModelBase
         }
     }
 
-    public void AddSongToSelectedPlaylist(Song song)
+    public async Task AddSongToSelectedPlaylistAsync(Song song)
     {
-        if (_selectedPlaylist != null)
+        if (SelectedPlaylist != null)
         {
-            _playlistService.AddSongToPlaylist(_selectedPlaylist.Id, song);
-            UpdatePlaylistSongs(_selectedPlaylist);
+            await _playlistService.AddSongToPlaylistAsync(SelectedPlaylist.Id, song);
+            UpdatePlaylistSongs(SelectedPlaylist);
         }
     }
 }

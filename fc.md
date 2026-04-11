@@ -131,3 +131,28 @@
   - 主窗口添加"音乐库"和"统计报告"导航入口
   - 集成到 MainWindowViewModel 导航系统
   - 播放统计自动触发（超过50%时长）
+
+## 2026-04-11
+
+### 1. ConfigurationService 重写为 EF Core SQLite 存储
+- 注入 AppDbContext 替代 JSON 文件读写
+- CurrentSettings 从 AppSettingsEntity（Key-Value 表）加载
+- LoadSettingsAsync 从数据库读取所有设置项，反序列化为 AppSettings
+- SaveSettingsAsync 将每个属性序列化为 JSON 写入数据库
+- JSON 迁移逻辑：首次启动检测 %AppData%/LocalMusicPlayer/settings.json，导入 SQLite 后删除 JSON 文件
+- 通过 _MigratedFromJson 标记防止重复迁移
+- GetScanFolders / AddScanFolderAsync / RemoveScanFolderAsync 操作数据库
+- IConfigurationService 接口保持不变
+
+### 2. UserPlaylistService 重写为 EF Core SQLite 存储
+- 注入 AppDbContext 和 IMusicLibraryService 替代 IConfigurationService
+- AddToFavorites/RemoveFromFavorites 操作 FavoriteEntity 表，立即 SaveChanges
+- GetFavoriteSongs 从数据库查询 FavoriteEntity，再匹配 IMusicLibraryService.Songs
+- IsFavorite 从数据库查询
+- 播放列表 CRUD 操作 PlaylistEntity 和 PlaylistSongEntity 表
+- 歌曲库变更时通过 Songs.CollectionChanged 事件同步收藏状态和清理无效引用
+- LoadPlaylistsAsync 从数据库加载播放列表到内存 ObservableCollection
+- SavePlaylistsAsync 将内存播放列表同步到数据库（增删改全量对比）
+- ExportPlaylistAsync/ImportPlaylistAsync 保持 JSON 文件导入导出
+- IUserPlaylistService 接口保持不变
+- App.axaml.cs 注册 AppDbContext 为 Singleton 服务

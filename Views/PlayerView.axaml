@@ -24,7 +24,7 @@
                     <TextBlock Text="{StaticResource String_Library}"
                                FontSize="32"
                                FontWeight="ExtraBold"
-                               FontFamily="Inter"
+                               FontFamily="{StaticResource FontFamilyPrimary}"
                                Foreground="{StaticResource TextPrimaryBrush}" />
                     <TextBlock Text="{Binding LibraryStats}"
                                FontSize="14"
@@ -48,7 +48,7 @@
                                            FontSize="14"
                                            Foreground="White"
                                            VerticalAlignment="Center" />
-                                <TextBlock Text="播放选中"
+                                <TextBlock Text="{DynamicResource String_PlaySelected}"
                                            FontSize="13"
                                            FontWeight="Medium"
                                            Foreground="White"
@@ -174,7 +174,7 @@
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemContainerTheme="{StaticResource SongListItemTheme}">
                     <ListBox.DataTemplates>
-                        <DataTemplate DataType="models:Song">
+                        <DataTemplate x:DataType="models:Song">
                             <Border x:Name="SongRow"
                                     CornerRadius="8"
                                     Padding="16,12"

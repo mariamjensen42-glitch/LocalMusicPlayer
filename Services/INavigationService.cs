@@ -17,6 +17,7 @@ public interface INavigationService
     void NavigateTo<T>() where T : class;
     void NavigateTo(Type pageType);
     void GoBack();
+    void NavigateBack();
     void ClearHistory();
     void ToggleQueuePanel();
 }

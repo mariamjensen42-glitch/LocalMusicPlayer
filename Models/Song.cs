@@ -19,6 +19,8 @@ public partial class Song : ObservableObject
 
     [ObservableProperty] private int _trackNumber;
 
+    [ObservableProperty] private int _year;
+
     [ObservableProperty] private string? _albumArtPath;
 
     public bool HasAlbumArt => !string.IsNullOrEmpty(AlbumArtPath);

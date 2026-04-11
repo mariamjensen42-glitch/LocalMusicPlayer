@@ -1,7 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using LocalMusicPlayer.Models;
-using LocalMusicPlayer.ViewModels;
 
 namespace LocalMusicPlayer.Views;
 
@@ -14,18 +11,14 @@ public partial class BatchMetadataEditorView : Window
 
     private void OnFieldTextChanged(object? sender, TextChangedEventArgs e)
     {
-        if (sender is TextBox textBox && textBox.DataContext is BatchEditField field)
+        if (sender is TextBox textBox && textBox.DataContext is Models.BatchEditField field)
         {
             field.IsModified = true;
         }
     }
 
-    private void OnCancelClick(object? sender, RoutedEventArgs e)
+    private void OnCancelClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (DataContext is BatchMetadataEditorViewModel vm)
-        {
-            vm.CancelCommand.Execute(null);
-        }
         Close();
     }
 }

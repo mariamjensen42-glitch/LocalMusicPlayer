@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
@@ -31,9 +30,6 @@ public partial class MetadataEditorViewModel : ViewModelBase
     [ObservableProperty]
     private string? _albumArtPath;
 
-    [ObservableProperty]
-    private Bitmap? _albumArtBitmap;
-
     [RelayCommand]
     private async Task SaveAsync()
     {
@@ -41,7 +37,7 @@ public partial class MetadataEditorViewModel : ViewModelBase
         {
             using var file = TagLib.File.Create(_song.FilePath);
 
-            file.Tag.Title = string.IsNullOrWhiteSpace(Title) ? System.IO.Path.GetFileNameWithoutExtension(_song.FilePath) : Title;
+            file.Tag.Title = string.IsNullOrWhiteSpace(Title) ? Path.GetFileNameWithoutExtension(_song.FilePath) : Title;
             file.Tag.Album = Album;
             file.Tag.Performers = string.IsNullOrWhiteSpace(Artist) ? Array.Empty<string>() : new[] { Artist };
             file.Tag.Track = (uint)TrackNumber;
@@ -85,7 +81,7 @@ public partial class MetadataEditorViewModel : ViewModelBase
                 Type = PictureType.FrontCover,
                 Description = "Cover",
                 MimeType = "image/jpeg",
-                Data = new ByteVector(imagePath)
+                Data = new ByteVector(System.IO.File.ReadAllBytes(imagePath))
             };
 
             file.Tag.Pictures = new IPicture[] { picture };
@@ -93,8 +89,6 @@ public partial class MetadataEditorViewModel : ViewModelBase
 
             AlbumArtPath = imagePath;
             _song.AlbumArtPath = imagePath;
-
-            LoadAlbumArt();
         }
         catch (Exception ex)
         {
@@ -113,22 +107,5 @@ public partial class MetadataEditorViewModel : ViewModelBase
         _album = song.Album;
         _trackNumber = song.TrackNumber;
         _albumArtPath = song.AlbumArtPath;
-
-        LoadAlbumArt();
-    }
-
-    private void LoadAlbumArt()
-    {
-        if (!string.IsNullOrEmpty(_song.AlbumArtPath) && System.IO.File.Exists(_song.AlbumArtPath))
-        {
-            try
-            {
-                AlbumArtBitmap = new Bitmap(_song.AlbumArtPath);
-            }
-            catch
-            {
-                AlbumArtBitmap = null;
-            }
-        }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Services;
@@ -11,7 +10,7 @@ namespace LocalMusicPlayer.ViewModels;
 
 public partial class SettingsViewModel : ViewModelBase
 {
-    private readonly IWindowProvider _windowProvider;
+    private readonly IDialogService _dialogService;
     private readonly IScanService _scanService;
     private readonly IMusicLibraryService _musicLibraryService;
     private readonly IConfigurationService _configService;
@@ -50,22 +49,16 @@ public partial class SettingsViewModel : ViewModelBase
     [RelayCommand]
     private async Task AddFolder()
     {
-        var window = _windowProvider.CurrentWindow;
-        if (window == null) return;
-
-        var folders = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        var paths = await _dialogService.ShowFolderPickerAsync();
+        if (paths != null)
         {
-            Title = "Select Music Folder",
-            AllowMultiple = true
-        });
-
-        foreach (var folder in folders)
-        {
-            var path = folder.Path.LocalPath;
-            if (!ScanFolders.Contains(path))
+            foreach (var path in paths)
             {
-                ScanFolders.Add(path);
-                await _configService.AddScanFolderAsync(path);
+                if (!string.IsNullOrEmpty(path) && !ScanFolders.Contains(path))
+                {
+                    ScanFolders.Add(path);
+                    await _configService.AddScanFolderAsync(path);
+                }
             }
         }
     }
@@ -111,13 +104,13 @@ public partial class SettingsViewModel : ViewModelBase
     }
 
     public SettingsViewModel(
-        IWindowProvider windowProvider,
+        IDialogService dialogService,
         IScanService scanService,
         IMusicLibraryService musicLibraryService,
         IConfigurationService configService,
         IPlaybackStateService playbackStateService)
     {
-        _windowProvider = windowProvider;
+        _dialogService = dialogService;
         _scanService = scanService;
         _musicLibraryService = musicLibraryService;
         _configService = configService;
@@ -159,34 +152,34 @@ public partial class SettingsViewModel : ViewModelBase
 
     partial void OnIncludeSubfoldersChanged(bool value)
     {
-        _ = SaveSettingsAsync();
+        _ = SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     partial void OnCrossfadeEnabledChanged(bool value)
     {
         _playbackStateService.IsCrossfadeEnabled = value;
         _configService.CurrentSettings.CrossfadeEnabled = value;
-        _ = _configService.SaveSettingsAsync();
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     partial void OnCrossfadeDurationSecondsChanged(int value)
     {
         _playbackStateService.CrossfadeDuration = TimeSpan.FromSeconds(value);
         _configService.CurrentSettings.CrossfadeDurationMs = value * 1000;
-        _ = _configService.SaveSettingsAsync();
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     partial void OnPlaybackRateChanged(float value)
     {
         _playbackStateService.SetPlaybackRate(value);
         _configService.CurrentSettings.PlaybackRate = value;
-        _ = _configService.SaveSettingsAsync();
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     partial void OnReplayGainEnabledChanged(bool value)
     {
         _playbackStateService.IsReplayGainEnabled = value;
         _configService.CurrentSettings.ReplayGainEnabled = value;
-        _ = _configService.SaveSettingsAsync();
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 }

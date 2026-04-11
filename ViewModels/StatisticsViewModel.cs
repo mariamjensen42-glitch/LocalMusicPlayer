@@ -62,10 +62,27 @@ public partial class StatisticsViewModel : ViewModelBase
         _statisticsService = statisticsService;
         _musicLibraryService = musicLibraryService;
 
-        _statisticsService.StatisticsChanged += (_, _) => RefreshStatistics();
-        _musicLibraryService.Songs.CollectionChanged += (_, _) => RefreshStatistics();
+        _statisticsService.StatisticsChanged += OnStatisticsChanged;
+        _musicLibraryService.Songs.CollectionChanged += OnSongsCollectionChanged;
 
         RefreshStatistics();
+    }
+
+    private void OnStatisticsChanged(object? sender, EventArgs e)
+    {
+        RefreshStatistics();
+    }
+
+    private void OnSongsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        RefreshStatistics();
+    }
+
+    protected override void DisposeCore()
+    {
+        _statisticsService.StatisticsChanged -= OnStatisticsChanged;
+        _musicLibraryService.Songs.CollectionChanged -= OnSongsCollectionChanged;
+        base.DisposeCore();
     }
 
     partial void OnTotalPlayTimeChanged(TimeSpan value)

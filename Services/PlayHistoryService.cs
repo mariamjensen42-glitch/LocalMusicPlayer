@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LocalMusicPlayer.Data;
 using LocalMusicPlayer.Models;
 
 namespace LocalMusicPlayer.Services;
@@ -9,77 +10,79 @@ namespace LocalMusicPlayer.Services;
 public class PlayHistoryService : IPlayHistoryService
 {
     private const int MaxHistoryCount = 200;
-    private readonly List<PlayHistoryEntry> _history = new();
-    private readonly IConfigurationService _configService;
     private readonly IMusicLibraryService _libraryService;
 
     public event EventHandler? HistoryChanged;
 
-    public PlayHistoryService(IConfigurationService configService, IMusicLibraryService libraryService)
+    public PlayHistoryService(IMusicLibraryService libraryService)
     {
-        _configService = configService;
         _libraryService = libraryService;
-        LoadHistory();
     }
 
     public void AddToHistory(Song song)
     {
-        var entry = new PlayHistoryEntry(song, DateTime.Now);
-
-        _history.Insert(0, entry);
-
-        if (_history.Count > MaxHistoryCount)
+        _ = Task.Run(() =>
         {
-            _history.RemoveAt(_history.Count - 1);
-        }
+            using var db = new AppDbContext();
+            var entity = new PlayHistoryEntity
+            {
+                FilePath = song.FilePath,
+                Title = song.Title,
+                Artist = song.Artist,
+                PlayedAt = DateTime.Now
+            };
+
+            db.PlayHistory.Add(entity);
+            db.SaveChanges();
+
+            var excess = db.PlayHistory.Count() - MaxHistoryCount;
+            if (excess > 0)
+            {
+                var oldest = db.PlayHistory
+                    .OrderBy(e => e.PlayedAt)
+                    .Take(excess)
+                    .ToList();
+
+                db.PlayHistory.RemoveRange(oldest);
+                db.SaveChanges();
+            }
+        });
 
         HistoryChanged?.Invoke(this, EventArgs.Empty);
-        SaveHistoryAsync().ConfigureAwait(false);
     }
 
     public IReadOnlyList<PlayHistoryEntry> GetHistory()
     {
-        return _history.ToList().AsReadOnly();
+        var entities = Task.Run(() =>
+        {
+            using var db = new AppDbContext();
+            return db.PlayHistory
+                .OrderByDescending(e => e.PlayedAt)
+                .ToList();
+        }).GetAwaiter().GetResult();
+
+        var result = new List<PlayHistoryEntry>();
+        foreach (var entity in entities)
+        {
+            var song = _libraryService.Songs.FirstOrDefault(s => s.FilePath == entity.FilePath);
+            if (song != null)
+            {
+                result.Add(new PlayHistoryEntry(song, entity.PlayedAt));
+            }
+        }
+
+        return result.AsReadOnly();
     }
 
     public void ClearHistory()
     {
-        _history.Clear();
+        _ = Task.Run(() =>
+        {
+            using var db = new AppDbContext();
+            db.PlayHistory.RemoveRange(db.PlayHistory.ToList());
+            db.SaveChanges();
+        });
+
         HistoryChanged?.Invoke(this, EventArgs.Empty);
-        SaveHistoryAsync().ConfigureAwait(false);
-    }
-
-    private void LoadHistory()
-    {
-        var records = _configService.CurrentSettings.PlayHistory;
-        if (records == null || records.Count == 0)
-            return;
-
-        _history.Clear();
-        foreach (var record in records.OrderByDescending(r => r.PlayedAt))
-        {
-            var song = _libraryService.Songs.FirstOrDefault(s => s.FilePath == record.FilePath);
-            if (song != null)
-            {
-                _history.Add(new PlayHistoryEntry(song, record.PlayedAt));
-            }
-        }
-
-        if (_history.Count > MaxHistoryCount)
-        {
-            _history.RemoveRange(MaxHistoryCount, _history.Count - MaxHistoryCount);
-        }
-    }
-
-    private async Task SaveHistoryAsync()
-    {
-        var records = _history.Select(h => new PlayHistoryRecord
-        {
-            FilePath = h.Song.FilePath,
-            PlayedAt = h.PlayedAt
-        }).ToList();
-
-        _configService.CurrentSettings.PlayHistory = records;
-        await _configService.SaveSettingsAsync();
     }
 }

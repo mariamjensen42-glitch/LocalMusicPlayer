@@ -22,7 +22,7 @@
                            Grid.Column="0"
                            FontSize="32"
                            FontWeight="Bold"
-                           FontFamily="Inter"
+                           FontFamily="{StaticResource FontFamilyPrimary}"
                            Foreground="{StaticResource TextPrimaryBrush}" />
                 <TextBlock Text="{StaticResource String_CustomizeExperience}"
                            Grid.Column="1"
@@ -264,7 +264,7 @@
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
                     <StackPanel Spacing="12">
-                        <TextBlock Text="播放效果"
+                        <TextBlock Text="{DynamicResource String_PlaybackEffects}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}"
@@ -272,7 +272,7 @@
 
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
                             <TextBlock Grid.Row="0" Grid.Column="0"
-                                       Text="淡入淡出"
+                                       Text="{DynamicResource String_Crossfade}"
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center" />
@@ -306,7 +306,7 @@
                             </StackPanel>
 
                             <TextBlock Grid.Row="2" Grid.Column="0"
-                                       Text="音量归一化 (ReplayGain)"
+                                       Text="{DynamicResource String_VolumeNormalization}"
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center"
@@ -320,7 +320,7 @@
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
                     <StackPanel Spacing="12">
-                        <TextBlock Text="播放速度"
+                        <TextBlock Text="{DynamicResource String_PlaybackSpeed}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}"

@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Threading;
 using LocalMusicPlayer.ViewModels;
 
 namespace LocalMusicPlayer.Views;
@@ -38,17 +39,20 @@ public partial class PlayerPageView : UserControl
         if (_lyricsScrollViewer == null || index < 0)
             return;
 
-        var scrollViewer = _lyricsScrollViewer;
-        var viewportHeight = scrollViewer.Viewport.Height;
-        var scrollableHeight = scrollViewer.Extent.Height - viewportHeight;
+        Dispatcher.UIThread.Post(() =>
+        {
+            var scrollViewer = _lyricsScrollViewer;
+            var viewportHeight = scrollViewer.Viewport.Height;
+            var scrollableHeight = scrollViewer.Extent.Height - viewportHeight;
 
-        var lyricItemHeight = 80.0;
-        var margin = 300.0;
+            var lyricItemHeight = 80.0;
+            var margin = 300.0;
 
-        var targetPosition = margin + (index * lyricItemHeight) - (viewportHeight / 2) + (lyricItemHeight / 2);
+            var targetPosition = margin + (index * lyricItemHeight) - (viewportHeight / 2) + (lyricItemHeight / 2);
 
-        targetPosition = double.Max(0, double.Min(scrollableHeight, targetPosition));
+            targetPosition = double.Max(0, double.Min(scrollableHeight, targetPosition));
 
-        scrollViewer.Offset = new Avalonia.Vector(0, targetPosition);
+            scrollViewer.Offset = new Avalonia.Vector(0, targetPosition);
+        });
     }
 }

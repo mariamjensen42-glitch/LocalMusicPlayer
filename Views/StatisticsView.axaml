@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
              xmlns:converters="using:LocalMusicPlayer.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -27,7 +28,7 @@
                            Grid.Column="0"
                            FontSize="32"
                            FontWeight="Bold"
-                           FontFamily="Inter"
+                           FontFamily="{StaticResource FontFamilyPrimary}"
                            Foreground="{StaticResource TextPrimaryBrush}" />
                 <TextBlock Text="{StaticResource String_ListeningHabits}"
                            Grid.Column="1"
@@ -46,7 +47,7 @@
                                 Background="{StaticResource AccentPurpleBrush}">
                             <TextBlock Text="&#xE8B7;"
                                        FontFamily="Segoe Fluent Icons"
-                                       Foreground="White"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
                                        FontSize="20"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
@@ -75,7 +76,7 @@
                                            FontSize="28"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
+                                           FontFamily="{StaticResource FontFamilyMono}"
                                            HorizontalAlignment="Center" />
                                 <TextBlock Text="{StaticResource String_Songs}"
                                            FontSize="12"
@@ -88,7 +89,7 @@
                                            FontSize="28"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
+                                           FontFamily="{StaticResource FontFamilyMono}"
                                            HorizontalAlignment="Center" />
                                 <TextBlock Text="{StaticResource String_Albums}"
                                            FontSize="12"
@@ -101,7 +102,7 @@
                                            FontSize="28"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
+                                           FontFamily="{StaticResource FontFamilyMono}"
                                            HorizontalAlignment="Center" />
                                 <TextBlock Text="{StaticResource String_Artists}"
                                            FontSize="12"
@@ -114,7 +115,7 @@
                                            FontSize="28"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
+                                           FontFamily="{StaticResource FontFamilyMono}"
                                            HorizontalAlignment="Center" />
                                 <TextBlock Text="{StaticResource String_Duration}"
                                            FontSize="12"
@@ -136,7 +137,7 @@
                                 Background="{StaticResource AccentPinkBrush}">
                             <TextBlock Text="&#xE15D;"
                                        FontFamily="Segoe Fluent Icons"
-                                       Foreground="White"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
                                        FontSize="20"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
@@ -165,7 +166,7 @@
                                            FontSize="28"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
+                                           FontFamily="{StaticResource FontFamilyMono}"
                                            HorizontalAlignment="Center" />
                                 <TextBlock Text="Total Plays"
                                            FontSize="12"
@@ -178,7 +179,7 @@
                                            FontSize="28"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
+                                           FontFamily="{StaticResource FontFamilyMono}"
                                            HorizontalAlignment="Center" />
                                 <TextBlock Text="Time Listened"
                                            FontSize="12"
@@ -191,7 +192,7 @@
                                            FontSize="28"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
+                                           FontFamily="{StaticResource FontFamilyMono}"
                                            HorizontalAlignment="Center" />
                                 <TextBlock Text="Avg/Day"
                                            FontSize="12"
@@ -204,7 +205,7 @@
                                            FontSize="28"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace"
+                                           FontFamily="{StaticResource FontFamilyMono}"
                                            HorizontalAlignment="Center" />
                                 <TextBlock Text="Days Used"
                                            FontSize="12"
@@ -226,17 +227,17 @@
                                 Background="{StaticResource PurplePinkVerticalGradientBrush}">
                             <TextBlock Text="&#xE8FA;"
                                        FontFamily="Segoe Fluent Icons"
-                                       Foreground="White"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
                                        FontSize="20"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="Top Played Songs"
+                            <TextBlock Text="{DynamicResource String_TopPlayedSongs}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="Your favorite tracks"
+                            <TextBlock Text="{DynamicResource String_YourFavoriteTracks}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
@@ -246,7 +247,7 @@
 
                     <ItemsControl ItemsSource="{Binding TopPlayedSongs}">
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="models:SongPlayRecord">
                                 <Border Background="{StaticResource BgPrimaryBrush}"
                                         CornerRadius="10"
                                         BorderBrush="{StaticResource BorderSubtleBrush}"
@@ -263,7 +264,7 @@
                                             <TextBlock Text="{Binding Rank}"
                                                        FontSize="14"
                                                        FontWeight="Bold"
-                                                       Foreground="White"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center" />
                                         </Border>
@@ -298,8 +299,8 @@
                                                        FontSize="16"
                                                        FontWeight="Bold"
                                                        Foreground="{StaticResource TextPrimaryBrush}"
-                                                       FontFamily="Consolas, monospace" />
-                                            <TextBlock Text="plays"
+                                                       FontFamily="{StaticResource FontFamilyMono}" />
+                                            <TextBlock Text="{DynamicResource String_Plays}"
                                                        FontSize="12"
                                                        Foreground="{StaticResource TextMutedBrush}"
                                                        VerticalAlignment="Center" />
@@ -344,4 +345,3 @@
         </StackPanel>
     </ScrollViewer>
 </UserControl>
-

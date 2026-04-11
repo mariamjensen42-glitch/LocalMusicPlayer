@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
+using LocalMusicPlayer.Data;
 using LocalMusicPlayer.Services;
 using LocalMusicPlayer.ViewModels;
 using LocalMusicPlayer.Views;
@@ -31,13 +34,38 @@ public partial class App : Application
             desktop.MainWindow = new MainWindow();
             windowProvider.CurrentWindow = desktop.MainWindow;
 
-            desktop.MainWindow.Loaded += (_, _) =>
+            desktop.MainWindow.Loaded += async (_, _) =>
             {
+                var databaseService = Services.GetRequiredService<IDatabaseService>();
+                await databaseService.InitializeAsync();
+
                 var mainWindowViewModel = Services.GetRequiredService<MainWindowViewModel>();
                 desktop.MainWindow!.DataContext = mainWindowViewModel;
                 
                 var systemTrayService = Services.GetRequiredService<ISystemTrayService>();
                 systemTrayService.Initialize();
+            };
+
+            desktop.MainWindow.Closing += async (_, _) =>
+            {
+                var playerService = Services.GetRequiredService<IMusicPlayerService>();
+                if (playerService is IDisposable disposable)
+                    disposable.Dispose();
+
+                var configService = Services.GetRequiredService<IConfigurationService>();
+                var playlistService = Services.GetRequiredService<IPlaylistService>();
+                var playbackStateService = Services.GetRequiredService<IPlaybackStateService>();
+
+                var currentSong = playlistService.CurrentSong;
+                var queueFilePaths = playlistService.CurrentPlaylist?.Songs
+                    .Select(s => s.FilePath)
+                    .ToList() ?? new List<string>();
+                var lastPosition = playbackStateService.Position.TotalSeconds;
+
+                await configService.SavePlaybackStateAsync(
+                    currentSong?.FilePath,
+                    queueFilePaths,
+                    lastPosition);
             };
         }
 
@@ -59,6 +87,8 @@ public partial class App : Application
         services.AddSingleton<IScanService, ScanService>();
         services.AddSingleton<ILyricsService, LyricsService>();
         services.AddSingleton<IStatisticsService, StatisticsService>();
+        services.AddSingleton<AppDbContext>();
+        services.AddSingleton<IDatabaseService, DatabaseService>();
         services.AddSingleton<IUserPlaylistService, UserPlaylistService>();
         services.AddSingleton<IKeyboardShortcutService, KeyboardShortcutService>();
         services.AddSingleton<ILibraryCategoryService, LibraryCategoryService>();
@@ -69,6 +99,7 @@ public partial class App : Application
         services.AddSingleton<IDedupService, DedupService>();
         services.AddSingleton<IViewModelFactory, ViewModelFactory>();
         services.AddSingleton<IFileManagerService, FileManagerService>();
+        services.AddSingleton<IDropHandlerService, DropHandlerService>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<StatisticsViewModel>();
         services.AddTransient<MainWindowViewModel>();

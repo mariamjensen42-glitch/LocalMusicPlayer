@@ -9,7 +9,7 @@
         x:Class="LocalMusicPlayer.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="LocalMusicPlayer"
+        Title="{DynamicResource String_AppTitle}"
         Background="{StaticResource BgPrimaryBrush}"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
@@ -23,6 +23,7 @@
     <Window.Resources>
         <converters:BoolToWidthConverter x:Key="BoolToWidthConverter" />
         <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+        <converters:NavigationPageToColorConverter x:Key="NavigationPageToColorConverter" />
     </Window.Resources>
 
     <Grid ColumnDefinitions="Auto,*">
@@ -43,7 +44,7 @@
                     </Border.Effect>
                     <TextBlock Text="&#xE80A;"
                                FontFamily="Segoe Fluent Icons"
-                               Foreground="White"
+                               Foreground="{StaticResource TextPrimaryBrush}"
                                FontSize="20"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center" />
@@ -54,46 +55,57 @@
                             Spacing="8"
                             Margin="16,24,16,0">
                     <Button Theme="{StaticResource SidebarIconButtonTheme}"
-                            Command="{Binding NavigateToLibraryBrowserCommand}"
+                            Command="{Binding NavigateToLibraryCommand}"
                             HorizontalAlignment="Center"
-                            ToolTip.Tip="Music Library">
-                        <TextBlock Text="&#xE8FA;"
+                            ToolTip.Tip="{DynamicResource String_Home}">
+                        <TextBlock Text="&#xE80A;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
-                                   Foreground="{Binding IsLibrarySelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
+                                   Foreground="{Binding CurrentNavPage, Converter={StaticResource NavigationPageToColorConverter}, ConverterParameter={x:Static vm:NavigationPage.Home}}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
                     <Button Theme="{StaticResource SidebarIconButtonTheme}"
-                            Command="{Binding NavigateToCategoryCommand}"
+                            Command="{Binding NavigateToLibraryBrowserCommand}"
                             HorizontalAlignment="Center"
-                            ToolTip.Tip="Categories">
-                        <TextBlock Text="&#xE8FD;"
+                            ToolTip.Tip="{DynamicResource String_MusicLibrary}">
+                        <TextBlock Text="&#xE8FA;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
-                                   Foreground="{Binding IsCategorySelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
+                                   Foreground="{Binding CurrentNavPage, Converter={StaticResource NavigationPageToColorConverter}, ConverterParameter={x:Static vm:NavigationPage.Library}}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Button>
+                    <Button Theme="{StaticResource SidebarIconButtonTheme}"
+                            Command="{Binding NavigateToFavoritesCommand}"
+                            HorizontalAlignment="Center"
+                            ToolTip.Tip="{DynamicResource String_Favorites}">
+                        <TextBlock Text="&#xEB52;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="18"
+                                   Foreground="{Binding CurrentNavPage, Converter={StaticResource NavigationPageToColorConverter}, ConverterParameter={x:Static vm:NavigationPage.Favorites}}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
                     <Button Theme="{StaticResource SidebarIconButtonTheme}"
                             Command="{Binding NavigateToStatisticsReportCommand}"
                             HorizontalAlignment="Center"
-                            ToolTip.Tip="Statistics Report">
+                            ToolTip.Tip="{DynamicResource String_StatisticsReport}">
                         <TextBlock Text="&#xE8B7;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
-                                   Foreground="{Binding IsStatisticsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
+                                   Foreground="{Binding CurrentNavPage, Converter={StaticResource NavigationPageToColorConverter}, ConverterParameter={x:Static vm:NavigationPage.Statistics}}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
                     <Button Theme="{StaticResource SidebarIconButtonTheme}"
                             Command="{Binding NavigateToHistoryCommand}"
                             HorizontalAlignment="Center"
-                            ToolTip.Tip="Play History">
+                            ToolTip.Tip="{DynamicResource String_PlayHistory}">
                         <TextBlock Text="&#xE81C;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
-                                   Foreground="{Binding IsHistorySelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
+                                   Foreground="{Binding CurrentNavPage, Converter={StaticResource NavigationPageToColorConverter}, ConverterParameter={x:Static vm:NavigationPage.History}}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
@@ -104,7 +116,7 @@
                         <TextBlock Text="&#xE713;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="18"
-                                   Foreground="{Binding IsSettingsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=accent}"
+                                   Foreground="{Binding CurrentNavPage, Converter={StaticResource NavigationPageToColorConverter}, ConverterParameter={x:Static vm:NavigationPage.Settings}}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
@@ -165,6 +177,7 @@
                                            Margin="12,0,8,0" />
                                 <TextBox Grid.Column="1"
                                          x:Name="SearchTextBox"
+                                         Text="{Binding SearchText, Mode=TwoWay}"
                                          Watermark="{StaticResource String_Search}"
                                          Background="Transparent"
                                          BorderThickness="0"

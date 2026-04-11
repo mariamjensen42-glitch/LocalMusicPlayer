@@ -54,6 +54,11 @@ public class NavigationService : INavigationService
         }
     }
 
+    public void NavigateBack()
+    {
+        GoBack();
+    }
+
     public void ClearHistory()
     {
         _history.Clear();

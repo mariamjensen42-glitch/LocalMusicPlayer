@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
@@ -15,26 +16,30 @@ public partial class LibraryCategoryViewModel : ViewModelBase
     private readonly IPlaylistService _playlistService;
     private readonly IStatisticsService _statisticsService;
 
-    private LibraryCategory _currentCategory = LibraryCategory.Songs;
-    private object? _selectedItem;
+    [ObservableProperty] private LibraryCategory _currentCategory = LibraryCategory.Songs;
+
+    [ObservableProperty] private object? _selectedItem;
 
     public Action<ArtistGroup>? OnNavigateToArtistDetail { get; set; }
     public Action<AlbumGroup>? OnNavigateToAlbumDetail { get; set; }
 
-    public LibraryCategory CurrentCategory
+    partial void OnCurrentCategoryChanged(LibraryCategory value)
     {
-        get => _currentCategory;
-        set
-        {
-            if (SetProperty(ref _currentCategory, value))
-            {
-                OnPropertyChanged(nameof(ShowArtistGroups));
-                OnPropertyChanged(nameof(ShowAlbumGroups));
-                OnPropertyChanged(nameof(ShowFolderGroups));
-                OnPropertyChanged(nameof(ShowFavorites));
-                RefreshItems();
-            }
-        }
+        OnPropertyChanged(nameof(ShowArtistGroups));
+        OnPropertyChanged(nameof(ShowAlbumGroups));
+        OnPropertyChanged(nameof(ShowFolderGroups));
+        OnPropertyChanged(nameof(ShowFavorites));
+        _ = RefreshItemsAsync();
+    }
+
+    partial void OnSelectedItemChanged(object? value)
+    {
+        UpdateSelectedGroupSongs();
+    }
+
+    public void ShowFavoritesOnly()
+    {
+        CurrentCategory = LibraryCategory.Favorites;
     }
 
     public bool ShowArtistGroups => CurrentCategory == LibraryCategory.Artists;
@@ -48,23 +53,30 @@ public partial class LibraryCategoryViewModel : ViewModelBase
     public ObservableCollection<Song> FavoriteSongs { get; } = new();
     public ObservableCollection<Song> SelectedGroupSongs { get; } = new();
 
-    public object? SelectedItem
-    {
-        get => _selectedItem;
-        set
-        {
-            if (SetProperty(ref _selectedItem, value))
-            {
-                UpdateSelectedGroupSongs();
-            }
-        }
-    }
-
     [RelayCommand]
     private void SwitchCategory(LibraryCategory category)
     {
         CurrentCategory = category;
         _categoryService.CurrentCategory = category;
+    }
+
+    [RelayCommand]
+    private void SelectItem(object? item)
+    {
+        if (item is ArtistGroup artistGroup)
+        {
+            SelectedItem = artistGroup;
+            OnNavigateToArtistDetail?.Invoke(artistGroup);
+        }
+        else if (item is AlbumGroup albumGroup)
+        {
+            SelectedItem = albumGroup;
+            OnNavigateToAlbumDetail?.Invoke(albumGroup);
+        }
+        else if (item is FolderGroup folderGroup)
+        {
+            SelectedItem = folderGroup;
+        }
     }
 
     [RelayCommand]
@@ -82,7 +94,7 @@ public partial class LibraryCategoryViewModel : ViewModelBase
     {
         if (SelectedGroupSongs.Count == 0) return;
 
-        var playlist = _playlistService.CreatePlaylist("临时播放");
+        var playlist = _playlistService.CreatePlaylist("TempPlay");
         _playlistService.SetCurrentPlaylist(playlist);
 
         foreach (var song in SelectedGroupSongs)
@@ -108,18 +120,26 @@ public partial class LibraryCategoryViewModel : ViewModelBase
         _playlistService = playlistService;
         _statisticsService = statisticsService;
 
-        _categoryService.CategoryChanged += (_, category) =>
-        {
-            if (CurrentCategory != category)
-            {
-                CurrentCategory = category;
-            }
-        };
+        _categoryService.CategoryChanged += OnCategoryChanged;
 
-        RefreshItems();
+        _ = RefreshItemsAsync();
     }
 
-    private void RefreshItems()
+    private void OnCategoryChanged(object? sender, LibraryCategory category)
+    {
+        if (CurrentCategory != category)
+        {
+            CurrentCategory = category;
+        }
+    }
+
+    protected override void DisposeCore()
+    {
+        _categoryService.CategoryChanged -= OnCategoryChanged;
+        base.DisposeCore();
+    }
+
+    private async Task RefreshItemsAsync()
     {
         ArtistGroups.Clear();
         AlbumGroups.Clear();
@@ -142,7 +162,8 @@ public partial class LibraryCategoryViewModel : ViewModelBase
                     FolderGroups.Add(group);
                 break;
             case LibraryCategory.Favorites:
-                foreach (var song in _categoryService.GetFavoriteSongs())
+                var favSongs = await _categoryService.GetFavoriteSongsAsync();
+                foreach (var song in favSongs)
                     FavoriteSongs.Add(song);
                 break;
         }

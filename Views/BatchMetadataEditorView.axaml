@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="520"
         x:Class="LocalMusicPlayer.Views.BatchMetadataEditorView"
         x:DataType="vm:BatchMetadataEditorViewModel"
-        Title="Batch Edit Metadata"
+        Title="{DynamicResource String_BatchEditMetadata}"
         Width="480"
         Height="520"
         WindowStartupLocation="CenterOwner"
@@ -24,7 +24,7 @@
                 BorderThickness="0,0,0,1"
                 Padding="24,16">
             <StackPanel>
-                <TextBlock Text="Batch Edit Metadata"
+                <TextBlock Text="{DynamicResource String_BatchEditMetadata}"
                            FontSize="18"
                            FontWeight="SemiBold"
                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -46,7 +46,7 @@
                              Watermark="{Binding TitleField.Placeholder}"
                              IsEnabled="{Binding !IsSaving}"
                              TextChanged="OnFieldTextChanged" />
-                    <TextBlock Text="Mixed values - leave empty to keep original"
+                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
                                FontSize="11"
                                Foreground="{StaticResource AccentOrangeBrush}"
                                IsVisible="{Binding TitleField.IsMixedValue}"
@@ -62,7 +62,7 @@
                              Watermark="{Binding ArtistField.Placeholder}"
                              IsEnabled="{Binding !IsSaving}"
                              TextChanged="OnFieldTextChanged" />
-                    <TextBlock Text="Mixed values - leave empty to keep original"
+                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
                                FontSize="11"
                                Foreground="{StaticResource AccentOrangeBrush}"
                                IsVisible="{Binding ArtistField.IsMixedValue}"
@@ -78,7 +78,7 @@
                              Watermark="{Binding AlbumField.Placeholder}"
                              IsEnabled="{Binding !IsSaving}"
                              TextChanged="OnFieldTextChanged" />
-                    <TextBlock Text="Mixed values - leave empty to keep original"
+                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
                                FontSize="11"
                                Foreground="{StaticResource AccentOrangeBrush}"
                                IsVisible="{Binding AlbumField.IsMixedValue}"
@@ -94,7 +94,7 @@
                              Watermark="{Binding GenreField.Placeholder}"
                              IsEnabled="{Binding !IsSaving}"
                              TextChanged="OnFieldTextChanged" />
-                    <TextBlock Text="Mixed values - leave empty to keep original"
+                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
                                FontSize="11"
                                Foreground="{StaticResource AccentOrangeBrush}"
                                IsVisible="{Binding GenreField.IsMixedValue}"
@@ -102,7 +102,7 @@
                 </StackPanel>
 
                 <StackPanel>
-                    <TextBlock Text="Year"
+                    <TextBlock Text="{DynamicResource String_Year}"
                                FontSize="12"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                Margin="0,0,0,6" />
@@ -110,7 +110,7 @@
                              Watermark="{Binding YearField.Placeholder}"
                              IsEnabled="{Binding !IsSaving}"
                              TextChanged="OnFieldTextChanged" />
-                    <TextBlock Text="Mixed values - leave empty to keep original"
+                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
                                FontSize="11"
                                Foreground="{StaticResource AccentOrangeBrush}"
                                IsVisible="{Binding YearField.IsMixedValue}"
@@ -153,16 +153,17 @@
                 IsVisible="{Binding !IsSaving}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
                 <Button Theme="{StaticResource SecondaryButtonTheme}"
-                        Height="36"
-                        FontSize="13"
-                        Click="OnCancelClick">
-                    <TextBlock Text="Cancel" VerticalAlignment="Center" />
+                            Height="36"
+                            FontSize="13"
+                            Command="{Binding CancelCommand}"
+                            Click="OnCancelClick">
+                    <TextBlock Text="{DynamicResource String_Cancel}" VerticalAlignment="Center" />
                 </Button>
                 <Button Theme="{StaticResource PrimaryButtonTheme}"
                         Height="36"
                         FontSize="13"
                         Command="{Binding SaveCommand}">
-                    <TextBlock Text="Save All" VerticalAlignment="Center" />
+                    <TextBlock Text="{DynamicResource String_SaveAll}" VerticalAlignment="Center" />
                 </Button>
             </StackPanel>
         </Border>

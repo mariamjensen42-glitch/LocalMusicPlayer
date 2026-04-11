@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
              xmlns:converters="using:LocalMusicPlayer.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -27,10 +28,10 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Spacing="4">
-                    <TextBlock Text="Statistics Report"
+                    <TextBlock Text="{DynamicResource String_StatisticsReport}"
                                FontSize="32"
                                FontWeight="Bold"
-                               FontFamily="Inter"
+                               FontFamily="{StaticResource FontFamilyPrimary}"
                                Foreground="{StaticResource TextPrimaryBrush}" />
                     <TextBlock Text="Detailed listening analytics"
                                FontSize="14"
@@ -75,13 +76,13 @@
                                 Background="{StaticResource AccentPurpleBrush}">
                             <TextBlock Text="&#xE7BF;"
                                        FontFamily="Segoe Fluent Icons"
-                                       Foreground="White"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
                                        FontSize="20"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="2" VerticalAlignment="Center">
-                            <TextBlock Text="Overview"
+                            <TextBlock Text="{DynamicResource String_Overview}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
@@ -106,7 +107,7 @@
                                            FontSize="32"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace" />
+                                           FontFamily="{StaticResource FontFamilyMono}" />
                                 <TextBlock Text="Total Songs"
                                            FontSize="12"
                                            FontWeight="500"
@@ -126,7 +127,7 @@
                                            FontSize="32"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace" />
+                                           FontFamily="{StaticResource FontFamilyMono}" />
                                 <TextBlock Text="Total Plays"
                                            FontSize="12"
                                            FontWeight="500"
@@ -146,7 +147,7 @@
                                            FontSize="32"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace" />
+                                           FontFamily="{StaticResource FontFamilyMono}" />
                                 <TextBlock Text="Total Play Time"
                                            FontSize="12"
                                            FontWeight="500"
@@ -166,7 +167,7 @@
                                            FontSize="32"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                           FontFamily="Consolas, monospace" />
+                                           FontFamily="{StaticResource FontFamilyMono}" />
                                 <TextBlock Text="Unique Artists"
                                            FontSize="12"
                                            FontWeight="500"
@@ -187,13 +188,13 @@
                                     Background="{StaticResource AccentPinkBrush}">
                                 <TextBlock Text="&#xE8F2;"
                                            FontFamily="Segoe Fluent Icons"
-                                           Foreground="White"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
                                            FontSize="20"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center" />
                             </Border>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Top Artists"
+                                <TextBlock Text="{DynamicResource String_TopArtists}"
                                            FontSize="18"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -207,7 +208,7 @@
 
                         <ItemsControl ItemsSource="{Binding TopArtists}">
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate x:DataType="models:ArtistStatistics">
                                     <Border Background="{StaticResource BgPrimaryBrush}"
                                             CornerRadius="10"
                                             BorderBrush="{StaticResource BorderSubtleBrush}"
@@ -224,7 +225,7 @@
                                                 <TextBlock Text="{Binding Rank}"
                                                            FontSize="14"
                                                            FontWeight="Bold"
-                                                           Foreground="White"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center" />
                                             </Border>
@@ -246,8 +247,8 @@
                                                            FontSize="16"
                                                            FontWeight="Bold"
                                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                                           FontFamily="Consolas, monospace" />
-                                                <TextBlock Text="plays"
+                                                           FontFamily="{StaticResource FontFamilyMono}" />
+                                                <TextBlock Text="{DynamicResource String_Plays}"
                                                            FontSize="12"
                                                            Foreground="{StaticResource TextMutedBrush}"
                                                            VerticalAlignment="Center" />
@@ -269,13 +270,13 @@
                                     Background="{StaticResource AccentBlueBrush}">
                                 <TextBlock Text="&#xE8C3;"
                                            FontFamily="Segoe Fluent Icons"
-                                           Foreground="White"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
                                            FontSize="20"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center" />
                             </Border>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Top Albums"
+                                <TextBlock Text="{DynamicResource String_TopAlbums}"
                                            FontSize="18"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -289,7 +290,7 @@
 
                         <ItemsControl ItemsSource="{Binding TopAlbums}">
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate x:DataType="models:AlbumStatistics">
                                     <Border Background="{StaticResource BgPrimaryBrush}"
                                             CornerRadius="10"
                                             BorderBrush="{StaticResource BorderSubtleBrush}"
@@ -306,7 +307,7 @@
                                                 <TextBlock Text="{Binding Rank}"
                                                            FontSize="14"
                                                            FontWeight="Bold"
-                                                           Foreground="White"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center" />
                                             </Border>
@@ -329,8 +330,8 @@
                                                            FontSize="16"
                                                            FontWeight="Bold"
                                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                                           FontFamily="Consolas, monospace" />
-                                                <TextBlock Text="plays"
+                                                           FontFamily="{StaticResource FontFamilyMono}" />
+                                                <TextBlock Text="{DynamicResource String_Plays}"
                                                            FontSize="12"
                                                            Foreground="{StaticResource TextMutedBrush}"
                                                            VerticalAlignment="Center" />
@@ -354,13 +355,13 @@
                                     Background="{StaticResource PurplePinkVerticalGradientBrush}">
                                 <TextBlock Text="&#xE8FA;"
                                            FontFamily="Segoe Fluent Icons"
-                                           Foreground="White"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
                                            FontSize="20"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center" />
                             </Border>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Top Songs"
+                                <TextBlock Text="{DynamicResource String_TopSongs}"
                                            FontSize="18"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -374,7 +375,7 @@
 
                         <ItemsControl ItemsSource="{Binding TopSongs}">
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate x:DataType="models:SongPlayRecord">
                                     <Border Background="{StaticResource BgPrimaryBrush}"
                                             CornerRadius="10"
                                             BorderBrush="{StaticResource BorderSubtleBrush}"
@@ -391,7 +392,7 @@
                                                 <TextBlock Text="{Binding Rank}"
                                                            FontSize="14"
                                                            FontWeight="Bold"
-                                                           Foreground="White"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center" />
                                             </Border>
@@ -425,8 +426,8 @@
                                                            FontSize="16"
                                                            FontWeight="Bold"
                                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                                           FontFamily="Consolas, monospace" />
-                                                <TextBlock Text="plays"
+                                                           FontFamily="{StaticResource FontFamilyMono}" />
+                                                <TextBlock Text="{DynamicResource String_Plays}"
                                                            FontSize="12"
                                                            Foreground="{StaticResource TextMutedBrush}"
                                                            VerticalAlignment="Center" />
@@ -448,13 +449,13 @@
                                     Background="{StaticResource AccentGreenBrush}">
                                 <TextBlock Text="&#xE8B7;"
                                            FontFamily="Segoe Fluent Icons"
-                                           Foreground="White"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
                                            FontSize="20"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center" />
                             </Border>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Genre Distribution"
+                                <TextBlock Text="{DynamicResource String_GenreDistribution}"
                                            FontSize="18"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -468,7 +469,7 @@
 
                         <ItemsControl ItemsSource="{Binding GenreDistribution}">
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate x:DataType="models:GenreDistribution">
                                     <Border Background="{StaticResource BgPrimaryBrush}"
                                             CornerRadius="10"
                                             BorderBrush="{StaticResource BorderSubtleBrush}"
@@ -491,7 +492,7 @@
                                                            FontSize="14"
                                                            FontWeight="Bold"
                                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                                           FontFamily="Consolas, monospace" />
+                                                           FontFamily="{StaticResource FontFamilyMono}" />
                                                 <TextBlock Text="songs"
                                                            FontSize="12"
                                                            Foreground="{StaticResource TextMutedBrush}" />
@@ -524,13 +525,13 @@
                                 Background="{StaticResource AccentOrangeBrush}">
                             <TextBlock Text="&#xE823;"
                                        FontFamily="Segoe Fluent Icons"
-                                       Foreground="White"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
                                        FontSize="20"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="2" VerticalAlignment="Center">
-                            <TextBlock Text="Listening History"
+                            <TextBlock Text="{DynamicResource String_ListeningHistory}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
@@ -544,7 +545,7 @@
 
                     <ItemsControl ItemsSource="{Binding ListeningHistory}">
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="models:ListeningHistoryItem">
                                 <Border Background="{StaticResource BgPrimaryBrush}"
                                         CornerRadius="10"
                                         BorderBrush="{StaticResource BorderSubtleBrush}"

@@ -8,6 +8,9 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using LocalMusicPlayer.Models;
+using LocalMusicPlayer.ViewModels;
+using LocalMusicPlayer.Views;
 
 namespace LocalMusicPlayer.Services;
 
@@ -117,7 +120,7 @@ public class DialogService : IDialogService
         var mainWindow = GetMainWindow();
         if (mainWindow == null) return null;
 
-#pragma warning disable CS0618 // OpenFileDialog is obsolete in Avalonia 11.x
+#pragma warning disable CS0618
         var dialog = new OpenFileDialog
         {
             Title = title,
@@ -149,6 +152,45 @@ public class DialogService : IDialogService
         });
 
         return result?.Path.LocalPath;
+    }
+
+    public async Task ShowMetadataEditorDialogAsync(Song song, Action? onSaved = null)
+    {
+        var mainWindow = GetMainWindow();
+        if (mainWindow == null) return;
+
+        var dialog = new MetadataEditorView
+        {
+            DataContext = new MetadataEditorViewModel(song, this, onSaved)
+        };
+        await dialog.ShowDialog(mainWindow);
+    }
+
+    public async Task ShowBatchMetadataEditorDialogAsync(System.Collections.IList songs, Action? onSaved = null)
+    {
+        var mainWindow = GetMainWindow();
+        if (mainWindow == null) return;
+
+        var songList = songs.Cast<Song>().ToList();
+        var dialog = new BatchMetadataEditorView
+        {
+            DataContext = new BatchMetadataEditorViewModel(songList, this, onSaved)
+        };
+        await dialog.ShowDialog(mainWindow);
+    }
+
+    public async Task<IReadOnlyList<string>?> ShowFolderPickerAsync()
+    {
+        var mainWindow = GetMainWindow();
+        if (mainWindow == null) return null;
+
+        var folders = await mainWindow.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        {
+            Title = "Select Music Folder",
+            AllowMultiple = true
+        });
+
+        return folders.Select(f => f.Path.LocalPath).ToList();
     }
 
     private Window? GetMainWindow()

@@ -9,15 +9,6 @@ using LocalMusicPlayer.Services;
 
 namespace LocalMusicPlayer.ViewModels;
 
-public enum BrowserCategory
-{
-    Songs,
-    Artists,
-    Albums,
-    Genres,
-    Folders
-}
-
 public partial class LibraryBrowserViewModel : ViewModelBase
 {
     private readonly IMusicLibraryService _musicLibraryService;
@@ -52,7 +43,7 @@ public partial class LibraryBrowserViewModel : ViewModelBase
         _playlistService = playlistService;
         _navigationService = navigationService;
 
-        _ = LoadDataAsync();
+        _ = LoadDataAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     [RelayCommand]
@@ -70,11 +61,15 @@ public partial class LibraryBrowserViewModel : ViewModelBase
         switch (item)
         {
             case ArtistInfo artist:
-                Songs = new ObservableCollection<Song>(_musicLibraryService.GetSongsByArtist(artist.Name));
+                Songs.Clear();
+                foreach (var song in _musicLibraryService.GetSongsByArtist(artist.Name))
+                    Songs.Add(song);
                 CurrentCategory = BrowserCategory.Songs;
                 break;
             case AlbumInfo album:
-                Songs = new ObservableCollection<Song>(_musicLibraryService.GetSongsByAlbum(album.Title));
+                Songs.Clear();
+                foreach (var song in _musicLibraryService.GetSongsByAlbum(album.Title))
+                    Songs.Add(song);
                 CurrentCategory = BrowserCategory.Songs;
                 break;
             case GenreInfo genre:
@@ -121,28 +116,32 @@ public partial class LibraryBrowserViewModel : ViewModelBase
         switch (CurrentCategory)
         {
             case BrowserCategory.Songs:
-                Songs = new ObservableCollection<Song>(
-                    _musicLibraryService.Songs.Where(s =>
-                        s.Title.ToLowerInvariant().Contains(searchLower) ||
-                        s.Artist.ToLowerInvariant().Contains(searchLower) ||
-                        s.Album.ToLowerInvariant().Contains(searchLower)));
+                Songs.Clear();
+                foreach (var song in _musicLibraryService.Songs.Where(s =>
+                             s.Title.ToLowerInvariant().Contains(searchLower) ||
+                             s.Artist.ToLowerInvariant().Contains(searchLower) ||
+                             s.Album.ToLowerInvariant().Contains(searchLower)))
+                    Songs.Add(song);
                 break;
             case BrowserCategory.Artists:
-                var artistList = _musicLibraryService.GetArtists();
-                Artists = new ObservableCollection<ArtistInfo>(
-                    artistList.Where(a => a.Name.ToLowerInvariant().Contains(searchLower)));
+                Artists.Clear();
+                foreach (var artist in _musicLibraryService.GetArtists()
+                             .Where(a => a.Name.ToLowerInvariant().Contains(searchLower)))
+                    Artists.Add(artist);
                 break;
             case BrowserCategory.Albums:
-                var albumList = _musicLibraryService.GetAlbums();
-                Albums = new ObservableCollection<AlbumInfo>(
-                    albumList.Where(a =>
-                        a.Title.ToLowerInvariant().Contains(searchLower) ||
-                        a.Artist.ToLowerInvariant().Contains(searchLower)));
+                Albums.Clear();
+                foreach (var album in _musicLibraryService.GetAlbums()
+                             .Where(a =>
+                                 a.Title.ToLowerInvariant().Contains(searchLower) ||
+                                 a.Artist.ToLowerInvariant().Contains(searchLower)))
+                    Albums.Add(album);
                 break;
             case BrowserCategory.Genres:
-                var genreList = _musicLibraryService.GetGenres();
-                Genres = new ObservableCollection<GenreInfo>(
-                    genreList.Where(g => g.Name.ToLowerInvariant().Contains(searchLower)));
+                Genres.Clear();
+                foreach (var genre in _musicLibraryService.GetGenres()
+                             .Where(g => g.Name.ToLowerInvariant().Contains(searchLower)))
+                    Genres.Add(genre);
                 break;
         }
     }
@@ -163,10 +162,18 @@ public partial class LibraryBrowserViewModel : ViewModelBase
             var genreList = _musicLibraryService.GetGenres();
             var folderList = _musicLibraryService.GetFolderStructure();
 
-            Artists = new ObservableCollection<ArtistInfo>(artistList);
-            Albums = new ObservableCollection<AlbumInfo>(albumList);
-            Genres = new ObservableCollection<GenreInfo>(genreList);
-            Folders = new ObservableCollection<FolderNode>(folderList);
+            Artists.Clear();
+            foreach (var artist in artistList)
+                Artists.Add(artist);
+            Albums.Clear();
+            foreach (var album in albumList)
+                Albums.Add(album);
+            Genres.Clear();
+            foreach (var genre in genreList)
+                Genres.Add(genre);
+            Folders.Clear();
+            foreach (var folder in folderList)
+                Folders.Add(folder);
         });
 
         RefreshCurrentView();
@@ -177,33 +184,46 @@ public partial class LibraryBrowserViewModel : ViewModelBase
         switch (CurrentCategory)
         {
             case BrowserCategory.Songs:
-                Songs = new ObservableCollection<Song>(_musicLibraryService.Songs);
+                Songs.Clear();
+                foreach (var song in _musicLibraryService.Songs)
+                    Songs.Add(song);
                 break;
             case BrowserCategory.Artists:
-                Artists = new ObservableCollection<ArtistInfo>(_musicLibraryService.GetArtists());
+                Artists.Clear();
+                foreach (var artist in _musicLibraryService.GetArtists())
+                    Artists.Add(artist);
                 break;
             case BrowserCategory.Albums:
-                Albums = new ObservableCollection<AlbumInfo>(_musicLibraryService.GetAlbums());
+                Albums.Clear();
+                foreach (var album in _musicLibraryService.GetAlbums())
+                    Albums.Add(album);
                 break;
             case BrowserCategory.Genres:
-                Genres = new ObservableCollection<GenreInfo>(_musicLibraryService.GetGenres());
+                Genres.Clear();
+                foreach (var genre in _musicLibraryService.GetGenres())
+                    Genres.Add(genre);
                 break;
             case BrowserCategory.Folders:
-                Folders = new ObservableCollection<FolderNode>(_musicLibraryService.GetFolderStructure());
+                Folders.Clear();
+                foreach (var folder in _musicLibraryService.GetFolderStructure())
+                    Folders.Add(folder);
                 break;
         }
     }
 
     private void FilterSongsByGenre(string genre)
     {
-        var songs = _musicLibraryService.GetSongsByGenre(genre);
-        Songs = new ObservableCollection<Song>(songs);
+        Songs.Clear();
+        foreach (var song in _musicLibraryService.GetSongsByGenre(genre))
+            Songs.Add(song);
         CurrentCategory = BrowserCategory.Songs;
     }
 
     private void ShowFolderSongs(FolderNode folder)
     {
-        Songs = new ObservableCollection<Song>(folder.Songs);
+        Songs.Clear();
+        foreach (var song in folder.Songs)
+            Songs.Add(song);
         CurrentCategory = BrowserCategory.Songs;
     }
 

@@ -1,0 +1,15 @@
+- [x] DI 配置中服务生命周期选择合理，无 Captive Dependency — **未通过**: AppDbContext 注册为 Singleton 存在线程安全问题；MainWindowViewModel 注册为 Transient 但依赖 Singleton 服务
+- [x] MusicPlayerService 中 LibVLCSharp 资源正确释放，无内存泄漏 — **未通过**: LibVLCSharp MediaPlayer/VideoView 未实现 IDisposable，Bitmap 未释放
+- [x] 所有异步服务方法使用 async/await，无 .Result/.Wait()/async void — **未通过**: 多处使用 .Result/.Wait()，存在 async void
+- [x] EF Core DbContext 使用模式正确，无 N+1 查询或并发问题 — **未通过**: Singleton DbContext 并发不安全，缺少 AsNoTracking
+- [x] ViewModel 无直接引用 View 层类型，MVVM 合规 — **未通过**: PlaylistManagementViewModel 直接 new View；PlayerPageViewModel/MetadataEditorViewModel 引用 Avalonia UI 类型
+- [x] ViewModel 中事件订阅正确取消，无内存泄漏 — **未通过**: 所有 ViewModel 事件订阅未取消
+- [x] CommunityToolkit.Mvvm 的 [ObservableProperty]/[RelayCommand] 使用规范 — **未通过**: PlaylistManagementViewModel/LibraryCategoryViewModel 手动实现 INPC
+- [x] 所有 XAML 绑定使用 x:DataType 编译绑定 — **未通过**: 多处 DataTemplate 缺少 x:DataType
+- [x] XAML 资源键遵循 PascalCase 命名规范，无硬编码字符串 — **未通过**: 31+ 处硬编码字符串，语言混用
+- [x] View code-behind 中无业务逻辑代码 — **未通过**: MainWindow.axaml.cs 包含拖放/快捷键等业务逻辑
+- [x] EF Core 实体关系和索引配置正确 — **未通过**: 缺少关键索引，关系配置不完整
+- [x] Converters 实现规范，无性能问题 — **未通过**: AlbumArtConverter 无缓存，参数解析无异常保护
+- [x] Behaviors 使用 Avalonia.Xaml.Behaviors 模式正确 — **未通过**: ClickBehavior 不是 Behavior；DragDropSortBehavior 直接依赖 ViewModel 类型
+- [x] 异常处理完整，无吞异常现象 — **未通过**: AlbumArtConverter 空 catch 块；多处 fire-and-forget 异步
+- [x] 审查报告按优先级整理，每个问题有修复建议 — **通过**

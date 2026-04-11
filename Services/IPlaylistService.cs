@@ -15,6 +15,7 @@ public interface IPlaylistService
     bool PlayNext();
     bool PlayPrevious();
     void PlaySong(Song song);
+    void PlayAtIndex(int index);
     PlaybackMode PlaybackMode { get; set; }
     Playlist? CurrentPlaylist { get; }
     int CurrentIndex { get; }

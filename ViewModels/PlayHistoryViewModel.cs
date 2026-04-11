@@ -14,6 +14,7 @@ public partial class PlayHistoryViewModel : ViewModelBase
     private readonly IPlaybackStateService _playbackStateService;
     private readonly IPlaylistService _playlistService;
     private readonly IStatisticsService _statisticsService;
+    private readonly INavigationService _navigationService;
 
     [ObservableProperty] private ObservableCollection<PlayHistoryEntry> _historyEntries = new();
 
@@ -23,15 +24,28 @@ public partial class PlayHistoryViewModel : ViewModelBase
         IPlayHistoryService playHistoryService,
         IPlaybackStateService playbackStateService,
         IPlaylistService playlistService,
-        IStatisticsService statisticsService)
+        IStatisticsService statisticsService,
+        INavigationService navigationService)
     {
         _playHistoryService = playHistoryService;
         _playbackStateService = playbackStateService;
         _playlistService = playlistService;
         _statisticsService = statisticsService;
+        _navigationService = navigationService;
 
         LoadHistory();
-        _playHistoryService.HistoryChanged += (_, _) => LoadHistory();
+        _playHistoryService.HistoryChanged += OnHistoryChanged;
+    }
+
+    private void OnHistoryChanged(object? sender, EventArgs e)
+    {
+        LoadHistory();
+    }
+
+    protected override void DisposeCore()
+    {
+        _playHistoryService.HistoryChanged -= OnHistoryChanged;
+        base.DisposeCore();
     }
 
     private void LoadHistory()

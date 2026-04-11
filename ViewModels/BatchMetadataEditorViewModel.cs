@@ -59,7 +59,7 @@ public partial class BatchMetadataEditorViewModel : ViewModelBase
         ArtistField = CreateBatchField("Artist", songs, s => s.Artist);
         AlbumField = CreateBatchField("Album", songs, s => s.Album);
         GenreField = CreateBatchField("Genre", songs, s => s.Genre);
-        YearField = CreateBatchField("Year", songs, s => s.TrackNumber.ToString());
+        YearField = CreateBatchField("Year", songs, s => s.Year.ToString());
     }
 
     private static BatchEditField CreateBatchField(string fieldName, List<Song> songs, Func<Song, string> valueSelector)
@@ -100,7 +100,7 @@ public partial class BatchMetadataEditorViewModel : ViewModelBase
                 await SaveSongMetadataAsync(song, modifiedFields);
                 SuccessCount++;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ErrorCount++;
             }

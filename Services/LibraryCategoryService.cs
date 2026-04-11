@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using LocalMusicPlayer.Models;
 
 namespace LocalMusicPlayer.Services;
@@ -36,7 +37,6 @@ public class LibraryCategoryService : ILibraryCategoryService
         _libraryService = libraryService;
         _playlistService = playlistService;
 
-        // 监听歌曲库变更
         _libraryService.Songs.CollectionChanged += (_, _) => RefreshCategories();
     }
 
@@ -61,16 +61,15 @@ public class LibraryCategoryService : ILibraryCategoryService
         return _folderGroups;
     }
 
-    public IReadOnlyList<Song> GetFavoriteSongs()
+    public async Task<IReadOnlyList<Song>> GetFavoriteSongsAsync()
     {
-        return _playlistService.GetFavoriteSongs();
+        return await _playlistService.GetFavoriteSongsAsync();
     }
 
     public void RefreshCategories()
     {
         var songs = _libraryService.Songs;
 
-        // 按艺术家分组
         _artistGroups = songs
             .GroupBy(s => s.Artist)
             .Where(g => !string.IsNullOrEmpty(g.Key))
@@ -82,7 +81,6 @@ public class LibraryCategoryService : ILibraryCategoryService
             .OrderBy(g => g.ArtistName)
             .ToList();
 
-        // 按专辑分组
         _albumGroups = songs
             .GroupBy(s => new { s.Album, s.Artist })
             .Where(g => !string.IsNullOrEmpty(g.Key.Album))
@@ -97,7 +95,6 @@ public class LibraryCategoryService : ILibraryCategoryService
             .ThenBy(g => g.AlbumName)
             .ToList();
 
-        // 按文件夹分组
         _folderGroups = songs
             .GroupBy(s => Path.GetDirectoryName(s.FilePath) ?? "Unknown")
             .Select(g => new FolderGroup

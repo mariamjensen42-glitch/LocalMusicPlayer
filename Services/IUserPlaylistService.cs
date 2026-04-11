@@ -11,19 +11,19 @@ public interface IUserPlaylistService
 {
     ObservableCollection<UserPlaylist> UserPlaylists { get; }
 
-    UserPlaylist CreatePlaylist(string name);
-    void DeletePlaylist(string playlistId);
-    void RenamePlaylist(string playlistId, string newName);
+    Task<UserPlaylist> CreatePlaylistAsync(string name);
+    Task DeletePlaylistAsync(string playlistId);
+    Task RenamePlaylistAsync(string playlistId, string newName);
 
-    void AddSongToPlaylist(string playlistId, Song song);
-    void RemoveSongFromPlaylist(string playlistId, string filePath);
+    Task AddSongToPlaylistAsync(string playlistId, Song song);
+    Task RemoveSongFromPlaylistAsync(string playlistId, string filePath);
     List<Song> GetPlaylistSongs(string playlistId);
-    void MoveSongInPlaylist(string playlistId, int oldIndex, int newIndex);
+    Task MoveSongInPlaylistAsync(string playlistId, int oldIndex, int newIndex);
 
-    void AddToFavorites(Song song);
-    void RemoveFromFavorites(Song song);
-    bool IsFavorite(string filePath);
-    List<Song> GetFavoriteSongs();
+    Task AddToFavoritesAsync(Song song);
+    Task RemoveFromFavoritesAsync(Song song);
+    Task<bool> IsFavoriteAsync(string filePath);
+    Task<List<Song>> GetFavoriteSongsAsync();
 
     Task SavePlaylistsAsync();
     Task LoadPlaylistsAsync();

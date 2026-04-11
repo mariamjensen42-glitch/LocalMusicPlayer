@@ -12,4 +12,5 @@ public interface IConfigurationService
     List<string> GetScanFolders();
     Task AddScanFolderAsync(string path);
     Task RemoveScanFolderAsync(string path);
+    Task SavePlaybackStateAsync(string? lastSongFilePath, List<string> queueFilePaths, double lastPlaybackPosition);
 }

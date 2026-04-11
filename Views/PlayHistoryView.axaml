@@ -22,7 +22,7 @@
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
-                    <TextBlock Text="播放历史"
+                    <TextBlock Text="{DynamicResource String_PlayHistory}"
                                Theme="{StaticResource TitleTextStyle}"
                                VerticalAlignment="Center" />
                 </StackPanel>
@@ -40,7 +40,7 @@
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="清空"
+                            <TextBlock Text="{DynamicResource String_Clear}"
                                        FontSize="13"
                                        FontWeight="Medium"
                                        Foreground="{StaticResource TextPrimaryBrush}"
@@ -64,8 +64,7 @@
                                 BorderThickness="1"
                                 BorderBrush="{StaticResource BorderSubtleBrush}"
                                 Background="{StaticResource BgCardBrush}"
-                                Cursor="Hand"
-                                PointerPressed="OnHistoryEntryClick">
+                                Cursor="Hand">
                             <Grid ColumnDefinitions="Auto,*,Auto,Auto">
                                 <Border Width="44"
                                         Height="44"

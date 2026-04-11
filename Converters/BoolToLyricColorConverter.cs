@@ -7,8 +7,10 @@ namespace LocalMusicPlayer.Converters;
 
 public class BoolToLyricColorConverter : IValueConverter
 {
+    private const string InactiveColor = "#FF71717A";
+
     private static readonly SolidColorBrush ActiveBrush = new(Colors.White);
-    private static readonly SolidColorBrush InactiveBrush = new(Color.Parse("#FF71717A"));
+    private static readonly SolidColorBrush InactiveBrush = new(Color.Parse(InactiveColor));
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
@@ -19,6 +21,6 @@ public class BoolToLyricColorConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 }
