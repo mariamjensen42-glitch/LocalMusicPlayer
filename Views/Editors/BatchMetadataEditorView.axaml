@@ -1,17 +1,17 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:LocalMusicPlayer.ViewModels"
-        xmlns:models="using:LocalMusicPlayer.Models"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="520"
         x:Class="LocalMusicPlayer.Views.Editors.BatchMetadataEditorView"
         x:DataType="vm:BatchMetadataEditorViewModel"
-        Title="{DynamicResource String_BatchEditMetadata}"
+        Title="{DynamicResource StringBatchEditMetadata}"
         Width="480"
         Height="520"
         WindowStartupLocation="CenterOwner"
-        CanResize="False">
+        CanResize="False"
+        x:CompileBindings="False">
 
     <Design.DataContext>
         <vm:BatchMetadataEditorViewModel />
@@ -24,7 +24,7 @@
                 BorderThickness="0,0,0,1"
                 Padding="24,16">
             <StackPanel>
-                <TextBlock Text="{DynamicResource String_BatchEditMetadata}"
+                <TextBlock Text="{DynamicResource StringBatchEditMetadata}"
                            FontSize="18"
                            FontWeight="SemiBold"
                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -46,7 +46,7 @@
                              Watermark="{Binding TitleField.Placeholder}"
                              IsEnabled="{Binding !IsSaving}"
                              TextChanged="OnFieldTextChanged" />
-                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
+                    <TextBlock Text="{DynamicResource StringMixedValuesHint}"
                                FontSize="11"
                                Foreground="{StaticResource AccentOrangeBrush}"
                                IsVisible="{Binding TitleField.IsMixedValue}"
@@ -62,7 +62,7 @@
                              Watermark="{Binding ArtistField.Placeholder}"
                              IsEnabled="{Binding !IsSaving}"
                              TextChanged="OnFieldTextChanged" />
-                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
+                    <TextBlock Text="{DynamicResource StringMixedValuesHint}"
                                FontSize="11"
                                Foreground="{StaticResource AccentOrangeBrush}"
                                IsVisible="{Binding ArtistField.IsMixedValue}"
@@ -78,7 +78,7 @@
                              Watermark="{Binding AlbumField.Placeholder}"
                              IsEnabled="{Binding !IsSaving}"
                              TextChanged="OnFieldTextChanged" />
-                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
+                    <TextBlock Text="{DynamicResource StringMixedValuesHint}"
                                FontSize="11"
                                Foreground="{StaticResource AccentOrangeBrush}"
                                IsVisible="{Binding AlbumField.IsMixedValue}"
@@ -94,7 +94,7 @@
                              Watermark="{Binding GenreField.Placeholder}"
                              IsEnabled="{Binding !IsSaving}"
                              TextChanged="OnFieldTextChanged" />
-                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
+                    <TextBlock Text="{DynamicResource StringMixedValuesHint}"
                                FontSize="11"
                                Foreground="{StaticResource AccentOrangeBrush}"
                                IsVisible="{Binding GenreField.IsMixedValue}"
@@ -102,7 +102,7 @@
                 </StackPanel>
 
                 <StackPanel>
-                    <TextBlock Text="{DynamicResource String_Year}"
+                    <TextBlock Text="{DynamicResource StringYear}"
                                FontSize="12"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                Margin="0,0,0,6" />
@@ -110,7 +110,7 @@
                              Watermark="{Binding YearField.Placeholder}"
                              IsEnabled="{Binding !IsSaving}"
                              TextChanged="OnFieldTextChanged" />
-                    <TextBlock Text="{DynamicResource String_MixedValuesHint}"
+                    <TextBlock Text="{DynamicResource StringMixedValuesHint}"
                                FontSize="11"
                                Foreground="{StaticResource AccentOrangeBrush}"
                                IsVisible="{Binding YearField.IsMixedValue}"
@@ -157,13 +157,13 @@
                             FontSize="13"
                             Command="{Binding CancelCommand}"
                             Click="OnCancelClick">
-                    <TextBlock Text="{DynamicResource String_Cancel}" VerticalAlignment="Center" />
+                    <TextBlock Text="{DynamicResource StringCancel}" VerticalAlignment="Center" />
                 </Button>
                 <Button Theme="{StaticResource PrimaryButtonTheme}"
                         Height="36"
                         FontSize="13"
                         Command="{Binding SaveCommand}">
-                    <TextBlock Text="{DynamicResource String_SaveAll}" VerticalAlignment="Center" />
+                    <TextBlock Text="{DynamicResource StringSaveAll}" VerticalAlignment="Center" />
                 </Button>
             </StackPanel>
         </Border>

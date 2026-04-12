@@ -151,7 +151,9 @@ public partial class SettingsViewModel : ViewModelBase
         ReplayGainEnabled = settings.ReplayGainEnabled;
         MinimizeToTray = settings.MinimizeToTray;
         ShowSongChangeNotification = settings.ShowSongChangeNotification;
+#pragma warning disable CA1416
         AutoStartOnBoot = _autoStartService.IsAutoStartEnabled();
+#pragma warning restore CA1416
         ResumeLastPlayback = settings.ResumeLastPlayback;
         SongCount = _musicLibraryService.Songs.Count;
         AlbumCount = _musicLibraryService.Songs.Select(s => s.Album).Distinct().Count();
@@ -237,6 +239,7 @@ public partial class SettingsViewModel : ViewModelBase
         _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
+#pragma warning disable CA1416
     partial void OnAutoStartOnBootChanged(bool value)
     {
         _ = HandleAutoStartOnBootChangedAsync(value);
@@ -248,6 +251,7 @@ public partial class SettingsViewModel : ViewModelBase
         _configService.CurrentSettings.AutoStartOnBoot = value;
         await _configService.SaveSettingsAsync();
     }
+#pragma warning restore CA1416
 
     partial void OnResumeLastPlaybackChanged(bool value)
     {

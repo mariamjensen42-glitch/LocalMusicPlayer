@@ -9,6 +9,7 @@ namespace LocalMusicPlayer.Services;
 public class LyricsService : ILyricsService
 {
     private static readonly Regex LrcRegex = new(@"\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)", RegexOptions.Compiled);
+    private const int TimeToleranceMs = 50;
 
     public List<LyricLine> GetLyrics(string filePath)
     {
@@ -19,31 +20,40 @@ public class LyricsService : ILyricsService
 
         try
         {
-            // 首先尝试从 TagLib 读取内嵌歌词
+            string? lrcContent = null;
+            string? translatedLrc = null;
+
             using (var file = TagLib.File.Create(filePath))
             {
                 if (!string.IsNullOrEmpty(file.Tag.Lyrics))
                 {
-                    lyrics = ParseLrc(file.Tag.Lyrics);
-                    if (lyrics.Count > 0)
-                        return lyrics;
+                    lrcContent = file.Tag.Lyrics;
                 }
             }
 
-            // 尝试查找同目录下的 .lrc 文件
             var directory = Path.GetDirectoryName(filePath);
             var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
             var lrcPath = Path.Combine(directory!, $"{fileNameWithoutExt}.lrc");
 
             if (System.IO.File.Exists(lrcPath))
             {
-                var lrcContent = System.IO.File.ReadAllText(lrcPath);
-                lyrics = ParseLrc(lrcContent);
+                lrcContent = System.IO.File.ReadAllText(lrcPath);
+            }
+
+            var transFileName = $"{fileNameWithoutExt}_Translated.lrc";
+            var transLrcPath = Path.Combine(directory!, transFileName);
+            if (System.IO.File.Exists(transLrcPath))
+            {
+                translatedLrc = System.IO.File.ReadAllText(transLrcPath);
+            }
+
+            if (!string.IsNullOrEmpty(lrcContent))
+            {
+                lyrics = ParseLrc(lrcContent, translatedLrc);
             }
         }
         catch (Exception)
         {
-            // 忽略错误，返回空列表
         }
 
         return lyrics;
@@ -63,14 +73,65 @@ public class LyricsService : ILyricsService
         return -1;
     }
 
-    private List<LyricLine> ParseLrc(string lrcContent)
+    private List<LyricLine> ParseLrc(string lrcContent, string? translatedLrc = null)
     {
         var lyrics = new List<LyricLine>();
 
         if (string.IsNullOrWhiteSpace(lrcContent))
             return lyrics;
 
-        var lines = lrcContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        ParseLrcToLines(lrcContent, (time, text) =>
+        {
+            var existingLine = lyrics.FirstOrDefault(l =>
+                Math.Abs((l.Timestamp - time).TotalMilliseconds) <= TimeToleranceMs);
+
+            if (existingLine != null)
+            {
+                existingLine.Text += "\n" + text;
+            }
+            else
+            {
+                lyrics.Add(new LyricLine
+                {
+                    Timestamp = time,
+                    Text = text,
+                    LineAnimateDuration = TimeSpan.FromSeconds(5)
+                });
+            }
+        });
+
+        if (!string.IsNullOrEmpty(translatedLrc))
+        {
+            ParseLrcToLines(translatedLrc, (time, transText) =>
+            {
+                var lyric = lyrics.FirstOrDefault(l =>
+                    Math.Abs((l.Timestamp - time).TotalMilliseconds) <= TimeToleranceMs);
+                if (lyric != null)
+                {
+                    lyric.Translation = transText;
+                }
+            });
+        }
+
+        var sortedLyrics = lyrics.OrderBy(l => l.Timestamp).ToList();
+        for (int i = 0; i < sortedLyrics.Count; i++)
+        {
+            if (i < sortedLyrics.Count - 1)
+            {
+                sortedLyrics[i].LineAnimateDuration =
+                    sortedLyrics[i + 1].Timestamp - sortedLyrics[i].Timestamp;
+            }
+        }
+
+        return sortedLyrics;
+    }
+
+    private void ParseLrcToLines(string content, Action<TimeSpan, string> onLineParsed)
+    {
+        if (string.IsNullOrEmpty(content))
+            return;
+
+        var lines = content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var line in lines)
         {
@@ -82,28 +143,13 @@ public class LyricsService : ILyricsService
                 var milliseconds = match.Groups[3].Value.Length == 2
                     ? int.Parse(match.Groups[3].Value) * 10
                     : int.Parse(match.Groups[3].Value);
-                var content = match.Groups[4].Value.Trim();
+                var text = match.Groups[4].Value.Trim();
 
-                if (!string.IsNullOrEmpty(content))
+                if (!string.IsNullOrEmpty(text))
                 {
-                    // 解析原文和翻译（用 \\n 或 \n 分隔）
-                    var parts = content.Split(new[] { "\\\\n", "\\n" }, StringSplitOptions.RemoveEmptyEntries);
-                    var text = parts[0].Trim();
-                    var translation = parts.Length > 1 ? parts[1].Trim() : null;
-
-                    if (!string.IsNullOrEmpty(text))
-                    {
-                        lyrics.Add(new LyricLine
-                        {
-                            Timestamp = new TimeSpan(0, 0, minutes, seconds, milliseconds),
-                            Text = text,
-                            Translation = translation
-                        });
-                    }
+                    onLineParsed(new TimeSpan(0, 0, minutes, seconds, milliseconds), text);
                 }
             }
         }
-
-        return lyrics.OrderBy(l => l.Timestamp).ToList();
     }
 }

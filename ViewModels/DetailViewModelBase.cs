@@ -118,4 +118,23 @@ public abstract partial class DetailViewModelBase : ViewModelBase
             await _dialogService.ShowAddToPlaylistDialogAsync(song);
         }
     }
+
+    [RelayCommand]
+    private async Task EditSongMetadataAsync(Song song)
+    {
+        await _dialogService.ShowMetadataEditorDialogAsync(song);
+    }
+
+    [RelayCommand]
+    private async Task BatchEditMetadataAsync(System.Collections.IList selectedItems)
+    {
+        var songs = selectedItems.OfType<Song>().ToList();
+        if (songs.Count < 2)
+        {
+            await _dialogService.ShowMessageDialogAsync("Batch Edit", "Please select at least 2 songs to batch edit.");
+            return;
+        }
+
+        await _dialogService.ShowBatchMetadataEditorDialogAsync(songs);
+    }
 }

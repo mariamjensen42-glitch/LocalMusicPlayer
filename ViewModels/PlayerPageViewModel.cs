@@ -19,8 +19,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     private readonly IAlbumArtService _albumArtService;
     private readonly IConfigurationService _configService;
     private readonly IUserPlaylistService _userPlaylistService;
-
-    public Action<int>? OnScrollToLyric { get; set; }
+    private readonly IDialogService _dialogService;
 
     public Action? OnClose { get; set; }
 
@@ -77,7 +76,8 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
         IMusicLibraryService musicLibraryService,
         IAlbumArtService albumArtService,
         IConfigurationService configService,
-        IUserPlaylistService userPlaylistService)
+        IUserPlaylistService userPlaylistService,
+        IDialogService dialogService)
     {
         _playbackStateService = playbackStateService;
         _navigationService = navigationService;
@@ -87,6 +87,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
         _albumArtService = albumArtService;
         _configService = configService;
         _userPlaylistService = userPlaylistService;
+        _dialogService = dialogService;
 
         LoadLyricSettings();
 
@@ -112,6 +113,8 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
 
     private void OnPlaybackModeChanged(object? sender, PlaybackMode mode)
     {
+        _configService.CurrentSettings.PlaybackMode = mode.ToString();
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
         OnPropertyChanged(nameof(IsShuffle));
         OnPropertyChanged(nameof(IsRepeat));
         OnPropertyChanged(nameof(IsSingleLoop));
@@ -254,6 +257,11 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     {
         _configService.CurrentSettings.ShowTranslation = value;
         _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+
+        foreach (var lyric in Lyrics)
+        {
+            lyric.ShowTranslation = value;
+        }
     }
 
     [RelayCommand]
@@ -281,30 +289,28 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
             return;
 
         IsSearchingLyrics = true;
-        LyricSearchStatus = "正在搜索歌词...";
 
         try
         {
             var result = await _onlineLyricsService.SearchLyricsAsync(CurrentSong);
-            if (result != null && result.Lyrics.Count > 0)
+
+            var selectedResult = await _dialogService.ShowLyricSearchResultDialogAsync(CurrentSong, result);
+
+            if (selectedResult != null && selectedResult.Lyrics.Count > 0)
             {
                 Lyrics.Clear();
-                foreach (var lyric in result.Lyrics)
+                foreach (var lyric in selectedResult.Lyrics)
                 {
+                    lyric.ShowTranslation = ShowTranslation;
                     Lyrics.Add(lyric);
                 }
                 HasLyrics = Lyrics.Count > 0;
-                LyricSearchStatus = $"找到 {result.Lyrics.Count} 行歌词 (来源: {result.Source})";
                 UpdateCurrentLyricIndex();
-            }
-            else
-            {
-                LyricSearchStatus = "未找到歌词";
             }
         }
         catch (Exception ex)
         {
-            LyricSearchStatus = $"搜索失败: {ex.Message}";
+            await _dialogService.ShowMessageDialogAsync("Error", $"Search failed: {ex.Message}");
         }
         finally
         {
@@ -323,6 +329,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
             var lyrics = _lyricsService.GetLyrics(CurrentSong.FilePath);
             foreach (var lyric in lyrics)
             {
+                lyric.ShowTranslation = ShowTranslation;
                 Lyrics.Add(lyric);
             }
 
@@ -376,7 +383,6 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
             }
 
             CurrentLyricIndex = newIndex;
-            OnScrollToLyric?.Invoke(newIndex);
         }
     }
 }

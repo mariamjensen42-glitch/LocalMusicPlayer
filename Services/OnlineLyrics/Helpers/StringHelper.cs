@@ -69,7 +69,7 @@ public static class StringHelper
         return str;
     }
 
-    public static string RemoveDuoBackslashN(this string str)
+    public static string? RemoveDuoBackslashN(this string str)
     {
         if (str == null) return null;
         while (str.Contains("\n\n"))
@@ -79,7 +79,7 @@ public static class StringHelper
         return str;
     }
 
-    public static string RemoveBackslashR(this string str)
+    public static string? RemoveBackslashR(this string str)
     {
         if (str == null) return null;
         str = str.Replace("\r", "");
@@ -105,7 +105,7 @@ public static class StringHelper
             : string.Format("{0:D1}:{1:D2}", minute, second);
     }
 
-    public static string Between(this string str, string start, string end)
+    public static string? Between(this string str, string start, string end)
     {
         if (str.IndexOf(start) != -1)
         {
@@ -123,7 +123,7 @@ public static class StringHelper
         }
     }
 
-    public static string Reverse(this string str)
+    public static string? Reverse(this string str)
     {
         if (str == null) return null;
 
@@ -133,7 +133,7 @@ public static class StringHelper
         return reverse;
     }
 
-    public static string Remove(this string str, string substring)
+    public static string? Remove(this string str, string substring)
     {
         if (str == null) return null;
 
@@ -161,11 +161,12 @@ public static class StringHelper
         return str;
     }
 
-    public static string RemoveFrontBackBrackets(this string str)
+    public static string? RemoveFrontBackBrackets(this string str)
     {
         if (str == null) return null;
 
         str = str.Trim();
+        if (str.Length == 0) return str;
         if (str[0] == '(' || str[0] == '（') str = str[1..];
         if (str[^1] == ')' || str[^1] == '）') str = str[..^1];
         return str.Trim();

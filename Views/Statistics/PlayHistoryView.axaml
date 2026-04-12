@@ -13,7 +13,7 @@
         <Grid RowDefinitions="Auto,*">
             <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
                 <TextBlock Grid.Column="0"
-                           Text="{DynamicResource String_PlayHistory}"
+                           Text="{DynamicResource StringPlayHistory}"
                            Theme="{StaticResource TitleTextStyle}"
                            VerticalAlignment="Center" />
 
@@ -30,7 +30,7 @@
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="{DynamicResource String_Clear}"
+                            <TextBlock Text="{DynamicResource StringClear}"
                                        FontSize="13"
                                        FontWeight="Medium"
                                        Foreground="{StaticResource TextPrimaryBrush}"

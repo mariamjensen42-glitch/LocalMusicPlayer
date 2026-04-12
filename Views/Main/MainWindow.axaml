@@ -12,12 +12,13 @@
         x:Class="LocalMusicPlayer.Views.Main.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="{DynamicResource String_AppTitle}"
+        Title="{DynamicResource StringAppTitle}"
         Background="{StaticResource BgPrimaryBrush}"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="-1"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        x:CompileBindings="False">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
@@ -52,7 +53,7 @@
                     <!-- 顶部应用标题区 -->
                     <Border Grid.Row="0"
                             Margin="24,20,0,24">
-                        <TextBlock Text="{DynamicResource String_AppTitle}"
+                        <TextBlock Text="{DynamicResource StringAppTitle}"
                                    FontSize="20"
                                    FontWeight="Bold"
                                    Foreground="{StaticResource TextPrimaryBrush}" />
@@ -83,7 +84,8 @@
                             <ToggleButton.IsChecked>
                                 <Binding Path="CurrentNavPage"
                                          Converter="{StaticResource NavigationPageToBoolConverter}"
-                                         ConverterParameter="{x:Static vm:NavigationPage.Artists}" />
+                                         ConverterParameter="{x:Static vm:NavigationPage.Artists}"
+                                         Mode="OneWay" />
                             </ToggleButton.IsChecked>
                             艺术家
                         </ToggleButton>
@@ -95,7 +97,8 @@
                             <ToggleButton.IsChecked>
                                 <Binding Path="CurrentNavPage"
                                          Converter="{StaticResource NavigationPageToBoolConverter}"
-                                         ConverterParameter="{x:Static vm:NavigationPage.Albums}" />
+                                         ConverterParameter="{x:Static vm:NavigationPage.Albums}"
+                                         Mode="OneWay" />
                             </ToggleButton.IsChecked>
                             专辑
                         </ToggleButton>
@@ -203,7 +206,7 @@
                         x:Name="TitleBar"
                         Background="{StaticResource BgPrimaryBrush}"
                         Height="48">
-                    <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                    <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto">
 
                         <!-- 返回按钮 (Column 0) -->
                         <Button Grid.Column="0"
@@ -219,8 +222,36 @@
                                        VerticalAlignment="Center" />
                         </Button>
 
-                        <!-- 搜索框 (Column 1) -->
-                        <Border Grid.Column="1"
+                        <!-- 播放全部按钮 (Column 1) -->
+                        <Button Grid.Column="1"
+                                Theme="{StaticResource ToolbarButtonTheme}"
+                                Command="{Binding PlayAllCommand}"
+                                ToolTip.Tip="{DynamicResource StringPlayAll}"
+                                Margin="8,0,0,0">
+                            <TextBlock Text="&#xE768;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Button>
+
+                        <!-- 随机播放按钮 (Column 2) -->
+                        <Button Grid.Column="2"
+                                Theme="{StaticResource ToolbarButtonTheme}"
+                                Command="{Binding ShufflePlayAllCommand}"
+                                ToolTip.Tip="{DynamicResource StringShuffle}"
+                                Margin="8,0,0,0">
+                            <TextBlock Text="&#xE81B;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Button>
+
+                        <!-- 搜索框 (Column 3) -->
+                        <Border Grid.Column="3"
                                 Background="{StaticResource BgCardBrush}"
                                 CornerRadius="8"
                                 Width="400"
@@ -238,7 +269,7 @@
                                 <TextBox Grid.Column="1"
                                          x:Name="SearchTextBox"
                                          Text="{Binding SearchText, Mode=TwoWay}"
-                                         Watermark="{DynamicResource String_SearchSongs}"
+                                         Watermark="{DynamicResource StringSearchSongs}"
                                          Background="Transparent"
                                          BorderThickness="0"
                                          VerticalAlignment="Center"
@@ -247,11 +278,34 @@
                             </Grid>
                         </Border>
 
-                        <!-- 设置按钮 (Column 2) -->
-                        <Button Grid.Column="2"
+                        <!-- 视图切换按钮 (Column 4) -->
+                        <Button Grid.Column="4"
+                                Theme="{StaticResource ToolbarButtonTheme}"
+                                Command="{Binding ToggleViewCommand}"
+                                ToolTip.Tip="{DynamicResource StringGridView}">
+                            <Panel>
+                                <TextBlock Text="&#xE80A;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           IsVisible="{Binding !IsGridView}" />
+                                <TextBlock Text="&#xE8FD;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           IsVisible="{Binding IsGridView}" />
+                            </Panel>
+                        </Button>
+
+                        <!-- 设置按钮 (Column 5) -->
+                        <Button Grid.Column="5"
                                 Theme="{StaticResource ToolbarButtonTheme}"
                                 Command="{Binding NavigateToSettingsCommand}"
-                                ToolTip.Tip="{DynamicResource String_Settings}">
+                                ToolTip.Tip="{DynamicResource StringSettings}">
                             <TextBlock Text="&#xE713;"
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="14"
@@ -260,8 +314,8 @@
                                        VerticalAlignment="Center" />
                         </Button>
 
-                        <!-- 窗口控制按钮组 (Column 3) -->
-                        <StackPanel Grid.Column="3"
+                        <!-- 窗口控制按钮组 (Column 6) -->
+                        <StackPanel Grid.Column="6"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"

@@ -13,7 +13,6 @@ public partial class MusicProgressBar : UserControl
 {
     private Panel? _trackPanel;
     private Border? _progressFill;
-    private Border? _thumb;
     private IPlaybackProgress? _viewModel;
     private Timer? _updateTimer;
 
@@ -27,7 +26,6 @@ public partial class MusicProgressBar : UserControl
         Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         _trackPanel = this.FindControl<Panel>("TrackPanel");
         _progressFill = this.FindControl<Border>("ProgressFill");
-        _thumb = this.FindControl<Border>("Thumb");
 
         _trackPanel?.AddHandler(Panel.PointerPressedEvent, OnTrackPointerPressed, RoutingStrategies.Bubble);
 
@@ -89,7 +87,7 @@ public partial class MusicProgressBar : UserControl
 
     private void UpdateProgressUI()
     {
-        if (_viewModel == null || _trackPanel == null || _progressFill == null || _thumb == null)
+        if (_viewModel == null || _trackPanel == null || _progressFill == null)
             return;
 
         var width = _trackPanel.Bounds.Width;
@@ -99,6 +97,5 @@ public partial class MusicProgressBar : UserControl
         var fillWidth = ratio * width;
 
         _progressFill.Width = fillWidth;
-        _thumb.Margin = new Thickness(fillWidth - 6, 0, 0, 0);
     }
 }

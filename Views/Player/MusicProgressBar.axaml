@@ -5,7 +5,7 @@
              x:DataType="vm:IPlaybackProgress">
 
     <Grid RowDefinitions="Auto,Auto">
-        <Panel Grid.Row="0" Height="20" VerticalAlignment="Center">
+        <Panel x:Name="TrackPanel" Grid.Row="0" Height="20" VerticalAlignment="Center">
             <Border Height="5"
                     VerticalAlignment="Center"
                     Background="{StaticResource SliderTrackBgBrush}"
@@ -16,13 +16,7 @@
                     HorizontalAlignment="Left"
                     CornerRadius="3"
                     Background="{StaticResource PurplePinkHorizontalGradientBrush}" />
-            <Border x:Name="Thumb"
-                    Width="12"
-                    Height="12"
-                    CornerRadius="6"
-                    Background="White"
-                    VerticalAlignment="Center"
-                    IsHitTestVisible="True" />
+
         </Panel>
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="0,4,0,0">
             <TextBlock Grid.Column="0"

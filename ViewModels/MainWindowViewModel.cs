@@ -82,6 +82,15 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     [ObservableProperty] private ObservableCollection<Song> _selectedSongs = new();
     [ObservableProperty] private bool _isSelectAll;
 
+    public bool IsGridView => HomeViewModel.IsGridView;
+
+    [RelayCommand]
+    private void ToggleView()
+    {
+        HomeViewModel.ToggleViewCommand.Execute(null);
+        OnPropertyChanged(nameof(IsGridView));
+    }
+
     partial void OnIsSelectAllChanged(bool value)
     {
         if (value)
@@ -348,7 +357,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
                 MainWindow: var window
             })
         {
-            window.WindowState = window.WindowState == WindowState.FullScreen
+            window!.WindowState = window.WindowState == WindowState.FullScreen
                 ? WindowState.Normal
                 : WindowState.FullScreen;
         }
@@ -365,6 +374,34 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         {
             _playlistService.AddSongToPlaylist(CurrentPlaylist, song);
         }
+
+        if (_playlistService.PlayNext())
+        {
+            var song = _playlistService.CurrentSong;
+            if (song != null)
+            {
+                _statisticsService.RecordPlayStart(song);
+                _playHistoryService.AddToHistory(song);
+                _playbackStateService.Play(song);
+            }
+        }
+    }
+
+    [RelayCommand]
+    private void ShufflePlayAll()
+    {
+        if (Library.FilteredSongs.Count == 0 || CurrentPlaylist == null)
+            return;
+
+        var shuffled = Library.FilteredSongs.OrderBy(_ => Guid.NewGuid()).ToList();
+
+        _playlistService.ClearPlaylist();
+        foreach (var song in shuffled)
+        {
+            _playlistService.AddSongToPlaylist(CurrentPlaylist, song);
+        }
+
+        _playbackStateService.PlaybackMode = PlaybackMode.Shuffle;
 
         if (_playlistService.PlayNext())
         {
@@ -490,12 +527,18 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         PlayerPageViewModel.OnToggleFullScreen = () => ToggleFullScreenCommand.Execute(null);
         HomeViewModel = _viewModelFactory.CreateHomeViewModel();
         HomeViewModel.CurrentPlaylist = CurrentPlaylist;
+        HomeViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(HomeViewModel.IsGridView))
+                OnPropertyChanged(nameof(IsGridView));
+        };
         CurrentPage = HomeViewModel;
         _navigationService.NavigateTo<HomeViewModel>();
 
         _playbackStateService.PlaybackStateChanged += OnPlaybackStateChanged;
         _playbackStateService.CurrentSongChanged += OnCurrentSongChanged;
         _playbackStateService.PositionChanged += OnPositionChanged;
+        _playbackStateService.PlaybackModeChanged += OnPlaybackModeChanged;
 
         _navigationService.QueuePanelChanged += OnQueuePanelChanged;
         _navigationService.CurrentPageChanged += OnCurrentPageChanged;
@@ -509,6 +552,12 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     {
         OnPropertyChanged(nameof(IsPlaying));
         _systemTrayService.UpdateTrayIcon(IsPlaying);
+    }
+
+    private void OnPlaybackModeChanged(object? sender, PlaybackMode mode)
+    {
+        _configService.CurrentSettings.PlaybackMode = mode.ToString();
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     private void OnCurrentSongChanged(object? sender, Song? song)
@@ -604,6 +653,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             _playbackStateService.SetVolume(Volume);
             if (IsMuted) _playbackStateService.Mute();
             _playbackStateService.SetPlaybackRate(_configService.CurrentSettings.PlaybackRate);
+            if (Enum.TryParse<PlaybackMode>(_configService.CurrentSettings.PlaybackMode, out var playbackMode))
+                _playbackStateService.PlaybackMode = playbackMode;
 
             var folders = _configService.GetScanFolders();
             if (folders.Count > 0)

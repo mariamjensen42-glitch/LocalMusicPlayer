@@ -9,7 +9,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
              x:Class="LocalMusicPlayer.Views.Library.AlbumsPageView"
-             x:DataType="vm:AlbumsPageViewModel">
+             x:DataType="vm:AlbumsPageViewModel"
+             x:CompileBindings="False">
 
     <UserControl.Resources>
         <converters:AlbumArtConverter x:Key="AlbumArtConverter" />

@@ -18,13 +18,13 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{StaticResource String_Settings}"
+                <TextBlock Text="{StaticResource StringSettings}"
                            Grid.Column="0"
                            FontSize="32"
                            FontWeight="Bold"
                            FontFamily="{StaticResource FontFamilyPrimary}"
                            Foreground="{StaticResource TextPrimaryBrush}" />
-                <TextBlock Text="{StaticResource String_CustomizeExperience}"
+                <TextBlock Text="{StaticResource StringCustomizeExperience}"
                            Grid.Column="1"
                            FontSize="14"
                            Foreground="{StaticResource TextMutedBrush}"
@@ -47,11 +47,11 @@
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="{StaticResource String_SystemTray}"
+                            <TextBlock Text="{StaticResource StringSystemTray}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="{StaticResource String_SystemTraySettings}"
+                            <TextBlock Text="{StaticResource StringSystemTraySettings}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
@@ -62,7 +62,7 @@
                     <StackPanel Spacing="12">
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Grid.Column="0"
-                                       Text="{StaticResource String_MinimizeToTray}"
+                                       Text="{StaticResource StringMinimizeToTray}"
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center" />
@@ -72,7 +72,7 @@
 
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Grid.Column="0"
-                                       Text="{StaticResource String_SongChangeNotification}"
+                                       Text="{StaticResource StringSongChangeNotification}"
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center" />
@@ -98,11 +98,11 @@
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="{StaticResource String_StartupBehavior}"
+                            <TextBlock Text="{StaticResource StringStartupBehavior}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="{StaticResource String_StartupBehaviorSettings}"
+                            <TextBlock Text="{StaticResource StringStartupBehaviorSettings}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
@@ -113,7 +113,7 @@
                     <StackPanel Spacing="12">
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Grid.Column="0"
-                                       Text="{StaticResource String_AutoStartOnBoot}"
+                                       Text="{StaticResource StringAutoStartOnBoot}"
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center" />
@@ -123,7 +123,7 @@
 
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Grid.Column="0"
-                                       Text="{StaticResource String_ResumeLastPlayback}"
+                                       Text="{StaticResource StringResumeLastPlayback}"
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center" />
@@ -149,11 +149,11 @@
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="{StaticResource String_LocalMusicLibrary}"
+                            <TextBlock Text="{StaticResource StringLocalMusicLibrary}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="{StaticResource String_ManageMusicFiles}"
+                            <TextBlock Text="{StaticResource StringManageMusicFiles}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
@@ -164,7 +164,7 @@
                     <StackPanel Spacing="12">
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Grid.Column="0"
-                                       Text="{StaticResource String_MusicFolders}"
+                                       Text="{StaticResource StringMusicFolders}"
                                        FontSize="11"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextMutedBrush}"
@@ -180,7 +180,7 @@
                                                FontFamily="Segoe Fluent Icons"
                                                FontSize="12"
                                                VerticalAlignment="Center" />
-                                    <TextBlock Text="{StaticResource String_Add}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{StaticResource StringAdd}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
                         </Grid>
@@ -224,7 +224,7 @@
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
                     <StackPanel Spacing="12">
-                        <TextBlock Text="{StaticResource String_ScanOptions}"
+                        <TextBlock Text="{StaticResource StringScanOptions}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}"
@@ -232,15 +232,15 @@
 
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
                             <CheckBox Grid.Row="0" Grid.Column="0"
-                                      Content="{StaticResource String_ScanSubfolders}"
+                                      Content="{StaticResource StringScanSubfolders}"
                                       IsChecked="{Binding IncludeSubfolders}"
                                       Foreground="{StaticResource TextPrimaryBrush}" />
                             <CheckBox Grid.Row="1" Grid.Column="0"
-                                      Content="{StaticResource String_DownloadAlbumArt}"
+                                      Content="{StaticResource StringDownloadAlbumArt}"
                                       IsChecked="{Binding DownloadAlbumArtwork}"
                                       Foreground="{StaticResource TextPrimaryBrush}" />
                             <CheckBox Grid.Row="2" Grid.Column="0"
-                                      Content="{StaticResource String_AutoMetadata}"
+                                      Content="{StaticResource StringAutoMetadata}"
                                       IsChecked="{Binding AutoDetectMetadata}"
                                       Foreground="{StaticResource TextPrimaryBrush}" />
                         </Grid>
@@ -258,7 +258,7 @@
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="16"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="{StaticResource String_RescanLibrary}"
+                            <TextBlock Text="{StaticResource StringRescanLibrary}"
                                        FontSize="14"
                                        VerticalAlignment="Center" />
                         </StackPanel>
@@ -271,7 +271,7 @@
                                        FontWeight="Bold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        HorizontalAlignment="Center" />
-                            <TextBlock Text="{StaticResource String_Songs}"
+                            <TextBlock Text="{StaticResource StringSongs}"
                                        FontSize="12"
                                        Foreground="{StaticResource TextMutedBrush}"
                                        HorizontalAlignment="Center" />
@@ -282,7 +282,7 @@
                                        FontWeight="Bold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        HorizontalAlignment="Center" />
-                            <TextBlock Text="{StaticResource String_Albums}"
+                            <TextBlock Text="{StaticResource StringAlbums}"
                                        FontSize="12"
                                        Foreground="{StaticResource TextMutedBrush}"
                                        HorizontalAlignment="Center" />
@@ -293,7 +293,7 @@
                                        FontWeight="Bold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        HorizontalAlignment="Center" />
-                            <TextBlock Text="{StaticResource String_Size}"
+                            <TextBlock Text="{StaticResource StringSize}"
                                        FontSize="12"
                                        Foreground="{StaticResource TextMutedBrush}"
                                        HorizontalAlignment="Center" />
@@ -304,7 +304,7 @@
                                        FontWeight="Bold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        HorizontalAlignment="Center" />
-                            <TextBlock Text="{StaticResource String_LastScan}"
+                            <TextBlock Text="{StaticResource StringLastScan}"
                                        FontSize="12"
                                        Foreground="{StaticResource TextMutedBrush}"
                                        HorizontalAlignment="Center" />
@@ -328,11 +328,11 @@
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="{StaticResource String_Playback}"
+                            <TextBlock Text="{StaticResource StringPlayback}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="{StaticResource String_PlaybackSettings}"
+                            <TextBlock Text="{StaticResource StringPlaybackSettings}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
@@ -341,7 +341,7 @@
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
                     <StackPanel Spacing="8">
-                        <TextBlock Text="{StaticResource String_AudioQuality}"
+                        <TextBlock Text="{StaticResource StringAudioQuality}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}"
@@ -349,15 +349,15 @@
 
                         <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
                             <RadioButton Grid.Row="0" Grid.Column="0"
-                                         Content="{StaticResource String_Standard}"
+                                         Content="{StaticResource StringStandard}"
                                          IsChecked="{Binding AudioQuality, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Standard}"
                                          HorizontalAlignment="Center" />
                             <RadioButton Grid.Row="0" Grid.Column="1"
-                                         Content="{StaticResource String_High}"
+                                         Content="{StaticResource StringHigh}"
                                          IsChecked="{Binding AudioQuality, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=High}"
                                          HorizontalAlignment="Center" />
                             <RadioButton Grid.Row="0" Grid.Column="2"
-                                         Content="{StaticResource String_Lossless}"
+                                         Content="{StaticResource StringLossless}"
                                          IsChecked="{Binding AudioQuality, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Lossless}"
                                          HorizontalAlignment="Center" />
                         </Grid>
@@ -366,7 +366,7 @@
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
                     <StackPanel Spacing="12">
-                        <TextBlock Text="{DynamicResource String_PlaybackEffects}"
+                        <TextBlock Text="{DynamicResource StringPlaybackEffects}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}"
@@ -374,7 +374,7 @@
 
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
                             <TextBlock Grid.Row="0" Grid.Column="0"
-                                       Text="{DynamicResource String_Crossfade}"
+                                       Text="{DynamicResource StringCrossfade}"
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center" />
@@ -408,7 +408,7 @@
                             </StackPanel>
 
                             <TextBlock Grid.Row="2" Grid.Column="0"
-                                       Text="{DynamicResource String_VolumeNormalization}"
+                                       Text="{DynamicResource StringVolumeNormalization}"
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center"
@@ -422,7 +422,7 @@
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
                     <StackPanel Spacing="12">
-                        <TextBlock Text="{DynamicResource String_PlaybackSpeed}"
+                        <TextBlock Text="{DynamicResource StringPlaybackSpeed}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}"
@@ -468,11 +468,11 @@
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="{StaticResource String_Appearance}"
+                            <TextBlock Text="{StaticResource StringAppearance}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="{StaticResource String_AppearanceSettings}"
+                            <TextBlock Text="{StaticResource StringAppearanceSettings}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
@@ -481,7 +481,7 @@
                     <Border Height="1" Background="{StaticResource BgElement2Brush}" />
 
                     <StackPanel Spacing="8">
-                        <TextBlock Text="{StaticResource String_Theme}"
+                        <TextBlock Text="{StaticResource StringTheme}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}"
@@ -489,15 +489,15 @@
 
                         <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
                             <RadioButton Grid.Row="0" Grid.Column="0"
-                                         Content="{StaticResource String_Dark}"
+                                         Content="{StaticResource StringDark}"
                                          IsChecked="{Binding ThemeMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Dark}"
                                          HorizontalAlignment="Center" />
                             <RadioButton Grid.Row="0" Grid.Column="1"
-                                         Content="{StaticResource String_Light}"
+                                         Content="{StaticResource StringLight}"
                                          IsChecked="{Binding ThemeMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Light}"
                                          HorizontalAlignment="Center" />
                             <RadioButton Grid.Row="0" Grid.Column="2"
-                                         Content="{StaticResource String_Auto}"
+                                         Content="{StaticResource StringAuto}"
                                          IsChecked="{Binding ThemeMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Auto}"
                                          HorizontalAlignment="Center" />
                         </Grid>
@@ -520,11 +520,11 @@
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="{StaticResource String_About}"
+                            <TextBlock Text="{StaticResource StringAbout}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
-                            <TextBlock Text="{StaticResource String_AppInfo}"
+                            <TextBlock Text="{StaticResource StringAppInfo}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextSecondaryBrush}" />
                         </StackPanel>
@@ -534,7 +534,7 @@
 
                     <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto">
                         <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="{StaticResource String_Version}"
+                                   Text="{StaticResource StringVersion}"
                                    FontSize="13"
                                    Foreground="{StaticResource TextMutedBrush}" />
                         <TextBlock Grid.Row="0" Grid.Column="1"
@@ -543,7 +543,7 @@
                                    Foreground="{StaticResource TextPrimaryBrush}" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0"
-                                   Text="{StaticResource String_Build}"
+                                   Text="{StaticResource StringBuild}"
                                    FontSize="13"
                                    Foreground="{StaticResource TextMutedBrush}"
                                    Margin="0,8,0,0" />
@@ -554,7 +554,7 @@
                                    Margin="0,8,0,0" />
 
                         <TextBlock Grid.Row="2" Grid.Column="0"
-                                   Text="{StaticResource String_Developer}"
+                                   Text="{StaticResource StringDeveloper}"
                                    FontSize="13"
                                    Foreground="{StaticResource TextMutedBrush}"
                                    Margin="0,8,0,0" />

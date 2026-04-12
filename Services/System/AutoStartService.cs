@@ -5,6 +5,7 @@ using Microsoft.Win32;
 
 namespace LocalMusicPlayer.Services;
 
+[System.Runtime.Versioning.SupportedOSPlatform("windows")]
 internal class AutoStartService : IAutoStartService
 {
     private const string AppName = "LocalMusicPlayer";

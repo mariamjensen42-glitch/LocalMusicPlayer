@@ -2,171 +2,175 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- 页面标题 -->
-    <x:String x:Key="String_Library">资料库</x:String>
-    <x:String x:Key="String_Statistics">统计</x:String>
-    <x:String x:Key="String_Settings">设置</x:String>
-    <x:String x:Key="String_NowPlaying">正在播放</x:String>
-    <x:String x:Key="String_NoLyrics">暂无歌词</x:String>
+    <x:String x:Key="StringLibrary">资料库</x:String>
+    <x:String x:Key="StringStatistics">统计</x:String>
+    <x:String x:Key="StringSettings">设置</x:String>
+    <x:String x:Key="StringNowPlaying">正在播放</x:String>
+    <x:String x:Key="StringNoLyrics">暂无歌词</x:String>
 
     <!-- 搜索 -->
-    <x:String x:Key="String_Search">搜索...</x:String>
+    <x:String x:Key="StringSearch">搜索...</x:String>
 
     <!-- 按钮文本 -->
-    <x:String x:Key="String_PlayAll">播放全部</x:String>
-    <x:String x:Key="String_Play">播放</x:String>
-    <x:String x:Key="String_Pause">暂停</x:String>
-    <x:String x:Key="String_Stop">停止</x:String>
-    <x:String x:Key="String_Next">下一首</x:String>
-    <x:String x:Key="String_Previous">上一首</x:String>
-    <x:String x:Key="String_Shuffle">随机播放</x:String>
-    <x:String x:Key="String_Repeat">循环</x:String>
-    <x:String x:Key="String_Volume">音量</x:String>
-    <x:String x:Key="String_Mute">静音</x:String>
-    <x:String x:Key="String_Queue">播放队列</x:String>
-    <x:String x:Key="String_Fullscreen">全屏</x:String>
-    <x:String x:Key="String_Add">添加</x:String>
-    <x:String x:Key="String_Remove">移除</x:String>
+    <x:String x:Key="StringPlayAll">播放全部</x:String>
+    <x:String x:Key="StringPlay">播放</x:String>
+    <x:String x:Key="StringPause">暂停</x:String>
+    <x:String x:Key="StringStop">停止</x:String>
+    <x:String x:Key="StringNext">下一首</x:String>
+    <x:String x:Key="StringPrevious">上一首</x:String>
+    <x:String x:Key="StringShuffle">随机播放</x:String>
+    <x:String x:Key="StringRepeat">循环</x:String>
+    <x:String x:Key="StringVolume">音量</x:String>
+    <x:String x:Key="StringMute">静音</x:String>
+    <x:String x:Key="StringQueue">播放队列</x:String>
+    <x:String x:Key="StringFullscreen">全屏</x:String>
+    <x:String x:Key="StringAdd">添加</x:String>
+    <x:String x:Key="StringRemove">移除</x:String>
 
     <!-- 表格列标题 -->
-    <x:String x:Key="String_Number">序号</x:String>
-    <x:String x:Key="String_Title">标题</x:String>
-    <x:String x:Key="String_Album">专辑</x:String>
-    <x:String x:Key="String_Duration">时长</x:String>
-    <x:String x:Key="String_Plays">播放次数</x:String>
-    <x:String x:Key="String_Artist">歌手</x:String>
+    <x:String x:Key="StringNumber">序号</x:String>
+    <x:String x:Key="StringTitle">标题</x:String>
+    <x:String x:Key="StringAlbum">专辑</x:String>
+    <x:String x:Key="StringDuration">时长</x:String>
+    <x:String x:Key="StringPlays">播放次数</x:String>
+    <x:String x:Key="StringArtist">歌手</x:String>
 
     <!-- 元数据编辑器 -->
-    <x:String x:Key="String_MetadataEditor">编辑元数据</x:String>
-    <x:String x:Key="String_SongTitle">歌曲标题</x:String>
-    <x:String x:Key="String_ArtistName">艺术家姓名</x:String>
-    <x:String x:Key="String_AlbumName">专辑名称</x:String>
-    <x:String x:Key="String_TrackNumber">曲目编号</x:String>
-    <x:String x:Key="String_AlbumCover">专辑封面</x:String>
-    <x:String x:Key="String_ChangeCover">更换封面</x:String>
-    <x:String x:Key="String_Save">保存</x:String>
-    <x:String x:Key="String_Cancel">取消</x:String>
+    <x:String x:Key="StringMetadataEditor">编辑元数据</x:String>
+    <x:String x:Key="StringSongTitle">歌曲标题</x:String>
+    <x:String x:Key="StringArtistName">艺术家姓名</x:String>
+    <x:String x:Key="StringAlbumName">专辑名称</x:String>
+    <x:String x:Key="StringTrackNumber">曲目编号</x:String>
+    <x:String x:Key="StringAlbumCover">专辑封面</x:String>
+    <x:String x:Key="StringChangeCover">更换封面</x:String>
+    <x:String x:Key="StringSave">保存</x:String>
+    <x:String x:Key="StringCancel">取消</x:String>
 
     <!-- 统计页面 -->
-    <x:String x:Key="String_ListeningHabits">您的聆听习惯和资料库概览</x:String>
-    <x:String x:Key="String_LibraryOverview">资料库概览</x:String>
-    <x:String x:Key="String_YourMusicCollection">您的音乐收藏一览</x:String>
-    <x:String x:Key="String_Songs">歌曲</x:String>
-    <x:String x:Key="String_Albums">专辑</x:String>
-    <x:String x:Key="String_TotalDuration">总时长</x:String>
+    <x:String x:Key="StringListeningHabits">您的聆听习惯和资料库概览</x:String>
+    <x:String x:Key="StringLibraryOverview">资料库概览</x:String>
+    <x:String x:Key="StringYourMusicCollection">您的音乐收藏一览</x:String>
+    <x:String x:Key="StringSongs">歌曲</x:String>
+    <x:String x:Key="StringAlbums">专辑</x:String>
+    <x:String x:Key="StringTotalDuration">总时长</x:String>
 
     <!-- 播放列表管理 -->
-    <x:String x:Key="String_NewPlaylist">新建播放列表</x:String>
-    <x:String x:Key="String_PlaylistName">播放列表名称</x:String>
-    <x:String x:Key="String_Create">创建</x:String>
-    <x:String x:Key="String_Delete">删除</x:String>
-    <x:String x:Key="String_Rename">重命名</x:String>
-    <x:String x:Key="String_AddToPlaylist">添加到播放列表</x:String>
-    <x:String x:Key="String_RemoveFromPlaylist">从播放列表移除</x:String>
+    <x:String x:Key="StringNewPlaylist">新建播放列表</x:String>
+    <x:String x:Key="StringPlaylistName">播放列表名称</x:String>
+    <x:String x:Key="StringCreate">创建</x:String>
+    <x:String x:Key="StringDelete">删除</x:String>
+    <x:String x:Key="StringRename">重命名</x:String>
+    <x:String x:Key="StringAddToPlaylist">添加到播放列表</x:String>
+    <x:String x:Key="StringRemoveFromPlaylist">从播放列表移除</x:String>
 
     <!-- 设置页面 -->
-    <x:String x:Key="String_CustomizeExperience">自定义您的音乐体验</x:String>
-    <x:String x:Key="String_LocalMusicLibrary">本地音乐库</x:String>
-    <x:String x:Key="String_ManageMusicFiles">扫描和管理您的本地音乐文件</x:String>
-    <x:String x:Key="String_MusicFolders">音乐文件夹</x:String>
-    <x:String x:Key="String_AddFolder">添加文件夹</x:String>
-    <x:String x:Key="String_RemoveFolder">移除文件夹</x:String>
-    <x:String x:Key="String_ScanOptions">扫描选项</x:String>
-    <x:String x:Key="String_ScanSubfolders">扫描子文件夹</x:String>
-    <x:String x:Key="String_DownloadAlbumArt">下载专辑封面</x:String>
-    <x:String x:Key="String_AutoMetadata">自动检测元数据</x:String>
-    <x:String x:Key="String_SaveToLibrary">保存到资料库</x:String>
-    <x:String x:Key="String_RescanLibrary">重新扫描资料库</x:String>
-    <x:String x:Key="String_Scanning">正在扫描...</x:String>
-    <x:String x:Key="String_Size">大小</x:String>
-    <x:String x:Key="String_LastScan">上次扫描</x:String>
+    <x:String x:Key="StringCustomizeExperience">自定义您的音乐体验</x:String>
+    <x:String x:Key="StringLocalMusicLibrary">本地音乐库</x:String>
+    <x:String x:Key="StringManageMusicFiles">扫描和管理您的本地音乐文件</x:String>
+    <x:String x:Key="StringMusicFolders">音乐文件夹</x:String>
+    <x:String x:Key="StringAddFolder">添加文件夹</x:String>
+    <x:String x:Key="StringRemoveFolder">移除文件夹</x:String>
+    <x:String x:Key="StringScanOptions">扫描选项</x:String>
+    <x:String x:Key="StringScanSubfolders">扫描子文件夹</x:String>
+    <x:String x:Key="StringDownloadAlbumArt">下载专辑封面</x:String>
+    <x:String x:Key="StringAutoMetadata">自动检测元数据</x:String>
+    <x:String x:Key="StringSaveToLibrary">保存到资料库</x:String>
+    <x:String x:Key="StringRescanLibrary">重新扫描资料库</x:String>
+    <x:String x:Key="StringScanning">正在扫描...</x:String>
+    <x:String x:Key="StringSize">大小</x:String>
+    <x:String x:Key="StringLastScan">上次扫描</x:String>
 
     <!-- 播放设置 -->
-    <x:String x:Key="String_Playback">播放</x:String>
-    <x:String x:Key="String_PlaybackSettings">音频质量和播放设置</x:String>
-    <x:String x:Key="String_AudioQuality">音频质量</x:String>
-    <x:String x:Key="String_Standard">标准</x:String>
-    <x:String x:Key="String_High">高</x:String>
-    <x:String x:Key="String_Lossless">无损</x:String>
+    <x:String x:Key="StringPlayback">播放</x:String>
+    <x:String x:Key="StringPlaybackSettings">音频质量和播放设置</x:String>
+    <x:String x:Key="StringAudioQuality">音频质量</x:String>
+    <x:String x:Key="StringStandard">标准</x:String>
+    <x:String x:Key="StringHigh">高</x:String>
+    <x:String x:Key="StringLossless">无损</x:String>
 
     <!-- 外观设置 -->
-    <x:String x:Key="String_Appearance">外观</x:String>
-    <x:String x:Key="String_AppearanceSettings">自定义外观和风格</x:String>
-    <x:String x:Key="String_Theme">主题</x:String>
-    <x:String x:Key="String_Dark">深色</x:String>
-    <x:String x:Key="String_Light">浅色</x:String>
-    <x:String x:Key="String_Auto">自动</x:String>
+    <x:String x:Key="StringAppearance">外观</x:String>
+    <x:String x:Key="StringAppearanceSettings">自定义外观和风格</x:String>
+    <x:String x:Key="StringTheme">主题</x:String>
+    <x:String x:Key="StringDark">深色</x:String>
+    <x:String x:Key="StringLight">浅色</x:String>
+    <x:String x:Key="StringAuto">自动</x:String>
 
     <!-- 关于 -->
-    <x:String x:Key="String_About">关于</x:String>
-    <x:String x:Key="String_AppInfo">应用程序信息</x:String>
-    <x:String x:Key="String_Version">版本</x:String>
-    <x:String x:Key="String_Build">构建</x:String>
-    <x:String x:Key="String_Developer">开发者</x:String>
+    <x:String x:Key="StringAbout">关于</x:String>
+    <x:String x:Key="StringAppInfo">应用程序信息</x:String>
+    <x:String x:Key="StringVersion">版本</x:String>
+    <x:String x:Key="StringBuild">构建</x:String>
+    <x:String x:Key="StringDeveloper">开发者</x:String>
 
     <!-- 队列面板 -->
-    <x:String x:Key="String_PlayQueue">播放队列</x:String>
-    <x:String x:Key="String_ClearQueue">清空队列</x:String>
-    <x:String x:Key="String_RemoveFromQueue">从队列移除</x:String>
-    <x:String x:Key="String_Close">关闭</x:String>
+    <x:String x:Key="StringPlayQueue">播放队列</x:String>
+    <x:String x:Key="StringClearQueue">清空队列</x:String>
+    <x:String x:Key="StringRemoveFromQueue">从队列移除</x:String>
+    <x:String x:Key="StringClose">关闭</x:String>
 
-    <x:String x:Key="String_AppTitle">LocalMusicPlayer</x:String>
-    <x:String x:Key="String_Home">Home</x:String>
-    <x:String x:Key="String_AllSongs">所有歌曲</x:String>
-    <x:String x:Key="String_Artists">艺术家</x:String>
-    <x:String x:Key="String_Folders">文件夹</x:String>
-    <x:String x:Key="String_TopCharts">听歌排行</x:String>
-    <x:String x:Key="String_RecentPlays">最近播放</x:String>
-    <x:String x:Key="String_Playlists">播放列表</x:String>
-    <x:String x:Key="String_SearchSongs">搜索歌曲</x:String>
-    <x:String x:Key="String_MusicLibrary">Music Library</x:String>
-    <x:String x:Key="String_Favorites">Favorites</x:String>
-    <x:String x:Key="String_StatisticsReport">Statistics Report</x:String>
-    <x:String x:Key="String_PlayHistory">播放历史</x:String>
-    <x:String x:Key="String_Genres">Genres</x:String>
-    <x:String x:Key="String_PlaySelected">播放选中</x:String>
-    <x:String x:Key="String_Clear">清空</x:String>
-    <x:String x:Key="String_PlaybackSpeed">播放速度</x:String>
-    <x:String x:Key="String_PlaybackEffects">播放效果</x:String>
-    <x:String x:Key="String_Crossfade">淡入淡出</x:String>
-    <x:String x:Key="String_Seconds">秒</x:String>
-    <x:String x:Key="String_VolumeNormalization">音量归一化 (ReplayGain)</x:String>
-    <x:String x:Key="String_BatchEditMetadata">Batch Edit Metadata</x:String>
-    <x:String x:Key="String_MixedValuesHint">Mixed values - leave empty to keep original</x:String>
-    <x:String x:Key="String_SaveAll">Save All</x:String>
-    <x:String x:Key="String_Year">Year</x:String>
-    <x:String x:Key="String_EditInfo">Edit Info</x:String>
-    <x:String x:Key="String_BatchEdit">Batch Edit</x:String>
-    <x:String x:Key="String_SongsDot">songs ·</x:String>
-    <x:String x:Key="String_TopPlayedSongs">Top Played Songs</x:String>
-    <x:String x:Key="String_YourFavoriteTracks">Your favorite tracks</x:String>
-    <x:String x:Key="String_PlaysCount">plays</x:String>
-    <x:String x:Key="String_SelectMusicFolder">Select Music Folder</x:String>
-    <x:String x:Key="String_Overview">Overview</x:String>
-    <x:String x:Key="String_TopArtists">Top Artists</x:String>
-    <x:String x:Key="String_TopAlbums">Top Albums</x:String>
-    <x:String x:Key="String_TopSongs">Top Songs</x:String>
-    <x:String x:Key="String_GenreDistribution">Genre Distribution</x:String>
-    <x:String x:Key="String_ListeningHistory">Listening History</x:String>
-    <x:String x:Key="String_Last7Days">Last 7 Days</x:String>
-    <x:String x:Key="String_Last30Days">Last 30 Days</x:String>
-    <x:String x:Key="String_Last90Days">Last 90 Days</x:String>
-    <x:String x:Key="String_LastYear">Last Year</x:String>
-    <x:String x:Key="String_TotalPlayTime">Total Play Time</x:String>
-    <x:String x:Key="String_UniqueArtists">Unique Artists</x:String>
-    <x:String x:Key="String_UniqueAlbums">Unique Albums</x:String>
-    <x:String x:Key="String_TotalListeningSessions">Total Listening Sessions</x:String>
-    <x:String x:Key="String_AverageSessionLength">Average Session Length</x:String>
+    <x:String x:Key="StringAppTitle">LocalMusicPlayer</x:String>
+    <x:String x:Key="StringHome">Home</x:String>
+    <x:String x:Key="StringAllSongs">所有歌曲</x:String>
+    <x:String x:Key="StringArtists">艺术家</x:String>
+    <x:String x:Key="StringFolders">文件夹</x:String>
+    <x:String x:Key="StringTopCharts">听歌排行</x:String>
+    <x:String x:Key="StringRecentPlays">最近播放</x:String>
+    <x:String x:Key="StringPlaylists">播放列表</x:String>
+    <x:String x:Key="StringSearchSongs">搜索歌曲</x:String>
+    <x:String x:Key="StringMusicLibrary">Music Library</x:String>
+    <x:String x:Key="StringFavorites">Favorites</x:String>
+    <x:String x:Key="StringStatisticsReport">Statistics Report</x:String>
+    <x:String x:Key="StringPlayHistory">播放历史</x:String>
+    <x:String x:Key="StringGenres">Genres</x:String>
+    <x:String x:Key="StringPlaySelected">播放选中</x:String>
+    <x:String x:Key="StringClear">清空</x:String>
+    <x:String x:Key="StringPlaybackSpeed">播放速度</x:String>
+    <x:String x:Key="StringPlaybackEffects">播放效果</x:String>
+    <x:String x:Key="StringCrossfade">淡入淡出</x:String>
+    <x:String x:Key="StringSeconds">秒</x:String>
+    <x:String x:Key="StringVolumeNormalization">音量归一化 (ReplayGain)</x:String>
+    <x:String x:Key="StringBatchEditMetadata">Batch Edit Metadata</x:String>
+    <x:String x:Key="StringMixedValuesHint">Mixed values - leave empty to keep original</x:String>
+    <x:String x:Key="StringSaveAll">保存所有</x:String>
+    <x:String x:Key="StringYear">年</x:String>
+    <x:String x:Key="StringEditInfo">编辑信息</x:String>
+    <x:String x:Key="StringBatchEdit">批量编辑元数据</x:String>
+    <x:String x:Key="StringSongsDot">歌曲 ·</x:String>
+    <x:String x:Key="StringTopPlayedSongs">热门歌曲</x:String>
+    <x:String x:Key="StringYourFavoriteTracks">您的收藏歌曲</x:String>
+    <x:String x:Key="StringPlaysCount">播放次数</x:String>
+    <x:String x:Key="StringSelectMusicFolder">选择音乐文件夹</x:String>
+    <x:String x:Key="StringOverview">概述</x:String>
+    <x:String x:Key="StringTopArtists">艺术家</x:String>
+    <x:String x:Key="StringTopAlbums">专辑</x:String>
+    <x:String x:Key="StringTopSongs">歌曲</x:String>
+    <x:String x:Key="StringGenreDistribution">流派分布</x:String>
+    <x:String x:Key="StringListeningHistory">播放历史记录</x:String>
+    <x:String x:Key="StringLast7Days">7天内</x:String>
+    <x:String x:Key="StringLast30Days">30天内</x:String>
+    <x:String x:Key="StringLast90Days">90天内</x:String>
+    <x:String x:Key="StringLastYear">去年</x:String>
+    <x:String x:Key="StringTotalPlayTime">总播放时间</x:String>
+    <x:String x:Key="StringUniqueArtists">艺术家</x:String>
+    <x:String x:Key="StringUniqueAlbums">专辑</x:String>
+    <x:String x:Key="StringTotalListeningSessions">总播放会话数</x:String>
+    <x:String x:Key="StringAverageSessionLength">平均会话长度</x:String>
 
     <!-- 系统托盘设置 -->
-    <x:String x:Key="String_SystemTray">系统托盘</x:String>
-    <x:String x:Key="String_SystemTraySettings">最小化和通知设置</x:String>
-    <x:String x:Key="String_MinimizeToTray">关闭时最小化到系统托盘</x:String>
-    <x:String x:Key="String_SongChangeNotification">歌曲切换时显示通知</x:String>
+    <x:String x:Key="StringSystemTray">系统托盘</x:String>
+    <x:String x:Key="StringSystemTraySettings">最小化和通知设置</x:String>
+    <x:String x:Key="StringMinimizeToTray">关闭时最小化到系统托盘</x:String>
+    <x:String x:Key="StringSongChangeNotification">歌曲切换时显示通知</x:String>
 
     <!-- 启动行为设置 -->
-    <x:String x:Key="String_StartupBehavior">启动行为</x:String>
-    <x:String x:Key="String_StartupBehaviorSettings">应用程序启动选项</x:String>
-    <x:String x:Key="String_AutoStartOnBoot">开机时自动启动</x:String>
-    <x:String x:Key="String_ResumeLastPlayback">启动时恢复上次播放</x:String>
-</ResourceDictionary>
+    <x:String x:Key="StringStartupBehavior">启动行为</x:String>
+    <x:String x:Key="StringStartupBehaviorSettings">应用程序启动选项</x:String>
+    <x:String x:Key="StringAutoStartOnBoot">开机时自动启动</x:String>
+    <x:String x:Key="StringResumeLastPlayback">启动时恢复上次播放</x:String>
 
+    <x:String x:Key="StringListView">列表视图</x:String>
+    <x:String x:Key="StringGridView">网格视图</x:String>
+    <x:String x:Key="StringNoSongs">暂无歌曲</x:String>
+    <x:String x:Key="StringAddMusicFolder">请前往设置添加音乐文件夹</x:String>
+</ResourceDictionary>

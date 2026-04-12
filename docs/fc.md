@@ -298,3 +298,21 @@
 - **SettingsView.axaml 新增 2 个卡片**
   - 系统托盘卡片：MinimizeToTray ToggleSwitch + ShowSongChangeNotification ToggleSwitch
   - 启动行为卡片：AutoStartOnBoot ToggleSwitch + ResumeLastPlayback ToggleSwitch
+
+### 5. 歌词搜索结果弹窗
+- **IDialogService 扩展**
+  - 新增 `ShowLyricSearchResultDialogAsync(Song song, OnlineLyricResult? result)` 方法声明
+- **DialogService 实现**
+  - 弹窗显示歌曲信息（标题 + 艺术家）
+  - 找到歌词时：显示歌词预览（前15行）+ 来源信息 + "Use These Lyrics" / "Skip" 按钮
+  - 未找到歌词时：显示提示信息 + "Close" 按钮
+  - 返回 `OnlineLyricResult?` 让用户选择是否使用搜索到的歌词
+- **PlayerPageViewModel 更新**
+  - 构造函数新增 `IDialogService` 参数注入
+  - `SearchOnlineLyricsAsync` 方法改造为先搜索，弹窗显示结果，用户确认后更新歌词
+  - 错误时通过 `ShowMessageDialogAsync` 显示错误信息
+- **交互流程**
+  - 点击搜索歌词按钮 → 搜索中状态
+  - 搜索完成 → 弹窗预览歌词
+  - 用户选择"使用这些歌词" → 更新歌词显示
+  - 用户选择"跳过" → 保持原有歌词状态

@@ -108,7 +108,7 @@
                                     </i:Interaction.Behaviors>
                                     <Border.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="{DynamicResource String_EditInfo}"
+                                            <MenuItem Header="{DynamicResource StringEditInfo}"
                                                       Command="{Binding $parent[ListBox].DataContext.EditSongMetadataCommand}"
                                                       CommandParameter="{Binding}">
                                                 <MenuItem.Icon>
@@ -116,7 +116,7 @@
                                                                FontSize="12" />
                                                 </MenuItem.Icon>
                                             </MenuItem>
-                                            <MenuItem Header="{DynamicResource String_BatchEdit}"
+                                            <MenuItem Header="{DynamicResource StringBatchEdit}"
                                                       Command="{Binding $parent[ListBox].DataContext.BatchEditMetadataCommand}"
                                                       CommandParameter="{Binding $parent[ListBox].SelectedItems}">
                                                 <MenuItem.Icon>
@@ -125,7 +125,7 @@
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                             <Separator />
-                                            <MenuItem Header="{DynamicResource String_AddToPlaylist}"
+                                            <MenuItem Header="{DynamicResource StringAddToPlaylist}"
                                                       Command="{Binding $parent[ListBox].DataContext.AddToPlaylistCommand}"
                                                       CommandParameter="{Binding FilePath}">
                                                 <MenuItem.Icon>
@@ -134,7 +134,7 @@
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                             <Separator />
-                                            <MenuItem Header="{DynamicResource String_RemoveFromPlaylist}"
+                                            <MenuItem Header="{DynamicResource StringRemoveFromPlaylist}"
                                                       Command="{Binding $parent[ListBox].DataContext.RemoveSongCommand}"
                                                       CommandParameter="{Binding FilePath}">
                                                 <MenuItem.Icon>

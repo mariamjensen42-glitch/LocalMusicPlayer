@@ -76,7 +76,9 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IConfigurationService, ConfigurationService>();
         services.AddSingleton<ISystemTrayService, SystemTrayService>();
+#pragma warning disable CA1416
         services.AddSingleton<IAutoStartService, AutoStartService>();
+#pragma warning restore CA1416
         services.AddSingleton<AppDbContext>();
         services.AddSingleton<IDatabaseService, DatabaseService>();
     }

@@ -70,7 +70,7 @@ public partial class App : Application
                                 if (song != null) playlist.Songs.Add(song);
                             }
                             playlistService.SetCurrentPlaylist(playlist);
-                            playlistService.PlaySong(lastSong);
+                            if (lastSong != null) playlistService.PlaySong(lastSong);
                             playbackStateService.Seek(TimeSpan.FromSeconds(settings.LastPlaybackPosition));
                         }
                     }

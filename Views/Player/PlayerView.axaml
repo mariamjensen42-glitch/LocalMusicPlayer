@@ -21,7 +21,7 @@
             <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
                 <!-- Left: Title and Stats -->
                 <StackPanel Grid.Column="0" Spacing="4">
-                    <TextBlock Text="{StaticResource String_Library}"
+                    <TextBlock Text="{StaticResource StringLibrary}"
                                FontSize="32"
                                FontWeight="ExtraBold"
                                FontFamily="{StaticResource FontFamilyPrimary}"
@@ -48,7 +48,7 @@
                                            FontSize="14"
                                            Foreground="White"
                                            VerticalAlignment="Center" />
-                                <TextBlock Text="{DynamicResource String_PlaySelected}"
+                                <TextBlock Text="{DynamicResource StringPlaySelected}"
                                            FontSize="13"
                                            FontWeight="Medium"
                                            Foreground="White"
@@ -108,7 +108,7 @@
                                        FontSize="14"
                                        Foreground="White"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="{StaticResource String_PlayAll}"
+                            <TextBlock Text="{StaticResource StringPlayAll}"
                                        FontSize="13"
                                        FontWeight="Medium"
                                        Foreground="White"
@@ -138,27 +138,27 @@
                                   IsChecked="{Binding IsSelectAll}"
                                   VerticalAlignment="Center" />
                         <TextBlock Grid.Column="1"
-                                   Text="{StaticResource String_Number}"
+                                   Text="{StaticResource StringNumber}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}" />
                         <TextBlock Grid.Column="2"
-                                   Text="{StaticResource String_Title}"
+                                   Text="{StaticResource StringTitle}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}" />
                         <TextBlock Grid.Column="3"
-                                   Text="{StaticResource String_Album}"
+                                   Text="{StaticResource StringAlbum}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}" />
                         <TextBlock Grid.Column="4"
-                                   Text="{StaticResource String_Duration}"
+                                   Text="{StaticResource StringDuration}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}" />
                         <TextBlock Grid.Column="5"
-                                   Text="{StaticResource String_Plays}"
+                                   Text="{StaticResource StringPlays}"
                                    FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextMutedBrush}" />

@@ -2,9 +2,12 @@
 ; 生成 Windows 安装包
 
 #define MyAppName "LocalMusicPlayer"
+#define MyAppVersion "1.0.0"
 #define MyAppPublisher "LocalMusicPlayer"
 #define MyAppURL "https://github.com/your-username/LocalMusicPlayer"
 #define MyAppExeName "LocalMusicPlayer.exe"
+#define MyAppTarget "win-x64"
+#define MyAppArch "x64"
 
 [Setup]
 ; 注意: AppId 是每个应用的唯一标识，不要更改
@@ -17,7 +20,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=..\LICENSE.txt
+; LicenseFile=..\LICENSE.txt
 ; 如果没有 LICENSE 文件，请注释掉上一行
 OutputDir=..\installer-output
 OutputBaseFilename=LocalMusicPlayer-{#MyAppVersion}-{#MyAppArch}-setup
@@ -29,7 +32,6 @@ WizardStyle=modern
 PrivilegesRequired=admin
 
 [Languages]
-Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]

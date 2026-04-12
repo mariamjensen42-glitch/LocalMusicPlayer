@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="500"
         x:Class="LocalMusicPlayer.Views.Editors.MetadataEditorView"
         x:DataType="vm:MetadataEditorViewModel"
-        Title="{StaticResource String_MetadataEditor}"
+        Title="{StaticResource StringMetadataEditor}"
         Width="450"
         Height="520"
         WindowStartupLocation="CenterOwner"
@@ -17,29 +17,29 @@
         <ScrollViewer Grid.Row="0" Padding="24">
             <StackPanel Spacing="16">
                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{StaticResource String_Title}"
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{StaticResource StringTitle}"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                VerticalAlignment="Center" Margin="0,0,16,0" />
                     <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Title}"
-                             Watermark="{StaticResource String_SongTitle}" />
+                             Watermark="{StaticResource StringSongTitle}" />
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{StaticResource String_Artist}"
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{StaticResource StringArtist}"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                VerticalAlignment="Center" Margin="0,12,16,0" />
                     <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Artist}"
-                             Watermark="{StaticResource String_ArtistName}" Margin="0,12,0,0" />
+                             Watermark="{StaticResource StringArtistName}" Margin="0,12,0,0" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{StaticResource String_Album}"
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{StaticResource StringAlbum}"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                VerticalAlignment="Center" Margin="0,12,16,0" />
                     <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Album}"
-                             Watermark="{StaticResource String_AlbumName}" Margin="0,12,0,0" />
+                             Watermark="{StaticResource StringAlbumName}" Margin="0,12,0,0" />
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{StaticResource String_TrackNumber}"
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{StaticResource StringTrackNumber}"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                VerticalAlignment="Center" Margin="0,12,16,0" />
                     <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding TrackNumber}"
-                             Watermark="{StaticResource String_TrackNumber}" Margin="0,12,0,0" />
+                             Watermark="{StaticResource StringTrackNumber}" Margin="0,12,0,0" />
                 </Grid>
 
                 <Border Height="1" Background="{StaticResource BorderSubtleBrush}" Margin="0,8" />
@@ -50,7 +50,7 @@
                         <Image Source="{Binding AlbumArtPath, Converter={StaticResource AlbumArtConverter}}" Stretch="UniformToFill" />
                     </Border>
                     <StackPanel VerticalAlignment="Center" Spacing="8">
-                        <TextBlock Text="{StaticResource String_AlbumCover}"
+                        <TextBlock Text="{StaticResource StringAlbumCover}"
                                    FontSize="14" FontWeight="Medium"
                                    Foreground="{StaticResource TextPrimaryBrush}" />
                         <Button Theme="{StaticResource CardButtonTheme}"
@@ -61,7 +61,7 @@
                                            FontSize="12"
                                            VerticalAlignment="Center"
                                            Foreground="{StaticResource TextSecondaryBrush}" />
-                                <TextBlock Text="{StaticResource String_ChangeCover}"
+                                <TextBlock Text="{StaticResource StringChangeCover}"
                                            FontSize="13"
                                            Foreground="{StaticResource TextPrimaryBrush}" />
                             </StackPanel>
@@ -77,11 +77,11 @@
                 BorderThickness="0,1,0,0"
                 Padding="24,16">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
-                <Button Content="{StaticResource String_Cancel}" MinWidth="100" Height="36"
+                <Button Content="{StaticResource StringCancel}" MinWidth="100" Height="36"
                         Theme="{StaticResource CardButtonTheme}"
                         Command="{Binding CancelCommand}"
                         Click="CancelButton_Click" />
-                <Button Content="{StaticResource String_Save}" MinWidth="100" Height="36"
+                <Button Content="{StaticResource StringSave}" MinWidth="100" Height="36"
                         Theme="{StaticResource AccentButtonTheme}"
                         Command="{Binding SaveCommand}"
                         Click="SaveButton_Click" />

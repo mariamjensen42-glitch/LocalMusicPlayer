@@ -7,7 +7,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="600"
              x:Class="LocalMusicPlayer.Views.Playlist.QueueView"
-             x:DataType="vm:QueueViewModel">
+             x:DataType="vm:QueueViewModel"
+             x:CompileBindings="False">
 
     <Design.DataContext>
         <vm:QueueViewModel />
@@ -131,7 +132,7 @@
                                FontSize="14"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                VerticalAlignment="Center" />
-                    <TextBlock Text="{DynamicResource String_Clear}"
+                    <TextBlock Text="{DynamicResource StringClear}"
                                FontSize="13"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                VerticalAlignment="Center" />

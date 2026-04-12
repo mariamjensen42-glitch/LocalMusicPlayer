@@ -15,7 +15,6 @@ internal class CoverManagerService : ICoverManagerService
 {
     private readonly string _cacheDirectory;
     private readonly int _maxCoverSize = 800;
-    private readonly int _jpegQuality = 90;
 
     public CoverManagerService()
     {

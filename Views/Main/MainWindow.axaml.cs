@@ -12,10 +12,15 @@ namespace LocalMusicPlayer.Views.Main;
 
 public partial class MainWindow : Window
 {
-    private readonly IKeyboardShortcutService _keyboardShortcutService;
-    private readonly IDropHandlerService _dropHandlerService;
-    private readonly IConfigurationService _configService;
+    private readonly IKeyboardShortcutService? _keyboardShortcutService;
+    private readonly IDropHandlerService? _dropHandlerService;
+    private readonly IConfigurationService? _configService;
     private MainWindowViewModel? _mainWindowViewModel;
+
+    public MainWindow()
+    {
+        InitializeComponent();
+    }
 
     public MainWindow(IDropHandlerService dropHandlerService, IKeyboardShortcutService keyboardShortcutService, IConfigurationService configService)
     {
@@ -62,7 +67,8 @@ public partial class MainWindow : Window
         if (files == null || !files.Any())
             return;
 
-        await _dropHandlerService.HandleDroppedFilesAsync(files);
+        if (_dropHandlerService != null)
+            await _dropHandlerService.HandleDroppedFilesAsync(files);
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
@@ -81,7 +87,7 @@ public partial class MainWindow : Window
         if (_mainWindowViewModel == null)
             return;
 
-        _keyboardShortcutService.SetNavigateBackAction(() =>
+        _keyboardShortcutService?.SetNavigateBackAction(() =>
         {
             _mainWindowViewModel.NavigateToLibraryCommand.Execute(null);
         });
@@ -89,39 +95,39 @@ public partial class MainWindow : Window
         switch (e.Key)
         {
             case Key.Space:
-                _keyboardShortcutService.PlayPause();
+                _keyboardShortcutService?.PlayPause();
                 e.Handled = true;
                 break;
             case Key.Left:
-                _keyboardShortcutService.SeekBackward(5);
+                _keyboardShortcutService?.SeekBackward(5);
                 e.Handled = true;
                 break;
             case Key.Right:
-                _keyboardShortcutService.SeekForward(5);
+                _keyboardShortcutService?.SeekForward(5);
                 e.Handled = true;
                 break;
             case Key.Up:
-                _keyboardShortcutService.VolumeUp(5);
+                _keyboardShortcutService?.VolumeUp(5);
                 e.Handled = true;
                 break;
             case Key.Down:
-                _keyboardShortcutService.VolumeDown(5);
+                _keyboardShortcutService?.VolumeDown(5);
                 e.Handled = true;
                 break;
             case Key.Escape:
-                _keyboardShortcutService.NavigateBack();
+                _keyboardShortcutService?.NavigateBack();
                 e.Handled = true;
                 break;
             case Key.M:
-                _keyboardShortcutService.ToggleMute();
+                _keyboardShortcutService?.ToggleMute();
                 e.Handled = true;
                 break;
             case Key.N:
-                _keyboardShortcutService.NextTrack();
+                _keyboardShortcutService?.NextTrack();
                 e.Handled = true;
                 break;
             case Key.P:
-                _keyboardShortcutService.PreviousTrack();
+                _keyboardShortcutService?.PreviousTrack();
                 e.Handled = true;
                 break;
         }
@@ -173,7 +179,7 @@ public partial class MainWindow : Window
 
     private void CloseButton_Click(object? sender, RoutedEventArgs e)
     {
-        if (_configService.CurrentSettings.MinimizeToTray)
+        if (_configService?.CurrentSettings.MinimizeToTray == true)
         {
             Hide();
         }

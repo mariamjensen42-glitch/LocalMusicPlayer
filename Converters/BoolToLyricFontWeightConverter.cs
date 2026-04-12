@@ -5,19 +5,16 @@ using Avalonia.Media;
 
 namespace LocalMusicPlayer.Converters;
 
-public class BoolToLyricColorConverter : IValueConverter
+public class BoolToLyricFontWeightConverter : IValueConverter
 {
-    private const string InactiveColor = "#FF71717A";
-    private const string ActiveColor = "#FFA855F7";
-
-    private static readonly SolidColorBrush ActiveBrush = new(Color.Parse(ActiveColor));
-    private static readonly SolidColorBrush InactiveBrush = new(Color.Parse(InactiveColor));
+    private static readonly FontWeight ActiveWeight = FontWeight.Bold;
+    private static readonly FontWeight InactiveWeight = FontWeight.Normal;
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is true)
-            return ActiveBrush;
-        return InactiveBrush;
+            return ActiveWeight;
+        return InactiveWeight;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

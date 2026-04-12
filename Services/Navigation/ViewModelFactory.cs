@@ -61,9 +61,9 @@ public class ViewModelFactory : IViewModelFactory
         => ActivatorUtilities.CreateInstance<AlbumsPageViewModel>(_serviceProvider);
 
     public MetadataEditorViewModel CreateMetadataEditorViewModel(Song song, Action? onSaved = null)
-        => ActivatorUtilities.CreateInstance<MetadataEditorViewModel>(_serviceProvider, song, onSaved);
+        => ActivatorUtilities.CreateInstance<MetadataEditorViewModel>(_serviceProvider, song!, onSaved!);
 
     public BatchMetadataEditorViewModel CreateBatchMetadataEditorViewModel(
         System.Collections.Generic.IEnumerable<Song> songs, Action? onSaved = null)
-        => ActivatorUtilities.CreateInstance<BatchMetadataEditorViewModel>(_serviceProvider, songs, onSaved);
+        => ActivatorUtilities.CreateInstance<BatchMetadataEditorViewModel>(_serviceProvider, songs, onSaved!);
 }

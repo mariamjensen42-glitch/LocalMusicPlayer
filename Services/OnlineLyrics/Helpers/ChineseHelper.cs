@@ -142,9 +142,6 @@ public static class ChineseConverter
             {
                 if (CHS_to_CHT_dict == null || CHT_to_CHS_dict == null)
                 {
-#if DEBUG
-                    if (CHSWord.Length != CHTWord.Length) throw new ArgumentException(nameof(CHSWord));
-#endif
                     CHS_to_CHT_dict = new Dictionary<char, char>();
                     CHT_to_CHS_dict = new Dictionary<char, char>();
 

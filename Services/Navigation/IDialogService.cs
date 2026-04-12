@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using LocalMusicPlayer.Models;
+using LocalMusicPlayer.Services.OnlineLyrics;
 
 namespace LocalMusicPlayer.Services;
 
@@ -16,4 +17,5 @@ public interface IDialogService
     Task ShowBatchMetadataEditorDialogAsync(System.Collections.IList songs, Action? onSaved = null);
     Task<IReadOnlyList<string>?> ShowFolderPickerAsync();
     Task ShowAddToPlaylistDialogAsync(Song song);
+    Task<OnlineLyricResult?> ShowLyricSearchResultDialogAsync(Song song, OnlineLyricResult? result);
 }

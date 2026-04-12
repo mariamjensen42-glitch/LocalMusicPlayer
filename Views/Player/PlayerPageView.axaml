@@ -10,7 +10,8 @@
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
              x:Class="LocalMusicPlayer.Views.Player.PlayerPageView"
-             x:DataType="vm:PlayerPageViewModel">
+             x:DataType="vm:PlayerPageViewModel"
+             x:Name="RootUserControl">
 
     <Design.DataContext>
         <vm:PlayerPageViewModel />
@@ -18,6 +19,9 @@
 
     <UserControl.Resources>
         <converters:StringToBrushConverter x:Key="StringToBrushConverter" />
+        <converters:BoolToLyricColorConverter x:Key="BoolToLyricColorConverter" />
+        <converters:BoolToLyricFontWeightConverter x:Key="BoolToFontWeightConverter" />
+        <converters:LyricTranslationFontSizeConverter x:Key="LyricTranslationFontSizeConverter" />
     </UserControl.Resources>
 
     <Grid Background="{Binding GradientBackground, Converter={StaticResource StringToBrushConverter}}"
@@ -47,7 +51,7 @@
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Button>
-                    <TextBlock Text="{StaticResource String_NowPlaying}"
+                    <TextBlock Text="{StaticResource StringNowPlaying}"
                                Theme="{StaticResource TitleTextStyle}"
                                VerticalAlignment="Center" />
                 </StackPanel>
@@ -67,7 +71,7 @@
                     <!-- FullScreen Button -->
                     <Button Theme="{StaticResource CircleIconButtonTheme}"
                             Command="{Binding ToggleFullScreenCommand}"
-                            ToolTip.Tip="{DynamicResource String_Fullscreen}">
+                            ToolTip.Tip="{DynamicResource StringFullscreen}">
                         <TextBlock Text="&#xE73E;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="16"
@@ -90,7 +94,7 @@
             <!-- Content Area -->
             <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="32,24,32,32">
                 <!-- Left: Cover Area + Controls -->
-                <Grid Grid.Column="0" RowDefinitions="*,Auto,Auto" HorizontalAlignment="Stretch"
+                <Grid Grid.Column="0" RowDefinitions="*,Auto,Auto,Auto" HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch" Margin="32,0">
                     <!-- Cover -->
                     <Border HorizontalAlignment="Stretch"
@@ -114,14 +118,31 @@
                             VerticalAlignment="Center" />
                     </Border>
 
+                    <!-- Title Section -->
+                    <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,24,0,0" Spacing="4">
+                        <TextBlock Text="{Binding CurrentSong.Title}"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="White"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   MaxWidth="480" />
+                        <TextBlock Text="{Binding CurrentSong.Artist}"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   MaxWidth="480" />
+                    </StackPanel>
+
                     <!-- Progress Section -->
-                    <StackPanel Grid.Row="1" Spacing="12" Margin="0,24,0,24">
+                    <StackPanel Grid.Row="2" Spacing="12" Margin="0,24,0,24">
                         <!-- Progress Bar -->
                         <player:MusicProgressBar />
                     </StackPanel>
 
                     <!-- Controls Section -->
-                    <StackPanel Grid.Row="2" Spacing="24">
+                    <StackPanel Grid.Row="3" Spacing="24">
                         <!-- Control Buttons -->
                         <StackPanel Orientation="Horizontal"
                                     HorizontalAlignment="Center"
@@ -248,7 +269,7 @@
                                             Padding="8"
                                             BoxShadow="0 8 32 0 #00000060">
                                         <StackPanel Spacing="2">
-                                            <TextBlock Text="{DynamicResource String_PlaybackSpeed}"
+                                            <TextBlock Text="{DynamicResource StringPlaybackSpeed}"
                                                        FontSize="12"
                                                        Foreground="{StaticResource TextMutedBrush}"
                                                        Margin="8,4,8,8"
@@ -311,13 +332,6 @@
                         <StackPanel Grid.Row="0" Orientation="Horizontal"
                                     Spacing="12" HorizontalAlignment="Right"
                                     Margin="0,0,0,16">
-                            <!-- 测试按钮 -->
-                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                    Command="{Binding ToggleTranslationCommand}"
-                                    ToolTip.Tip="测试按钮">
-                                <TextBlock Text="T"
-                                           FontSize="16" />
-                            </Button>
                             <Button Theme="{StaticResource TransparentIconButtonTheme}"
                                     Command="{Binding SearchOnlineLyricsCommand}"
                                     Foreground="{StaticResource TextMutedBrush}"
@@ -379,31 +393,45 @@
                             <ItemsControl ItemsSource="{Binding Lyrics}"
                                           HorizontalAlignment="Stretch"
                                           Margin="0,300,0,300">
+                                <i:Interaction.Behaviors>
+                                    <behaviors:LyricsAutoScrollBehavior TargetScrollViewer="{Binding #LyricsScrollViewer}"
+                                                                        CurrentIndex="{Binding CurrentLyricIndex}" />
+                                </i:Interaction.Behaviors>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="services:LyricLine">
-                                        <StackPanel Spacing="6"
-                                                    Margin="0,0,0,0"
-                                                    HorizontalAlignment="Center">
-                                            <Border
-                                                Height="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricLineSpacing}" />
-                                            <!-- Original Lyric -->
-                                            <TextBlock Text="{Binding Text}"
-                                                       FontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize}"
-                                                       FontWeight="{Binding IsActive, Converter={StaticResource BoolToFontWeightConverter}}"
+                                        <StackPanel Spacing="6" HorizontalAlignment="Center" Margin="0,6,0,6">
+                                            <Grid HorizontalAlignment="Center">
+                                                <TextBlock x:Name="LyricsTextBlock"
+                                                           Text="{Binding Text}"
+                                                           FontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize}"
+                                                           FontWeight="{Binding IsActive, Converter={StaticResource BoolToFontWeightConverter}}"
+                                                           FontFamily="{StaticResource FontFamilyPrimary}"
+                                                           Foreground="{Binding IsActive, Converter={StaticResource BoolToLyricColorConverter}}"
+                                                           TextAlignment="Center"
+                                                           TextWrapping="Wrap" />
+                                                <Border x:Name="LyricsClipBorder"
+                                                        ClipToBounds="True"
+                                                        HorizontalAlignment="Left"
+                                                        Background="Transparent">
+                                                    <TextBlock Text="{Binding Text}"
+                                                               FontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize}"
+                                                               FontWeight="{Binding IsActive, Converter={StaticResource BoolToFontWeightConverter}}"
+                                                               FontFamily="{StaticResource FontFamilyPrimary}"
+                                                               Foreground="{Binding IsActive, Converter={StaticResource BoolToLyricColorConverter}}"
+                                                               TextAlignment="Center"
+                                                               TextWrapping="Wrap"
+                                                               HorizontalAlignment="Left" />
+                                                </Border>
+                                            </Grid>
+                                            <TextBlock x:Name="TranslationTextBlock"
+                                                       Text="{Binding Translation}"
+                                                       FontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize, Converter={StaticResource LyricTranslationFontSizeConverter}}"
                                                        FontFamily="{StaticResource FontFamilyPrimary}"
-                                                       Foreground="{Binding IsActive, Converter={StaticResource BoolToLyricColorConverter}}"
+                                                       Foreground="{StaticResource TextMutedBrush}"
                                                        TextAlignment="Center"
-                                                       TextWrapping="Wrap" />
-                                            <!-- Translation -->
-                                            <TextBlock
-                                                IsVisible="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).ShowTranslation, Mode=OneWay}"
-                                                Text="{Binding Translation}"
-                                                FontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize, Converter={StaticResource LyricTranslationFontSizeConverter}}"
-                                                FontFamily="{StaticResource FontFamilyPrimary}"
-                                                Foreground="{StaticResource TextMutedBrush}"
-                                                TextAlignment="Center"
-                                                TextWrapping="Wrap"
-                                                Opacity="0.9" />
+                                                       TextWrapping="Wrap"
+                                                       Opacity="0.9"
+                                                       IsVisible="{Binding IsTranslationVisible}" />
                                         </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
@@ -413,7 +441,7 @@
 
                     <!-- No Lyrics Message -->
                     <TextBlock IsVisible="{Binding !HasLyrics}"
-                               Text="{StaticResource String_NoLyrics}"
+                               Text="{StaticResource StringNoLyrics}"
                                FontSize="16"
                                FontFamily="{StaticResource FontFamilyPrimary}"
                                Foreground="{StaticResource TextMutedBrush}"
@@ -434,4 +462,3 @@
         </Grid>
     </Grid>
 </UserControl>
-

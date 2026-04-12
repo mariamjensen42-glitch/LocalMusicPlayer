@@ -28,7 +28,7 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Spacing="4">
-                    <TextBlock Text="{DynamicResource String_StatisticsReport}"
+                    <TextBlock Text="{DynamicResource StringStatisticsReport}"
                                FontSize="32"
                                FontWeight="Bold"
                                FontFamily="{StaticResource FontFamilyPrimary}"
@@ -82,7 +82,7 @@
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="2" VerticalAlignment="Center">
-                            <TextBlock Text="{DynamicResource String_Overview}"
+                            <TextBlock Text="{DynamicResource StringOverview}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />
@@ -194,7 +194,7 @@
                                            VerticalAlignment="Center" />
                             </Border>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource String_TopArtists}"
+                                <TextBlock Text="{DynamicResource StringTopArtists}"
                                            FontSize="18"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -248,7 +248,7 @@
                                                            FontWeight="Bold"
                                                            Foreground="{StaticResource TextPrimaryBrush}"
                                                            FontFamily="{StaticResource FontFamilyMono}" />
-                                                <TextBlock Text="{DynamicResource String_Plays}"
+                                                <TextBlock Text="{DynamicResource StringPlays}"
                                                            FontSize="12"
                                                            Foreground="{StaticResource TextMutedBrush}"
                                                            VerticalAlignment="Center" />
@@ -276,7 +276,7 @@
                                            VerticalAlignment="Center" />
                             </Border>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource String_TopAlbums}"
+                                <TextBlock Text="{DynamicResource StringTopAlbums}"
                                            FontSize="18"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -331,7 +331,7 @@
                                                            FontWeight="Bold"
                                                            Foreground="{StaticResource TextPrimaryBrush}"
                                                            FontFamily="{StaticResource FontFamilyMono}" />
-                                                <TextBlock Text="{DynamicResource String_Plays}"
+                                                <TextBlock Text="{DynamicResource StringPlays}"
                                                            FontSize="12"
                                                            Foreground="{StaticResource TextMutedBrush}"
                                                            VerticalAlignment="Center" />
@@ -361,7 +361,7 @@
                                            VerticalAlignment="Center" />
                             </Border>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource String_TopSongs}"
+                                <TextBlock Text="{DynamicResource StringTopSongs}"
                                            FontSize="18"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -427,7 +427,7 @@
                                                            FontWeight="Bold"
                                                            Foreground="{StaticResource TextPrimaryBrush}"
                                                            FontFamily="{StaticResource FontFamilyMono}" />
-                                                <TextBlock Text="{DynamicResource String_Plays}"
+                                                <TextBlock Text="{DynamicResource StringPlays}"
                                                            FontSize="12"
                                                            Foreground="{StaticResource TextMutedBrush}"
                                                            VerticalAlignment="Center" />
@@ -455,7 +455,7 @@
                                            VerticalAlignment="Center" />
                             </Border>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource String_GenreDistribution}"
+                                <TextBlock Text="{DynamicResource StringGenreDistribution}"
                                            FontSize="18"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -531,7 +531,7 @@
                                        VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Spacing="2" VerticalAlignment="Center">
-                            <TextBlock Text="{DynamicResource String_ListeningHistory}"
+                            <TextBlock Text="{DynamicResource StringListeningHistory}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}" />

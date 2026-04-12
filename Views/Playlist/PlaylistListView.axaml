@@ -9,7 +9,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
              x:Class="LocalMusicPlayer.Views.Playlist.PlaylistListView"
-             x:DataType="vm:PlaylistListViewModel">
+             x:DataType="vm:PlaylistListViewModel"
+             x:CompileBindings="False">
 
     <Design.DataContext>
         <vm:PlaylistListViewModel />
@@ -39,7 +40,7 @@
                 Padding="24,16">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Grid.Column="0"
-                           Text="{DynamicResource String_Playlists}"
+                           Text="{DynamicResource StringPlaylists}"
                            FontSize="24"
                            FontWeight="Bold"
                            Foreground="{StaticResource TextPrimaryBrush}" />
@@ -52,7 +53,7 @@
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="14"
                                    VerticalAlignment="Center" />
-                        <TextBlock Text="{DynamicResource String_NewPlaylist}" VerticalAlignment="Center" />
+                        <TextBlock Text="{DynamicResource StringNewPlaylist}" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
             </Grid>

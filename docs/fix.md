@@ -1,5 +1,14 @@
 # Bug 修复记录
 
+## 2026-04-12: ToggleButton IsChecked 绑定导致 NotSupportedException
+
+**问题**: 导航到艺术家或专辑页面时抛出 `NotSupportedException: Specified method is not supported`
+
+**根因**: `NavigationPageToBoolConverter` 的 `ConvertBack` 方法抛出 `NotSupportedException`，但 ToggleButton.IsChecked 默认是 TwoWay 绑定，点击按钮时 Avalonia 调用 `ConvertBack` 回写值
+
+**修复**:
+- [MainWindow.axaml](file:///c:/Users/yun/Programming/C%23/LocalMusicPlayer/Views/Main/MainWindow.axaml): Artists 和 Albums 的 ToggleButton.IsChecked 绑定添加 `Mode="OneWay"`
+
 ## 2026-04-12: AlbumDetailView/ArtistDetailView 中 DetailHeaderView 不可见（编译绑定 DataContext 泄漏）
 
 **问题**: HomeView 中 DetailHeaderView 正常显示，但导航到专辑详情页（AlbumDetailView）或艺术家详情页（ArtistDetailView）时，DetailHeaderView 完全不可见
@@ -259,3 +268,15 @@
 - [App.axaml](file:///c:/Users/yun/Programming/C%23/LocalMusicPlayer/App.axaml): TimeSpanToStringConverter 的 key 从 `TimeSpanConverter` 改为 `TimeSpanToStringConverter`
 - 多个视图文件中 `{StaticResource TimeSpanConverter}` 统一改为 `{StaticResource TimeSpanToStringConverter}`
 - QueueView.axaml 移除本地重复的 TimeSpanToStringConverter 资源定义
+
+## 2026-04-13: PlaybackMode 不持久化导致重启后丢失
+
+**问题**: 切换播放模式（顺序/随机/循环/单曲循环）后重启应用，播放模式恢复为默认的 Normal
+
+**根因**:
+1. `MainWindowViewModel.InitializeAsync` 中恢复了 Volume、IsMuted、PlaybackRate，但没有恢复 PlaybackMode
+2. 切换播放模式时没有将新值写入 `_configService.CurrentSettings` 并保存
+
+**修复**:
+- **[MainWindowViewModel.cs](file:///c:/Users/yun/Programming/C%23/LocalMusicPlayer/ViewModels/MainWindowViewModel.cs)**: InitializeAsync 中从配置恢复 PlaybackMode；添加 PlaybackModeChanged 事件订阅，在回调中保存配置
+- **[PlayerPageViewModel.cs](file:///c:/Users/yun/Programming/C%23/LocalMusicPlayer/ViewModels/PlayerPageViewModel.cs)**: OnPlaybackModeChanged 回调中添加配置保存逻辑

@@ -70,7 +70,7 @@ public abstract class BaseApi
     {
         SetRequestHeaders();
 
-        var jsonContent = new StringContent(paramDict.ToJson(), Encoding.UTF8, "application/json");
+        var jsonContent = new StringContent(paramDict.ToJson() ?? string.Empty, Encoding.UTF8, "application/json");
         var response = await HttpClient.PostAsync(url, jsonContent);
 
         response.EnsureSuccessStatusCode();

@@ -26,6 +26,10 @@ public partial class HomeViewModel : ViewModelBase
 
     [ObservableProperty] private string? _coverArtPath;
 
+    [ObservableProperty] private bool _isGridView;
+
+    public bool IsGridEmptyVisible => IsGridView && Songs.Count == 0;
+
     public ObservableCollection<Song> Songs => _musicLibraryService.FilteredSongs;
 
     public Song? CurrentSong => _playbackStateService.CurrentSong;
@@ -71,6 +75,11 @@ public partial class HomeViewModel : ViewModelBase
         FilterSongs();
     }
 
+    partial void OnIsGridViewChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsGridEmptyVisible));
+    }
+
     private void FilterSongs()
     {
         _musicLibraryService.FilteredSongs.Clear();
@@ -94,6 +103,12 @@ public partial class HomeViewModel : ViewModelBase
         var count = Songs.Count;
         LibraryStats = $"本地: {count} 首";
         CoverArtPath = _musicLibraryService.Songs.FirstOrDefault()?.AlbumArtPath;
+    }
+
+    [RelayCommand]
+    private void ToggleView()
+    {
+        IsGridView = !IsGridView;
     }
 
     [RelayCommand]
@@ -188,6 +203,25 @@ public partial class HomeViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand]
+    private async Task EditSongMetadataAsync(Song song)
+    {
+        await _dialogService.ShowMetadataEditorDialogAsync(song, () => { FilterSongs(); });
+    }
+
+    [RelayCommand]
+    private async Task BatchEditMetadataAsync(System.Collections.IList selectedItems)
+    {
+        var songs = selectedItems.OfType<Song>().ToList();
+        if (songs.Count < 2)
+        {
+            await _dialogService.ShowMessageDialogAsync("Batch Edit", "Please select at least 2 songs to batch edit.");
+            return;
+        }
+
+        await _dialogService.ShowBatchMetadataEditorDialogAsync(songs, () => { FilterSongs(); });
+    }
+
     private void OnPlaybackStateChanged(object? sender, PlayState state)
     {
         OnPropertyChanged(nameof(IsPlaying));
@@ -202,6 +236,7 @@ public partial class HomeViewModel : ViewModelBase
     {
         UpdateLibraryStats();
         FilterSongs();
+        OnPropertyChanged(nameof(IsGridEmptyVisible));
     }
 
     protected override void DisposeCore()
