@@ -14,6 +14,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     private readonly IPlaybackStateService _playbackStateService;
     private readonly INavigationService _navigationService;
     private readonly ILyricsService _lyricsService;
+    private readonly IOnlineLyricsService _onlineLyricsService;
     private readonly IMusicLibraryService _musicLibraryService;
     private readonly IAlbumArtService _albumArtService;
     private readonly IConfigurationService _configService;
@@ -30,6 +31,10 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     [ObservableProperty] private int _currentLyricIndex = -1;
 
     [ObservableProperty] private bool _hasLyrics;
+
+    [ObservableProperty] private bool _isSearchingLyrics;
+
+    [ObservableProperty] private string _lyricSearchStatus = string.Empty;
 
     [ObservableProperty] private float _playbackRate = 1.0f;
 
@@ -68,6 +73,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
         IPlaybackStateService playbackStateService,
         INavigationService navigationService,
         ILyricsService lyricsService,
+        IOnlineLyricsService onlineLyricsService,
         IMusicLibraryService musicLibraryService,
         IAlbumArtService albumArtService,
         IConfigurationService configService,
@@ -76,6 +82,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
         _playbackStateService = playbackStateService;
         _navigationService = navigationService;
         _lyricsService = lyricsService;
+        _onlineLyricsService = onlineLyricsService;
         _musicLibraryService = musicLibraryService;
         _albumArtService = albumArtService;
         _configService = configService;
@@ -265,6 +272,44 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     private void ToggleTranslation()
     {
         ShowTranslation = !ShowTranslation;
+    }
+
+    [RelayCommand]
+    private async Task SearchOnlineLyricsAsync()
+    {
+        if (CurrentSong == null || IsSearchingLyrics)
+            return;
+
+        IsSearchingLyrics = true;
+        LyricSearchStatus = "正在搜索歌词...";
+
+        try
+        {
+            var result = await _onlineLyricsService.SearchLyricsAsync(CurrentSong);
+            if (result != null && result.Lyrics.Count > 0)
+            {
+                Lyrics.Clear();
+                foreach (var lyric in result.Lyrics)
+                {
+                    Lyrics.Add(lyric);
+                }
+                HasLyrics = Lyrics.Count > 0;
+                LyricSearchStatus = $"找到 {result.Lyrics.Count} 行歌词 (来源: {result.Source})";
+                UpdateCurrentLyricIndex();
+            }
+            else
+            {
+                LyricSearchStatus = "未找到歌词";
+            }
+        }
+        catch (Exception ex)
+        {
+            LyricSearchStatus = $"搜索失败: {ex.Message}";
+        }
+        finally
+        {
+            IsSearchingLyrics = false;
+        }
     }
 
     private void LoadLyrics()

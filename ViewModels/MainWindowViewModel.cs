@@ -155,6 +155,12 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     }
 
     [RelayCommand]
+    private void Seek(TimeSpan position)
+    {
+        _playbackStateService.Seek(position);
+    }
+
+    [RelayCommand]
     private void PlaySong(string path)
     {
         var song = Library.FilteredSongs.FirstOrDefault(s => s.FilePath == path);
@@ -437,6 +443,16 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     public ArtistsPageViewModel? ArtistsPageViewModel { get; private set; }
     public AlbumsPageViewModel? AlbumsPageViewModel { get; private set; }
 
+    public ObservableCollection<UserPlaylist> UserPlaylists => _userPlaylistService.UserPlaylists;
+
+    [ObservableProperty] private bool _isPlaylistSectionExpanded = true;
+
+    [RelayCommand]
+    private void NavigateToPlaylistDetailFromSidebar(UserPlaylist playlist)
+    {
+        NavigateToPlaylistDetail(playlist);
+    }
+
     public MainWindowViewModel(
         IPlaybackStateService playbackStateService,
         INavigationService navigationService,
@@ -486,7 +502,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
 
         Library.Songs.CollectionChanged += OnSongsCollectionChanged;
 
-        _ = InitializeAsync(scanService).ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+        _ = InitializeAsync(scanService);
     }
 
     private void OnPlaybackStateChanged(object? sender, PlayState state)
@@ -580,26 +596,33 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
 
     private async Task InitializeAsync(IScanService scanService)
     {
-        await _configService.LoadSettingsAsync();
-        Volume = _configService.CurrentSettings.Volume;
-        IsMuted = _configService.CurrentSettings.IsMuted;
-        _playbackStateService.SetVolume(Volume);
-        if (IsMuted) _playbackStateService.Mute();
-        _playbackStateService.SetPlaybackRate(_configService.CurrentSettings.PlaybackRate);
-
-        var folders = _configService.GetScanFolders();
-        if (folders.Count > 0)
+        try
         {
-            if (_musicLibraryService.Songs.Count == 0)
-                await scanService.ScanAllFoldersAsync();
-            else
-                await scanService.RescanLibraryAsync();
-            UpdateLibraryStats();
+            await _configService.LoadSettingsAsync();
+            Volume = _configService.CurrentSettings.Volume;
+            IsMuted = _configService.CurrentSettings.IsMuted;
+            _playbackStateService.SetVolume(Volume);
+            if (IsMuted) _playbackStateService.Mute();
+            _playbackStateService.SetPlaybackRate(_configService.CurrentSettings.PlaybackRate);
+
+            var folders = _configService.GetScanFolders();
+            if (folders.Count > 0)
+            {
+                if (_musicLibraryService.Songs.Count == 0)
+                    await scanService.ScanAllFoldersAsync();
+                else
+                    await scanService.RescanLibraryAsync();
+                UpdateLibraryStats();
+            }
+
+            await _userPlaylistService.LoadPlaylistsAsync();
+
+            await RestorePlaybackStateAsync();
         }
-
-        await _userPlaylistService.LoadPlaylistsAsync();
-
-        await RestorePlaybackStateAsync();
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[MainWindowViewModel] Initialization failed: {ex}");
+        }
     }
 
     private Task RestorePlaybackStateAsync()

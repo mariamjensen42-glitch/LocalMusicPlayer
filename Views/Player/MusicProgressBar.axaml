@@ -1,24 +1,29 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:LocalMusicPlayer.ViewModels"
-             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              x:Class="LocalMusicPlayer.Views.Player.MusicProgressBar"
              x:DataType="vm:IPlaybackProgress">
 
     <Grid RowDefinitions="Auto,Auto">
-        <Slider Grid.Row="0"
-                Theme="{StaticResource MusicProgressSliderTheme}"
-                HorizontalAlignment="Stretch"
-                Minimum="0"
-                Maximum="{Binding DurationSeconds}"
-                Value="{Binding PositionSeconds, Mode=TwoWay}"
-                IsSnapToTickEnabled="True"
-                TickFrequency="1">
-            <i:Interaction.Behaviors>
-                <behaviors:SliderClickToSeekBehavior />
-            </i:Interaction.Behaviors>
-        </Slider>
+        <Panel Grid.Row="0" Height="20" VerticalAlignment="Center">
+            <Border Height="5"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SliderTrackBgBrush}"
+                    CornerRadius="3" />
+            <Border x:Name="ProgressFill"
+                    Height="5"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    CornerRadius="3"
+                    Background="{StaticResource PurplePinkHorizontalGradientBrush}" />
+            <Border x:Name="Thumb"
+                    Width="12"
+                    Height="12"
+                    CornerRadius="6"
+                    Background="White"
+                    VerticalAlignment="Center"
+                    IsHitTestVisible="True" />
+        </Panel>
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="0,4,0,0">
             <TextBlock Grid.Column="0"
                        Text="{Binding Position, Converter={StaticResource TimeSpanToStringConverter}}"
@@ -35,4 +40,3 @@
         </Grid>
     </Grid>
 </UserControl>
-

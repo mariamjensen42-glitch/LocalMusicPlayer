@@ -11,21 +11,11 @@
 
     <Grid Background="{StaticResource BgPrimaryBrush}">
         <Grid RowDefinitions="Auto,*">
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="32,24,32,0">
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16">
-                    <Button Theme="{StaticResource CircleIconButtonTheme}"
-                            Command="{Binding NavigateBackCommand}">
-                        <TextBlock Text="&#xE74A;"
-                                   FontFamily="Segoe Fluent Icons"
-                                   FontSize="16"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
-                    </Button>
-                    <TextBlock Text="{DynamicResource String_PlayHistory}"
-                               Theme="{StaticResource TitleTextStyle}"
-                               VerticalAlignment="Center" />
-                </StackPanel>
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="32,24,32,0">
+                <TextBlock Grid.Column="0"
+                           Text="{DynamicResource String_PlayHistory}"
+                           Theme="{StaticResource TitleTextStyle}"
+                           VerticalAlignment="Center" />
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
                     <Button Height="38"
@@ -71,8 +61,9 @@
                                         CornerRadius="8"
                                         Background="{StaticResource BgElement2Brush}"
                                         ClipToBounds="True">
-                                    <Image Source="{Binding Song.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
-                                           Stretch="UniformToFill" />
+                                    <Image
+                                        Source="{Binding Song.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                        Stretch="UniformToFill" />
                                 </Border>
 
                                 <StackPanel Grid.Column="1"
@@ -120,3 +111,4 @@
         </Grid>
     </Grid>
 </UserControl>
+

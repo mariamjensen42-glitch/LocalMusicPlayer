@@ -68,4 +68,7 @@ public class AppSettings
     public bool ShowSongChangeNotification { get; set; } = true;
     public bool AutoStartOnBoot { get; set; }
     public bool ResumeLastPlayback { get; set; } = true;
+    public string AudioQuality { get; set; } = "Standard";
+    public bool DownloadAlbumArtwork { get; set; } = true;
+    public bool AutoDetectMetadata { get; set; }
 }

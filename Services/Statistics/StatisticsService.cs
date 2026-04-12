@@ -52,7 +52,12 @@ public class StatisticsService : IStatisticsService
         _musicPlayerService.PositionChanged += OnPositionChanged;
         _musicPlayerService.PlaybackEnded += OnPlaybackEnded;
 
-        LoadStatisticsAsync().ConfigureAwait(false);
+        _ = LoadStatisticsAsync();
+    }
+
+    public void Initialize()
+    {
+        _ = LoadStatisticsAsync();
     }
 
     public LibraryStatistics GetLibraryStatistics()
@@ -115,7 +120,7 @@ public class StatisticsService : IStatisticsService
             });
 
             StatisticsChanged?.Invoke(this, EventArgs.Empty);
-            SaveStatisticsAsync().ConfigureAwait(false);
+            _ = SaveStatisticsAsync();
         }
 
         _isPlaying = false;

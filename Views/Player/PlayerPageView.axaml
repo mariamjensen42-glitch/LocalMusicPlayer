@@ -67,7 +67,7 @@
                     <!-- FullScreen Button -->
                     <Button Theme="{StaticResource CircleIconButtonTheme}"
                             Command="{Binding ToggleFullScreenCommand}"
-                            ToolTip.Tip="全屏">
+                            ToolTip.Tip="{DynamicResource String_Fullscreen}">
                         <TextBlock Text="&#xE73E;"
                                    FontFamily="Segoe Fluent Icons"
                                    FontSize="16"
@@ -311,6 +311,30 @@
                         <StackPanel Grid.Row="0" Orientation="Horizontal"
                                     Spacing="12" HorizontalAlignment="Right"
                                     Margin="0,0,0,16">
+                            <!-- 测试按钮 -->
+                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
+                                    Command="{Binding ToggleTranslationCommand}"
+                                    ToolTip.Tip="测试按钮">
+                                <TextBlock Text="T"
+                                           FontSize="16" />
+                            </Button>
+                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
+                                    Command="{Binding SearchOnlineLyricsCommand}"
+                                    Foreground="{StaticResource TextMutedBrush}"
+                                    IsVisible="{Binding !IsSearchingLyrics}"
+                                    ToolTip.Tip="搜索歌词">
+                                <TextBlock Text="&#xE721;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="16" />
+                            </Button>
+                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
+                                    Foreground="{StaticResource AccentPurpleBrush}"
+                                    IsVisible="{Binding IsSearchingLyrics}"
+                                    ToolTip.Tip="搜索中...">
+                                <TextBlock Text="&#xE895;"
+                                           FontFamily="Segoe Fluent Icons"
+                                           FontSize="16" />
+                            </Button>
                             <Button Theme="{StaticResource TransparentIconButtonTheme}"
                                     Command="{Binding ToggleTranslationCommand}"
                                     Foreground="{StaticResource TextMutedBrush}">
@@ -395,6 +419,16 @@
                                Foreground="{StaticResource TextMutedBrush}"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center" />
+
+                    <!-- Lyric Search Status -->
+                    <TextBlock IsVisible="{Binding LyricSearchStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                               Text="{Binding LyricSearchStatus}"
+                               FontSize="14"
+                               FontFamily="{StaticResource FontFamilyPrimary}"
+                               Foreground="{StaticResource AccentPurpleBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Bottom"
+                               Margin="0,0,0,20" />
                 </Grid>
             </Grid>
         </Grid>

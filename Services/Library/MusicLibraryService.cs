@@ -22,20 +22,17 @@ public class MusicLibraryService : IMusicLibraryService
         foreach (var song in songs)
         {
             Songs.Add(song);
-            FilteredSongs.Add(song);
         }
     }
 
     public void AddSong(Song song)
     {
         Songs.Add(song);
-        FilteredSongs.Add(song);
     }
 
     public void RemoveSong(Song song)
     {
         Songs.Remove(song);
-        FilteredSongs.Remove(song);
     }
 
     public List<ArtistInfo> GetArtists()

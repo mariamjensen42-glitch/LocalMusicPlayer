@@ -139,7 +139,7 @@ public class AppSettingsEntity
 public class PlaylistEntity
 {
     public int Id { get; set; }
-    public string PlaylistId { get; set; } = Guid.NewGuid().ToString();
+    public string PlaylistId { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public DateTime CreatedTime { get; set; } = DateTime.Now;
     public DateTime? ModifiedTime { get; set; }

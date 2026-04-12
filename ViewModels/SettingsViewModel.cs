@@ -141,6 +141,9 @@ public partial class SettingsViewModel : ViewModelBase
         }
 
         IncludeSubfolders = settings.IncludeSubfolders;
+        AudioQuality = settings.AudioQuality;
+        DownloadAlbumArtwork = settings.DownloadAlbumArtwork;
+        AutoDetectMetadata = settings.AutoDetectMetadata;
         ThemeMode = settings.Theme;
         CrossfadeEnabled = settings.CrossfadeEnabled;
         CrossfadeDurationSeconds = settings.CrossfadeDurationMs / 1000;
@@ -163,6 +166,30 @@ public partial class SettingsViewModel : ViewModelBase
     {
         _configService.CurrentSettings.IncludeSubfolders = IncludeSubfolders;
         await _configService.SaveSettingsAsync();
+    }
+
+    partial void OnAudioQualityChanged(string value)
+    {
+        _configService.CurrentSettings.AudioQuality = value;
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    partial void OnThemeModeChanged(string value)
+    {
+        _configService.CurrentSettings.Theme = value;
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    partial void OnDownloadAlbumArtworkChanged(bool value)
+    {
+        _configService.CurrentSettings.DownloadAlbumArtwork = value;
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    partial void OnAutoDetectMetadataChanged(bool value)
+    {
+        _configService.CurrentSettings.AutoDetectMetadata = value;
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     partial void OnIncludeSubfoldersChanged(bool value)

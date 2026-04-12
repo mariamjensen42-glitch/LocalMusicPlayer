@@ -2,7 +2,6 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Xaml.Interactivity;
 
 namespace LocalMusicPlayer.Behaviors;
@@ -12,21 +11,17 @@ public class SliderClickToSeekBehavior : Behavior<Slider>
     protected override void OnAttached()
     {
         base.OnAttached();
-        if (AssociatedObject != null)
-        {
-            AssociatedObject.AddHandler(InputElement.PointerPressedEvent, OnPointerPressed, RoutingStrategies.Bubble);
-            AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, OnPointerReleased, RoutingStrategies.Bubble);
-        }
+        if (AssociatedObject == null) return;
+
+        AssociatedObject.PointerPressed += OnPointerPressed;
     }
 
     protected override void OnDetaching()
     {
         base.OnDetaching();
-        if (AssociatedObject != null)
-        {
-            AssociatedObject.RemoveHandler(InputElement.PointerPressedEvent, OnPointerPressed);
-            AssociatedObject.RemoveHandler(InputElement.PointerReleasedEvent, OnPointerReleased);
-        }
+        if (AssociatedObject == null) return;
+
+        AssociatedObject.PointerPressed -= OnPointerPressed;
     }
 
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
@@ -34,26 +29,20 @@ public class SliderClickToSeekBehavior : Behavior<Slider>
         if (AssociatedObject == null) return;
 
         var point = e.GetPosition(AssociatedObject);
-        CalculateAndSeek(point);
+        var seekValue = CalculateValue(point, AssociatedObject.Bounds.Width, AssociatedObject.Minimum,
+            AssociatedObject.Maximum);
+
+        if (seekValue.HasValue)
+        {
+            AssociatedObject.Value = seekValue.Value;
+        }
     }
 
-    private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    private static double? CalculateValue(Point point, double width, double minimum, double maximum)
     {
-    }
+        if (width <= 0 || maximum <= minimum) return null;
 
-    private void CalculateAndSeek(Point point)
-    {
-        if (AssociatedObject == null) return;
-
-        var bounds = AssociatedObject.Bounds;
-
-        if (bounds.Width <= 0) return;
-
-        var ratio = point.X / bounds.Width;
-        var value = AssociatedObject.Minimum + ratio * (AssociatedObject.Maximum - AssociatedObject.Minimum);
-
-        value = Math.Clamp(value, AssociatedObject.Minimum, AssociatedObject.Maximum);
-
-        AssociatedObject.Value = value;
+        var ratio = Math.Clamp(point.X / width, 0.0, 1.0);
+        return minimum + ratio * (maximum - minimum);
     }
 }

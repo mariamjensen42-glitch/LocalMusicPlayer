@@ -1,8 +1,8 @@
 ---
-alwaysApply: false
-description: 
+alwaysApply: true
 ---
 # 日志规范
+使用 Microsoft.Extensions.Logging 库进行日志记录，确保日志记录的可维护性和可扩展。
 
 ## 日志级别
 
@@ -17,10 +17,12 @@ description:
 ## 记录要求
 
 ### 必须记录
-- 用户登录/登出
 - 播放操作开始和结束
+- 播放模式变化
 - 扫描音乐文件
 - 异常和错误
+- 警告信息
+- 系统级严重错误
 
 ### 不记录
 - 调试用的临时日志
@@ -31,11 +33,4 @@ description:
 
 ```
 [时间戳] [级别] [模块名] 消息内容
-```
-
-## 示例
-
-```csharp
-Log.Info("[MusicScanner] 开始扫描目录: {Path}", path);
-Log.Error("[Player] 播放失败: {Error}", ex.Message);
 ```

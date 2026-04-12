@@ -2,6 +2,7 @@ using LocalMusicPlayer.Data;
 using LocalMusicPlayer.Services;
 using LocalMusicPlayer.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace LocalMusicPlayer.Helpers;
 
@@ -9,6 +10,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddMusicServices(this IServiceCollection services)
     {
+        AddLoggingServices(services);
         AddNavigationServices(services);
         AddPlaybackServices(services);
         AddLibraryServices(services);
@@ -19,6 +21,15 @@ public static class ServiceCollectionExtensions
         AddFileServices(services);
         AddViewModels(services);
         return services;
+    }
+
+    private static void AddLoggingServices(IServiceCollection services)
+    {
+        services.AddLogging(builder =>
+        {
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Information);
+        });
     }
 
     private static void AddNavigationServices(IServiceCollection services)
@@ -51,6 +62,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IAlbumArtService, AlbumArtService>();
         services.AddSingleton<ICoverManagerService, CoverManagerService>();
         services.AddSingleton<ILyricsService, LyricsService>();
+        services.AddSingleton<IOnlineLyricsService, OnlineLyricsService>();
     }
 
     private static void AddPlaylistServices(IServiceCollection services)

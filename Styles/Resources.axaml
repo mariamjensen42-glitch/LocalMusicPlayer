@@ -399,13 +399,14 @@
         <Setter Property="Foreground" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Height="20" VerticalAlignment="Center" Background="Transparent">
+                <Border Height="20" VerticalAlignment="Center" Background="Transparent" IsHitTestVisible="True">
                     <Grid VerticalAlignment="Center">
                         <Border Name="TrackBackground"
                                 Background="{StaticResource SliderTrackBgBrush}"
                                 CornerRadius="3"
                                 Height="5"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                IsHitTestVisible="False" />
                         <Track Name="PART_Track"
                                VerticalAlignment="Center"
                                IsDirectionReversed="False"
@@ -414,7 +415,7 @@
                                Maximum="{TemplateBinding Maximum}"
                                Value="{TemplateBinding Value, Mode=TwoWay}">
                             <Track.DecreaseButton>
-                                <RepeatButton Focusable="False">
+                                <RepeatButton Focusable="False" IsHitTestVisible="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
                                             <Border CornerRadius="3"
@@ -426,7 +427,7 @@
                                 </RepeatButton>
                             </Track.DecreaseButton>
                             <Track.IncreaseButton>
-                                <RepeatButton Focusable="False">
+                                <RepeatButton Focusable="False" IsHitTestVisible="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
                                             <Border Background="Transparent"
@@ -437,7 +438,7 @@
                                 </RepeatButton>
                             </Track.IncreaseButton>
                             <Track.Thumb>
-                                <Thumb Width="12" Height="12">
+                                <Thumb Width="12" Height="12" Focusable="False">
                                     <Thumb.Template>
                                         <ControlTemplate>
                                             <Border Width="12" Height="12"
@@ -620,11 +621,10 @@
                                 VerticalAlignment="Center">
                         <ContentPresenter Content="{TemplateBinding (Button.Tag)}"
                                           VerticalAlignment="Center" />
-                        <TextBlock Text="{TemplateBinding Content}"
-                                   Foreground="{TemplateBinding Foreground}"
-                                   FontSize="{TemplateBinding FontSize}"
-                                   VerticalAlignment="Center"
-                                   TextTrimming="CharacterEllipsis" />
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          Foreground="{TemplateBinding Foreground}"
+                                          FontSize="{TemplateBinding FontSize}"
+                                          VerticalAlignment="Center" />
                     </StackPanel>
                 </Border>
             </ControlTemplate>

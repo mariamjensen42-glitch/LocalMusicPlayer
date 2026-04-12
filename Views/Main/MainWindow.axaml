@@ -52,7 +52,7 @@
                     <!-- 顶部应用标题区 -->
                     <Border Grid.Row="0"
                             Margin="24,20,0,24">
-                        <TextBlock Text="Local Music Player"
+                        <TextBlock Text="{DynamicResource String_AppTitle}"
                                    FontSize="20"
                                    FontWeight="Bold"
                                    Foreground="{StaticResource TextPrimaryBrush}" />
@@ -64,7 +64,19 @@
                                 Spacing="4"
                                 Margin="8,0,8,24">
 
-                        <!-- 艺术家 -->
+                        <!-- 所有歌曲 (默认选中) -->
+                        <ToggleButton Theme="{StaticResource SidebarNavItemTheme}"
+                                      Command="{Binding NavigateToLibraryCommand}"
+                                      Tag="&#xE8D6;">
+                            <ToggleButton.IsChecked>
+                                <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
+                                    <Binding Path="CurrentNavPage" />
+                                    <Binding Source="{x:Static vm:NavigationPage.Home}" />
+                                </MultiBinding>
+                            </ToggleButton.IsChecked>
+                            所有歌曲
+                        </ToggleButton>
+
                         <ToggleButton Theme="{StaticResource SidebarNavItemTheme}"
                                       Command="{Binding NavigateToArtistsPageCommand}"
                                       Tag="&#xE77B;">
@@ -104,19 +116,6 @@
                             文件夹
                         </ToggleButton>
 
-                        <!-- 所有歌曲 (默认选中) -->
-                        <ToggleButton Theme="{StaticResource SidebarNavItemTheme}"
-                                      Command="{Binding NavigateToLibraryCommand}"
-                                      Tag="&#xE8D6;">
-                            <ToggleButton.IsChecked>
-                                <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                    <Binding Path="CurrentNavPage" />
-                                    <Binding Source="{x:Static vm:NavigationPage.Home}" />
-                                </MultiBinding>
-                            </ToggleButton.IsChecked>
-                            所有歌曲
-                        </ToggleButton>
-
                         <!-- 听歌排行 -->
                         <ToggleButton Theme="{StaticResource SidebarNavItemTheme}"
                                       Command="{Binding NavigateToStatisticsReportCommand}"
@@ -143,13 +142,13 @@
                             最近播放
                         </ToggleButton>
 
-                        <!-- 歌单 (带右侧+按钮) -->
+                        <!-- 歌单 -->
                         <Grid Margin="4,0">
                             <ToggleButton Theme="{StaticResource SidebarNavItemTheme}"
                                           HorizontalAlignment="Stretch"
                                           Command="{Binding NavigateToPlaylistCommand}"
                                           Tag="&#xE8FC;"
-                                          Content="歌单" />
+                                          Content="播放列表" />
                             <Button Width="24"
                                     Height="24"
                                     Background="Transparent"
@@ -169,18 +168,28 @@
                             </Button>
                         </Grid>
 
-                        <!-- 我喜欢的 -->
-                        <ToggleButton Theme="{StaticResource SidebarNavItemTheme}"
-                                      Command="{Binding NavigateToFavoritesCommand}"
-                                      Tag="&#xE006;">
-                            <ToggleButton.IsChecked>
-                                <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                    <Binding Path="CurrentNavPage" />
-                                    <Binding Source="{x:Static vm:NavigationPage.Favorites}" />
-                                </MultiBinding>
-                            </ToggleButton.IsChecked>
-                            我喜欢的
-                        </ToggleButton>
+                        <!-- 歌单列表 -->
+                        <ItemsControl ItemsSource="{Binding UserPlaylists}"
+                                      Margin="8,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:UserPlaylist">
+                                    <Button Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="8,6"
+                                            Cursor="Hand"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding $parent[ItemsControl].DataContext.NavigateToPlaylistDetailFromSidebarCommand}"
+                                            CommandParameter="{Binding}">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+
                     </StackPanel>
 
                 </Grid>
@@ -229,7 +238,7 @@
                                 <TextBox Grid.Column="1"
                                          x:Name="SearchTextBox"
                                          Text="{Binding SearchText, Mode=TwoWay}"
-                                         Watermark="搜索歌曲"
+                                         Watermark="{DynamicResource String_SearchSongs}"
                                          Background="Transparent"
                                          BorderThickness="0"
                                          VerticalAlignment="Center"
@@ -242,7 +251,7 @@
                         <Button Grid.Column="2"
                                 Theme="{StaticResource ToolbarButtonTheme}"
                                 Command="{Binding NavigateToSettingsCommand}"
-                                ToolTip.Tip="设置">
+                                ToolTip.Tip="{DynamicResource String_Settings}">
                             <TextBlock Text="&#xE713;"
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="14"
@@ -257,21 +266,6 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     Margin="0,0,8,0">
-
-                            <!-- 全屏/窗口化 -->
-                            <Button x:Name="FullScreenButton"
-                                    Width="40"
-                                    Height="40"
-                                    Theme="{StaticResource TitleBarButtonTheme}"
-                                    Command="{Binding ToggleFullScreenCommand}"
-                                    ToolTip.Tip="全屏">
-                                <TextBlock Text="&#xE73E;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="14"
-                                           Foreground="{StaticResource TextSecondaryBrush}"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Button>
 
                             <!-- 最小化 -->
                             <Button x:Name="MinimizeButton"

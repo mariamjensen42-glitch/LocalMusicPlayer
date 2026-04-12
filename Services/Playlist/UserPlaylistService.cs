@@ -9,10 +9,11 @@ using LocalMusicPlayer.Models;
 
 namespace LocalMusicPlayer.Services;
 
-public class UserPlaylistService : IUserPlaylistService
+public class UserPlaylistService : IUserPlaylistService, IDisposable
 {
     private readonly IMusicLibraryService _libraryService;
     private readonly ObservableCollection<UserPlaylist> _userPlaylists = new();
+    private bool _disposed;
 
     public ObservableCollection<UserPlaylist> UserPlaylists => _userPlaylists;
 
@@ -23,11 +24,7 @@ public class UserPlaylistService : IUserPlaylistService
     {
         _libraryService = libraryService;
 
-        _libraryService.Songs.CollectionChanged += async (_, _) =>
-        {
-            await SyncFavoritesToSongsAsync();
-            await CleanupInvalidReferencesAsync();
-        };
+        _libraryService.Songs.CollectionChanged += OnSongsCollectionChanged;
     }
 
     private async Task SyncFavoritesToSongsAsync()
@@ -118,6 +115,11 @@ public class UserPlaylistService : IUserPlaylistService
 
         playlist.SongFilePaths.Add(song.FilePath);
         playlist.ModifiedTime = DateTime.Now;
+
+        if (string.IsNullOrEmpty(playlist.CoverArtPath))
+        {
+            playlist.CoverArtPath = song.AlbumArtPath;
+        }
 
         await Task.Run(() =>
         {
@@ -357,8 +359,11 @@ public class UserPlaylistService : IUserPlaylistService
         _userPlaylists.Clear();
         foreach (var playlist in playlists)
         {
+            DeriveCoverArtFromFirstSong(playlist);
             _userPlaylists.Add(playlist);
         }
+
+        EnsureDefaultPlaylistExists();
 
         foreach (var song in _libraryService.Songs)
         {
@@ -367,6 +372,33 @@ public class UserPlaylistService : IUserPlaylistService
 
         PlaylistsChanged?.Invoke(this, EventArgs.Empty);
         FavoritesChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void EnsureDefaultPlaylistExists()
+    {
+        const string favoritesId = "favorites";
+        if (!_userPlaylists.Any(p => p.Id == favoritesId))
+        {
+            var favoritesPlaylist = new UserPlaylist
+            {
+                Id = favoritesId,
+                Name = "我喜欢的"
+            };
+            _userPlaylists.Insert(0, favoritesPlaylist);
+        }
+    }
+
+    private void DeriveCoverArtFromFirstSong(UserPlaylist playlist)
+    {
+        if (string.IsNullOrEmpty(playlist.CoverArtPath) && playlist.SongFilePaths.Count > 0)
+        {
+            var firstSongPath = playlist.SongFilePaths[0];
+            var firstSong = _libraryService.Songs.FirstOrDefault(s => s.FilePath == firstSongPath);
+            if (firstSong != null)
+            {
+                playlist.CoverArtPath = firstSong.AlbumArtPath;
+            }
+        }
     }
 
     private async Task CleanupInvalidReferencesAsync()
@@ -435,7 +467,8 @@ public class UserPlaylistService : IUserPlaylistService
                 playlist.ModifiedTime = modifiedTime;
         }
 
-        if (playlistData.TryGetProperty("SongFilePaths", out var songsProp) && songsProp.ValueKind == JsonValueKind.Array)
+        if (playlistData.TryGetProperty("SongFilePaths", out var songsProp) &&
+            songsProp.ValueKind == JsonValueKind.Array)
         {
             foreach (var item in songsProp.EnumerateArray())
             {
@@ -448,5 +481,19 @@ public class UserPlaylistService : IUserPlaylistService
                 }
             }
         }
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        _libraryService.Songs.CollectionChanged -= OnSongsCollectionChanged;
+    }
+
+    private async void OnSongsCollectionChanged(object? sender,
+        System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        await SyncFavoritesToSongsAsync();
+        await CleanupInvalidReferencesAsync();
     }
 }

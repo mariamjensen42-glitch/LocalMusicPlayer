@@ -1,17 +1,7 @@
 ---
-alwaysApply: true
+alwaysApply: false
+description: 
 ---
-# 项目规则指南
-
-## 框架版本
-
-- **.NET**: 9.0
-- **Avalonia**: 11.3.8
-- **ReactiveUI.Avalonia**: 11.3.8
-- **ReactiveUI.SourceGenerators**: 2.4.1
-- **TagLibSharp**: 2.3.0
-- **LibVLCSharp**: 3.9.6
-
 ## 目录结构
 
 ```
@@ -23,6 +13,7 @@ Converters/      # XAML 值转换器
 Helpers/         # 工具类
 Styles/          # 共享样式资源
 Behaviors/       # Avalonia 行为
+
 ```
 
 ## 开发规范
@@ -38,3 +29,4 @@ Behaviors/       # Avalonia 行为
 - 禁止在 ViewModel 中直接操作 UI 控件
 - 禁止使用 Binding 字符串路径（应用 x:DataType 编译绑定）
 - 禁止在 XAML 中硬编码中文字符串（应提取到资源文件）
+- 禁止内联样式

@@ -11,7 +11,7 @@
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
              x:Class="LocalMusicPlayer.Views.Details.ArtistDetailView"
              x:DataType="vm:ArtistDetailViewModel"
-             x:CompileBindings="True">
+             x:CompileBindings="False">
 
     <UserControl.Resources>
         <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
@@ -108,7 +108,8 @@
                                                       Command="{Binding $parent[ListBox].DataContext.AddToPlaylistCommand}"
                                                       CommandParameter="{Binding FilePath}">
                                                 <MenuItem.Icon>
-                                                    <TextBlock Text="&#xE710;" FontFamily="Segoe Fluent Icons" FontSize="12" />
+                                                    <TextBlock Text="&#xE710;" FontFamily="Segoe Fluent Icons"
+                                                               FontSize="12" />
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                         </ContextMenu>
@@ -194,3 +195,4 @@
         </StackPanel>
     </ScrollViewer>
 </UserControl>
+

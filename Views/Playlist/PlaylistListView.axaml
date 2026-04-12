@@ -17,15 +17,31 @@
 
     <UserControl.Resources>
         <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
+        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+        <ControlTheme x:Key="PlaylistCardTheme" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="BoxShadow" Value="0 4 16 0 #26000000" />
+            <Style Selector="^:pointerover">
+                <Setter Property="BorderBrush" Value="{StaticResource AccentPurpleBorderBrush}" />
+                <Setter Property="BoxShadow" Value="0 8 24 0 #40000000" />
+            </Style>
+        </ControlTheme>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Spacing="24" Margin="32">
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0"
+                Background="{StaticResource BgCardBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="24,16">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Grid.Column="0"
                            Text="{DynamicResource String_Playlists}"
                            FontSize="24"
-                           FontWeight="SemiBold"
+                           FontWeight="Bold"
                            Foreground="{StaticResource TextPrimaryBrush}" />
                 <Button Grid.Column="1"
                         Theme="{StaticResource AccentButtonTheme}"
@@ -40,8 +56,12 @@
                     </StackPanel>
                 </Button>
             </Grid>
+        </Border>
 
-            <ItemsControl ItemsSource="{Binding UserPlaylists}">
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Hidden">
+            <ItemsControl ItemsSource="{Binding UserPlaylists}"
+                          Margin="24,20">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel />
@@ -50,14 +70,13 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="models:UserPlaylist">
                         <Border Width="180"
-                                CornerRadius="12"
-                                Background="{StaticResource BgCardBrush}"
-                                BorderBrush="{StaticResource BorderSubtleBrush}"
-                                BorderThickness="1"
+                                Theme="{StaticResource PlaylistCardTheme}"
                                 Cursor="Hand"
                                 Margin="8">
                             <i:Interaction.Behaviors>
-                                <behaviors:TapCommandBehavior Command="{Binding $parent[ItemsControl].DataContext.SelectPlaylistCommand}" CommandParameter="{Binding}" />
+                                <behaviors:TapCommandBehavior
+                                    Command="{Binding $parent[ItemsControl].DataContext.SelectPlaylistCommand}"
+                                    CommandParameter="{Binding}" />
                             </i:Interaction.Behaviors>
 
                             <StackPanel Spacing="12" Margin="16">
@@ -66,17 +85,14 @@
                                         CornerRadius="8"
                                         Background="{StaticResource BgElement2Brush}"
                                         ClipToBounds="True">
-                                    <TextBlock Text="&#xE8FC;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="48"
-                                               Foreground="{StaticResource AccentPurpleBrush}"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" />
+                                    <Image
+                                        Source="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                        Stretch="UniformToFill" />
                                 </Border>
 
                                 <TextBlock Text="{Binding Name}"
                                            FontSize="14"
-                                           FontWeight="Medium"
+                                           FontWeight="SemiBold"
                                            Foreground="{StaticResource TextPrimaryBrush}"
                                            TextTrimming="CharacterEllipsis" />
 
@@ -88,6 +104,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

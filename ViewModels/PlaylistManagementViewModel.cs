@@ -28,6 +28,10 @@ public partial class PlaylistManagementViewModel : ViewModelBase
 
     public ObservableCollection<UserPlaylist> UserPlaylists => _playlistService.UserPlaylists;
 
+    public string? CoverArtPath => SelectedPlaylist?.CoverArtPath ?? PlaylistSongs.FirstOrDefault()?.AlbumArtPath;
+
+    public string Subtitle => PlaylistSongs.Count > 0 ? $"{PlaylistSongs.Count} 首歌曲" : "暂无歌曲";
+
     public bool CanDeletePlaylist => SelectedPlaylist != null &&
                                      SelectedPlaylist.Id != "favorites";
 
@@ -38,6 +42,8 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(CanDeletePlaylist));
         OnPropertyChanged(nameof(CanRenamePlaylist));
+        OnPropertyChanged(nameof(CoverArtPath));
+        OnPropertyChanged(nameof(Subtitle));
         UpdatePlaylistSongs(value);
     }
 
@@ -152,6 +158,31 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void ShufflePlay()
+    {
+        if (PlaylistSongs.Count == 0) return;
+
+        var currentPlaylist = _playbackService.CreatePlaylist("TempPlay");
+        _playbackService.SetCurrentPlaylist(currentPlaylist);
+        _playbackService.ClearPlaylist();
+
+        var random = new Random();
+        var shuffled = PlaylistSongs.OrderBy(_ => random.Next()).ToList();
+
+        foreach (var song in shuffled)
+        {
+            _playbackService.AddSongToPlaylist(currentPlaylist, song);
+        }
+
+        _playbackService.PlayNext();
+        if (_playbackService.CurrentSong != null)
+        {
+            _statisticsService.RecordPlayStart(_playbackService.CurrentSong);
+            _musicPlayerService.Play(_playbackService.CurrentSong);
+        }
+    }
+
+    [RelayCommand]
     private async Task MoveSongAsync((int OldIndex, int NewIndex) param)
     {
         if (SelectedPlaylist != null)
@@ -177,7 +208,8 @@ public partial class PlaylistManagementViewModel : ViewModelBase
             return;
         }
 
-        await _dialogService.ShowBatchMetadataEditorDialogAsync(songs, () => { UpdatePlaylistSongs(SelectedPlaylist); });
+        await _dialogService.ShowBatchMetadataEditorDialogAsync(songs,
+            () => { UpdatePlaylistSongs(SelectedPlaylist); });
     }
 
     [RelayCommand]

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
 using LocalMusicPlayer.Models;
+using Microsoft.Extensions.Logging;
 
 namespace LocalMusicPlayer.Services;
 
@@ -17,6 +18,7 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
     private float _playbackRate = 1.0f;
     private bool _replayGainEnabled = true;
     private float _replayGainAdjustment = 0f;
+    private readonly ILogger<MusicPlayerService>? _logger;
 
     public event EventHandler? PlaybackEnded;
     public event EventHandler<PlayState>? PlaybackStateChanged;
@@ -32,8 +34,9 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
     public bool IsMuted => _isMuted;
     public float PlaybackRate => _playbackRate;
 
-    public MusicPlayerService()
+    public MusicPlayerService(ILogger<MusicPlayerService>? logger = null)
     {
+        _logger = logger;
         Core.Initialize();
         _libVlc = new LibVLC("--quiet", "--no-video");
         _mediaPlayer = new MediaPlayer(_libVlc);
@@ -43,6 +46,7 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
         _mediaPlayer.Playing += (_, _) => PlaybackStateChanged?.Invoke(this, PlayState.Playing);
         _mediaPlayer.Paused += (_, _) => PlaybackStateChanged?.Invoke(this, PlayState.Paused);
         _mediaPlayer.Stopped += (_, _) => PlaybackStateChanged?.Invoke(this, PlayState.Stopped);
+        _logger?.LogInformation("[MusicPlayer] MusicPlayerService initialized");
     }
 
     public void Play(Song song)
@@ -50,6 +54,7 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
         if (_disposed || _mediaPlayer == null) return;
 
         _currentSong = song;
+        _logger?.LogInformation("[MusicPlayer] Play started: {Title} from {FilePath}", song.Title, song.FilePath);
         using var media = new Media(_libVlc, new Uri(song.FilePath));
         _mediaPlayer.Play(media);
 
@@ -92,6 +97,7 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
 
     public void Stop()
     {
+        _logger?.LogInformation("[MusicPlayer] Playback stopped");
         _mediaPlayer?.Stop();
     }
 
@@ -108,6 +114,7 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
         if (_mediaPlayer != null)
         {
             _mediaPlayer.Time = (long)position.TotalMilliseconds;
+            _logger?.LogDebug("[MusicPlayer] Seek to {Position}", position);
         }
     }
 
@@ -143,6 +150,8 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
         {
             _mediaPlayer.SetRate(_playbackRate);
         }
+
+        _logger?.LogDebug("[MusicPlayer] Playback rate changed to {Rate}x", _playbackRate);
     }
 
     public async Task FadeInAsync(int targetVolume, TimeSpan duration)
@@ -184,16 +193,27 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
 
     private void OnEndReached(object? sender, EventArgs e)
     {
+        _logger?.LogInformation("[MusicPlayer] Playback ended");
         PlaybackEnded?.Invoke(this, EventArgs.Empty);
     }
 
     public void Dispose()
     {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
         if (_disposed) return;
         _disposed = true;
+        _logger?.LogInformation("[MusicPlayer] MusicPlayerService disposing");
 
-        _mediaPlayer?.Stop();
-        _mediaPlayer?.Dispose();
-        _libVlc.Dispose();
+        if (disposing)
+        {
+            _mediaPlayer?.Stop();
+            _mediaPlayer?.Dispose();
+            _libVlc.Dispose();
+        }
     }
 }
