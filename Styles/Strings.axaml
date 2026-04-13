@@ -187,4 +187,59 @@
 
     <!-- 秒 -->
     <x:String x:Key="StringSecondsFormat">{0} 秒</x:String>
+
+    <!-- 专辑页面 -->
+    <x:String x:Key="StringAddToFavourite">添加到收藏</x:String>
+    <x:String x:Key="StringFavorite">收藏/取消收藏</x:String>
+    <x:String x:Key="StringProperties">属性</x:String>
+    <x:String x:Key="StringSongsUnit">首</x:String>
+    <x:String x:Key="StringAddTo">添加到</x:String>
+    <x:String x:Key="StringOpenLocation">打开位置</x:String>
+
+    <!-- 标签页 -->
+    <x:String x:Key="StringTabSong">歌曲</x:String>
+    <x:String x:Key="StringTabAlbum">专辑</x:String>
+    <x:String x:Key="StringTabArtist">艺人</x:String>
+    <x:String x:Key="StringTabFolder">文件夹</x:String>
+    <x:String x:Key="StringTabFavourite">收藏</x:String>
+    <x:String x:Key="StringTabPlaylist">播放列表</x:String>
+
+    <!-- 菜单项通用 -->
+    <x:String x:Key="StringMenuPlay">播放</x:String>
+    <x:String x:Key="StringMenuFavorite">收藏 / 取消收藏</x:String>
+    <x:String x:Key="StringMenuConvert">转换格式</x:String>
+    <x:String x:Key="StringMenuAddToCurrentQueue">添加到当前播放列表</x:String>
+    <x:String x:Key="StringMenuReGetLyrics">重新获取歌词</x:String>
+    <x:String x:Key="StringMenuDelete">删除</x:String>
+    <x:String x:Key="StringMenuRescan">重新扫描</x:String>
+
+    <!-- 音频格式 -->
+    <x:String x:Key="StringFormatWav">WAV 格式</x:String>
+    <x:String x:Key="StringFormatMp3">MP3 格式</x:String>
+    <x:String x:Key="StringFormatFlac">FLAC 格式</x:String>
+    <x:String x:Key="StringFormatOgg">OGG 格式</x:String>
+    <x:String x:Key="StringFormatOpus">OPUS 格式</x:String>
+
+    <!-- 提示信息 -->
+    <x:String x:Key="StringNoFolders">暂无音乐文件夹</x:String>
+    <x:String x:Key="StringDeleteConfirm">确定要删除选中的文件吗？此操作不可撤销。</x:String>
+    <x:String x:Key="StringConverting">正在转换格式...</x:String>
+    <x:String x:Key="StringProcessing">处理中</x:String>
+    <x:String x:Key="StringSearchPlaceholder">搜索音乐...</x:String>
+    <x:String x:Key="StringSortByTitle">按标题排序</x:String>
+    <x:String x:Key="StringSortByArtist">按艺人排序</x:String>
+    <x:String x:Key="StringSortByAlbum">按专辑排序</x:String>
+    <x:String x:Key="StringSortByDuration">按时长排序</x:String>
+    <x:String x:Key="StringSortByDateAdded">按添加日期排序</x:String>
+
+    <!-- 播放控制 -->
+    <x:String x:Key="StringPlayModeSingleLoop">单曲循环</x:String>
+    <x:String x:Key="StringPlayModeListLoop">列表循环</x:String>
+    <x:String x:Key="StringPlayModeRandom">随机播放</x:String>
+    <x:String x:Key="StringPlayModeOff">顺序播放</x:String>
+
+    <!-- 确认对话框 -->
+    <x:String x:Key="StringConfirmTitle">确认</x:String>
+    <x:String x:Key="StringConfirmOK">确定</x:String>
+    <x:String x:Key="StringConfirmCancel">取消</x:String>
 </ResourceDictionary>

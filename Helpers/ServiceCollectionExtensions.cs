@@ -116,5 +116,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<MetadataEditorViewModel>();
         services.AddTransient<BatchMetadataEditorViewModel>();
         services.AddTransient<SmartPlaylistSongsViewModel>();
+        services.AddTransient<MusicBrowseViewModel>();
+        services.AddTransient<FolderBrowseViewModel>();
+        services.AddTransient<SongListViewModel>();
     }
 }

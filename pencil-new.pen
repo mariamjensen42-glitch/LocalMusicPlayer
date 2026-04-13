@@ -3978,6 +3978,623 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "SIwWU",
+      "x": 2888,
+      "y": -756,
+      "name": "MusicPlayerWindow",
+      "clip": true,
+      "width": 1280,
+      "height": 800,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#1a0a2e",
+            "position": 0
+          },
+          {
+            "color": "#16082a",
+            "position": 0.3
+          },
+          {
+            "color": "#2d1b4e",
+            "position": 0.7
+          },
+          {
+            "color": "#1a0a2e",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "UQYPU",
+          "name": "TopNavigation",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "#0d0d15",
+          "gap": 16,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "jHxpZ",
+              "name": "LogoArea",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "ZABkz",
+                  "name": "logoIcon",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "music",
+                  "iconFontFamily": "lucide",
+                  "fill": "#A855F7"
+                },
+                {
+                  "type": "text",
+                  "id": "ks9cs",
+                  "name": "LogoText",
+                  "fill": "#FFFFFF",
+                  "content": "音乐播放器",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dT25N",
+              "name": "NavigationTabs",
+              "gap": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "tQLEI",
+                  "name": "TabSongs",
+                  "fill": "#FFFFFF",
+                  "content": "歌曲",
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "jBZaZ",
+                  "name": "TabAlbums",
+                  "fill": "#A1A1AA",
+                  "content": "专辑",
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "VMbvd",
+                  "name": "TabArtists",
+                  "fill": "#A1A1AA",
+                  "content": "艺术家",
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nu45R",
+                  "name": "TabFolders",
+                  "fill": "#A1A1AA",
+                  "content": "文件夹",
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "aVTPW",
+                  "name": "TabFavorites",
+                  "fill": "#A1A1AA",
+                  "content": "最爱",
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "obRG7",
+                  "name": "TabPlaylists",
+                  "fill": "#A1A1AA",
+                  "content": "播放列表",
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "BKv2r",
+                  "name": "addBtn",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "plus",
+                  "iconFontFamily": "lucide",
+                  "fill": "#A1A1AA"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GghPi",
+              "name": "SearchArea",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "9NTwb",
+                  "name": "SearchBox",
+                  "width": 200,
+                  "height": 32,
+                  "fill": "#1a1a2e",
+                  "cornerRadius": 6,
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "9jEKz",
+                      "name": "searchIcon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "search",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A1A1AA"
+                    },
+                    {
+                      "type": "text",
+                      "id": "6K1bC",
+                      "name": "SearchPlaceholder",
+                      "fill": "#52525B",
+                      "content": "搜索...",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ROZ9X",
+                  "name": "FilterButton",
+                  "height": 32,
+                  "fill": "#1a1a2e",
+                  "cornerRadius": 6,
+                  "gap": 6,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YctXs",
+                      "name": "filterText",
+                      "fill": "#A1A1AA",
+                      "content": "筛选器",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "vxHza",
+                      "name": "filterIcon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "chevron-down",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A1A1AA"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oTKoK",
+              "name": "WindowControls",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "rHv60",
+                  "name": "minBtn",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "minus",
+                  "iconFontFamily": "lucide",
+                  "fill": "#A1A1AA"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "Yv3Ly",
+                  "name": "maxBtn",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "square",
+                  "iconFontFamily": "lucide",
+                  "fill": "#A1A1AA"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "TNkSY",
+                  "name": "closeBtn",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "x",
+                  "iconFontFamily": "lucide",
+                  "fill": "#A1A1AA"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "LQaxQ",
+          "name": "SongListContainer",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "#0d0d15",
+          "layout": "vertical",
+          "padding": [
+            16,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "uKcQz",
+              "name": "SongRowTemplate",
+              "reusable": true,
+              "width": "fill_container",
+              "height": 56,
+              "cornerRadius": 6,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "j5rrv",
+                  "name": "LeftSection",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "g3z0V",
+                      "name": "CoverImage",
+                      "width": 40,
+                      "height": 40,
+                      "cornerRadius": 4
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "a4e0y",
+                      "name": "likeBtn",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "heart",
+                      "iconFontFamily": "lucide",
+                      "fill": "#EC4899"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "78ydY",
+                  "name": "CenterSection",
+                  "width": 400,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "veYa9",
+                      "name": "SongTitle",
+                      "fill": "#FFFFFF",
+                      "content": "歌曲名称",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "dg5IG",
+                      "name": "ArtistName",
+                      "fill": "#A1A1AA",
+                      "content": "艺术家 / 专辑名",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lsZOR",
+                  "name": "RightSection",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "pUrm4",
+                      "name": "Duration",
+                      "fill": "#A855F7",
+                      "textGrowth": "fixed-width",
+                      "width": 50,
+                      "content": "04:45",
+                      "textAlign": "right",
+                      "fontFamily": "Geist Mono",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "rzMXd",
+                      "name": "addBtn2",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "plus",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A1A1AA"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "gKlV7",
+              "type": "ref",
+              "ref": "uKcQz",
+              "name": "row1",
+              "descendants": {
+                "g3z0V": {
+                  "fill": "#4a1942"
+                },
+                "veYa9": {
+                  "content": "蝶々(ちょうちょ)"
+                },
+                "dg5IG": {
+                  "content": "初めて作詞"
+                },
+                "pUrm4": {
+                  "content": "04:45"
+                }
+              }
+            },
+            {
+              "id": "0DijI",
+              "type": "ref",
+              "ref": "uKcQz",
+              "name": "row2",
+              "descendants": {
+                "g3z0V": {
+                  "fill": "#1e3a5f"
+                },
+                "veYa9": {
+                  "content": "Signal"
+                },
+                "dg5IG": {
+                  "content": "TWICE"
+                },
+                "pUrm4": {
+                  "content": "03:15"
+                }
+              }
+            },
+            {
+              "id": "bjIAq",
+              "type": "ref",
+              "ref": "uKcQz",
+              "name": "row3",
+              "descendants": {
+                "g3z0V": {
+                  "fill": "#2d5016"
+                },
+                "a4e0y": {
+                  "fill": "#A1A1AA"
+                },
+                "veYa9": {
+                  "content": "null (feat. soul from ミレニアム)"
+                },
+                "dg5IG": {
+                  "content": "null (feat. soul from ミレニアム)"
+                },
+                "pUrm4": {
+                  "content": "04:35"
+                }
+              }
+            },
+            {
+              "id": "bpNvc",
+              "type": "ref",
+              "ref": "uKcQz",
+              "name": "row4",
+              "descendants": {
+                "g3z0V": {
+                  "fill": "#5c3d2e"
+                },
+                "veYa9": {
+                  "content": "依存 - Salu..."
+                },
+                "dg5IG": {
+                  "content": "依存"
+                },
+                "pUrm4": {
+                  "content": "04:33"
+                }
+              }
+            },
+            {
+              "id": "hg6To",
+              "type": "ref",
+              "ref": "uKcQz",
+              "name": "row5",
+              "descendants": {
+                "g3z0V": {
+                  "fill": "#1a4a4a"
+                },
+                "veYa9": {
+                  "content": "Enigmatic Feeling"
+                },
+                "dg5IG": {
+                  "content": "Enigmatic Feeling"
+                },
+                "pUrm4": {
+                  "content": "03:54"
+                }
+              }
+            },
+            {
+              "id": "C2F8s",
+              "type": "ref",
+              "ref": "uKcQz",
+              "name": "row6",
+              "descendants": {
+                "g3z0V": {
+                  "fill": "#3d2a5c"
+                },
+                "veYa9": {
+                  "content": "Jabberwock"
+                },
+                "dg5IG": {
+                  "content": "Jabberwock"
+                },
+                "pUrm4": {
+                  "content": "03:36"
+                }
+              }
+            },
+            {
+              "id": "0yuFf",
+              "type": "ref",
+              "ref": "uKcQz",
+              "name": "row7",
+              "descendants": {
+                "g3z0V": {
+                  "fill": "#5c4a1a"
+                },
+                "veYa9": {
+                  "content": "プレリュードチョコラテ"
+                },
+                "dg5IG": {
+                  "content": "プレリュードチョコラテ"
+                },
+                "pUrm4": {
+                  "content": "03:26"
+                }
+              }
+            },
+            {
+              "id": "uCCHN",
+              "type": "ref",
+              "ref": "uKcQz",
+              "name": "row8",
+              "descendants": {
+                "g3z0V": {
+                  "fill": "#4a2a3a"
+                },
+                "a4e0y": {
+                  "fill": "#A1A1AA"
+                },
+                "veYa9": {
+                  "content": "Kone no Anu, aruku"
+                },
+                "dg5IG": {
+                  "content": "Kone no Anu, aruku"
+                },
+                "pUrm4": {
+                  "content": "04:30"
+                }
+              }
+            },
+            {
+              "id": "XDOau",
+              "type": "ref",
+              "ref": "uKcQz",
+              "name": "row9",
+              "descendants": {
+                "g3z0V": {
+                  "fill": "#2a3a4a"
+                },
+                "veYa9": {
+                  "content": "Paint It, Black"
+                },
+                "dg5IG": {
+                  "content": "The Rolling Stones"
+                },
+                "pUrm4": {
+                  "content": "03:22"
+                }
+              }
+            },
+            {
+              "id": "kNhOr",
+              "type": "ref",
+              "ref": "uKcQz",
+              "name": "row10",
+              "descendants": {
+                "g3z0V": {
+                  "fill": "#3a2a4a"
+                },
+                "a4e0y": {
+                  "fill": "#A1A1AA"
+                },
+                "veYa9": {
+                  "content": "Divine"
+                },
+                "dg5IG": {
+                  "content": "Divine"
+                },
+                "pUrm4": {
+                  "content": "03:16"
+                }
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variables": {

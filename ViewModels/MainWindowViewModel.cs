@@ -23,7 +23,8 @@ public enum NavigationPage
     Favorites,
     Statistics,
     Settings,
-    History
+    History,
+    Playlist
 }
 
 public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
@@ -221,8 +222,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private void NavigateToLibrary()
     {
         CurrentNavPage = NavigationPage.Home;
-        CurrentPage = HomeViewModel;
-        _navigationService.NavigateTo<HomeViewModel>();
+        CurrentPage = MusicBrowseViewModel;
+        _navigationService.NavigateTo<MusicBrowseViewModel>();
     }
 
     [RelayCommand]
@@ -489,6 +490,15 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     public HomeViewModel HomeViewModel { get; }
     public ArtistsPageViewModel? ArtistsPageViewModel { get; private set; }
     public AlbumsPageViewModel? AlbumsPageViewModel { get; private set; }
+    public MusicBrowseViewModel MusicBrowseViewModel { get; }
+
+    [ObservableProperty] private bool _isPlayerBarVisible = true;
+
+    public bool IsBottomPlayerBarVisible => !IsMiniMode && IsPlayerBarVisible;
+
+    partial void OnIsPlayerBarVisibleChanged(bool value) => OnPropertyChanged(nameof(IsBottomPlayerBarVisible));
+
+    partial void OnIsMiniModeChanged(bool value) => OnPropertyChanged(nameof(IsBottomPlayerBarVisible));
 
     public ObservableCollection<UserPlaylist> UserPlaylists => _userPlaylistService.UserPlaylists;
 
@@ -561,8 +571,9 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             if (e.PropertyName == nameof(HomeViewModel.IsGridView))
                 OnPropertyChanged(nameof(IsGridView));
         };
-        CurrentPage = HomeViewModel;
-        _navigationService.NavigateTo<HomeViewModel>();
+        MusicBrowseViewModel = _viewModelFactory.CreateMusicBrowseViewModel();
+        CurrentPage = MusicBrowseViewModel;
+        _navigationService.NavigateTo<MusicBrowseViewModel>();
 
         // 使用 SubscribeEvent 辅助方法进行事件订阅，便于自动清理
         SubscribeEvent(
@@ -637,6 +648,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     {
         if (pageType == null) return;
 
+        IsPlayerBarVisible = pageType != typeof(MusicBrowseViewModel);
+
         // 使用字典查找替代 if-else 链，提高可维护性
         if (_pageLookup.TryGetValue(pageType, out var getViewModel))
         {
@@ -662,7 +675,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             [typeof(LibraryBrowserViewModel)] = () => LibraryBrowserViewModel,
             [typeof(ArtistsPageViewModel)] = () => ArtistsPageViewModel,
             [typeof(AlbumsPageViewModel)] = () => AlbumsPageViewModel,
-            [typeof(StatisticsReportViewModel)] = () => StatisticsReportViewModel
+            [typeof(StatisticsReportViewModel)] = () => StatisticsReportViewModel,
+            [typeof(MusicBrowseViewModel)] = () => MusicBrowseViewModel
         };
     }
 

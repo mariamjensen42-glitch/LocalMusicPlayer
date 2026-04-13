@@ -1,193 +1,342 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:LocalMusicPlayer.ViewModels"
-             xmlns:models="using:LocalMusicPlayer.Models"
-             xmlns:converters="using:LocalMusicPlayer.Converters"
-             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
-             xmlns:shared="using:LocalMusicPlayer.Views.Shared"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
-             x:Class="LocalMusicPlayer.Views.Details.AlbumDetailView"
-             x:DataType="vm:AlbumDetailViewModel"
-             x:CompileBindings="True">
+<UserControl
+    x:Class="LocalMusicPlayer.Views.Details.AlbumDetailView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+    xmlns:converters="using:LocalMusicPlayer.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:LocalMusicPlayer.Models"
+    xmlns:vm="using:LocalMusicPlayer.ViewModels"
+    d:DesignHeight="700"
+    d:DesignWidth="1000"
+    x:CompileBindings="True"
+    x:DataType="vm:AlbumDetailViewModel"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
         <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
         <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
+        <converters:BoolToFavouriteIconConverter x:Key="BoolToFavouriteIconConverter" />
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Spacing="24" Margin="32">
-            <!-- 顶部区域：复用 DetailHeader -->
-            <shared:DetailHeaderView Title="{Binding AlbumName}"
-                                     Subtitle="{Binding Subtitle}"
-                                     CoverImageSource="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
-                                     PlayAllCommand="{Binding PlayAllCommand}"
-                                     ShufflePlayCommand="{Binding ShufflePlayCommand}" />
+        <StackPanel Margin="24,20" Spacing="24">
 
-            <!-- 歌曲列表 -->
-            <Border Background="{StaticResource BgTableHeaderBrush}"
-                    CornerRadius="12"
-                    Padding="0,0,0,0">
+            <!--  ========== 信息头区域 ==========  -->
+            <Grid ColumnDefinitions="Auto,*">
+                <!--  左侧：封面  -->
+                <Border Grid.Column="0" Theme="{StaticResource DetailCoverTheme}">
+                    <Image Source="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}" Stretch="UniformToFill" />
+                </Border>
+
+                <!--  右侧：信息  -->
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="24,0,0,0"
+                    VerticalAlignment="Center"
+                    Spacing="6">
+                    <!--  专辑名  -->
+                    <TextBlock
+                        FontSize="30"
+                        FontWeight="Bold"
+                        Foreground="{StaticResource TextPrimaryBrush}"
+                        Text="{Binding AlbumName}"
+                        TextTrimming="CharacterEllipsis" />
+
+                    <!--  艺术家副标题  -->
+                    <TextBlock
+                        FontSize="20"
+                        Foreground="{StaticResource TextSecondaryBrush}"
+                        Text="{Binding SecondTitle}"
+                        TextTrimming="CharacterEllipsis" />
+
+                    <!--  年份·歌曲数  -->
+                    <TextBlock
+                        FontSize="14"
+                        Foreground="{StaticResource TextMutedBrush}"
+                        Text="{Binding ThirdTitle}"
+                        TextTrimming="CharacterEllipsis" />
+
+                    <!--  操作按钮  -->
+                    <StackPanel
+                        Margin="0,16,0,0"
+                        Orientation="Horizontal"
+                        Spacing="12">
+                        <Button Command="{Binding PlayAllCommand}" Theme="{StaticResource PrimaryButtonTheme}">
+                            <StackPanel
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal"
+                                Spacing="8">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="16"
+                                    Foreground="White"
+                                    Text="&#xE768;" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="13"
+                                    FontWeight="Medium"
+                                    Foreground="White"
+                                    Text="{DynamicResource StringPlayAll}" />
+                            </StackPanel>
+                        </Button>
+
+                        <Button Theme="{StaticResource SecondaryButtonTheme}">
+                            <StackPanel
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal"
+                                Spacing="8">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="16"
+                                    Foreground="{StaticResource TextSecondaryBrush}"
+                                    Text="&#xE710;" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="13"
+                                    FontWeight="Medium"
+                                    Text="{DynamicResource StringAddToPlaylist}" />
+                            </StackPanel>
+                        </Button>
+
+                        <Button Command="{Binding EditSongMetadataCommand}" Theme="{StaticResource SecondaryButtonTheme}">
+                            <StackPanel
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal"
+                                Spacing="8">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="16"
+                                    Foreground="{StaticResource TextSecondaryBrush}"
+                                    Text="&#xE70F;" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="13"
+                                    FontWeight="Medium"
+                                    Text="{DynamicResource StringEditInfo}" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <!--  ========== 歌曲列表 ==========  -->
+            <Border
+                Background="{StaticResource BgCardBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="1"
+                CornerRadius="12">
                 <Grid RowDefinitions="Auto,*">
-                    <Border Grid.Row="0"
-                            Background="{StaticResource BgTableHeaderBrush}"
-                            Padding="20,10"
-                            CornerRadius="12,12,0,0">
-                        <Grid ColumnDefinitions="40,*,150,80">
-                            <TextBlock Grid.Column="0"
-                                       Text="#"
-                                       FontSize="11"
-                                       FontWeight="SemiBold"
-                                       Foreground="{StaticResource TextMutedBrush}" />
-                            <TextBlock Grid.Column="1"
-                                       Text="{DynamicResource StringTitleArtist}"
-                                       FontSize="11"
-                                       FontWeight="SemiBold"
-                                       Foreground="{StaticResource TextMutedBrush}" />
-                            <TextBlock Grid.Column="2"
-                                       Text="{DynamicResource StringDuration}"
-                                       FontSize="11"
-                                       FontWeight="SemiBold"
-                                       Foreground="{StaticResource TextMutedBrush}"
-                                       HorizontalAlignment="Right" />
+                    <!--  表头  -->
+                    <Border Grid.Row="0" Theme="{StaticResource SongTableHeaderTheme}">
+                        <Grid ColumnDefinitions="44,Auto,3*,1.5*,3*,Auto,Auto,Auto,Auto,Auto,Auto">
+                            <TextBlock
+                                Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                FontSize="11"
+                                FontWeight="SemiBold"
+                                Foreground="{StaticResource TextMutedBrush}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                FontSize="11"
+                                FontWeight="SemiBold"
+                                Foreground="{StaticResource TextMutedBrush}" />
+                            <TextBlock
+                                Grid.Column="2"
+                                FontSize="11"
+                                FontWeight="SemiBold"
+                                Foreground="{StaticResource TextMutedBrush}"
+                                Text="{DynamicResource StringTitleArtist}" />
+                            <TextBlock
+                                Grid.Column="4"
+                                HorizontalAlignment="Right"
+                                FontSize="11"
+                                FontWeight="SemiBold"
+                                Foreground="{StaticResource TextMutedBrush}"
+                                Text="{DynamicResource StringDuration}" />
                         </Grid>
                     </Border>
 
-                    <ListBox Grid.Row="1"
-                             ItemsSource="{Binding Songs}"
-                             Background="Transparent"
-                             BorderThickness="0"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <!--  歌曲列表  -->
+                    <ListBox
+                        Grid.Row="1"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ItemsSource="{Binding Songs}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.ItemContainerTheme>
                             <ControlTheme TargetType="ListBoxItem">
                                 <Setter Property="Padding" Value="0" />
                                 <Setter Property="Margin" Value="0" />
                                 <Setter Property="Background" Value="Transparent" />
                                 <Setter Property="BorderThickness" Value="0" />
-                                <Style Selector="^:pointerover">
+                                <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
                                     <Setter Property="Background" Value="Transparent" />
                                 </Style>
-                                <Style Selector="^:selected">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                                <Style Selector="^:pressed">
+                                <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
                                     <Setter Property="Background" Value="Transparent" />
                                 </Style>
                                 <Setter Property="Template">
                                     <ControlTemplate>
-                                        <ContentPresenter Content="{TemplateBinding Content}"
-                                                          ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                        <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
                                     </ControlTemplate>
                                 </Setter>
                             </ControlTheme>
                         </ListBox.ItemContainerTheme>
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="models:Song">
-                                <Border Theme="{StaticResource SongListItemRowTheme}"
-                                        Cursor="Hand">
+                                <Border Cursor="Hand" Theme="{StaticResource SongListItemRowTheme}">
                                     <i:Interaction.Behaviors>
-                                        <behaviors:TapCommandBehavior
-                                            Command="{Binding $parent[ListBox].DataContext.PlaySongCommand}"
-                                            CommandParameter="{Binding FilePath}" />
+                                        <behaviors:TapCommandBehavior Command="{Binding $parent[ListBox].DataContext.PlaySongCommand}" CommandParameter="{Binding FilePath}" />
                                     </i:Interaction.Behaviors>
                                     <Border.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="{DynamicResource StringEditInfo}"
-                                                      Command="{Binding $parent[ListBox].DataContext.EditSongMetadataCommand}"
-                                                      CommandParameter="{Binding}">
-                                                <MenuItem.Icon>
-                                                    <TextBlock Text="&#xE70F;" FontFamily="Segoe Fluent Icons" FontSize="12" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <MenuItem Header="{DynamicResource StringBatchEdit}"
-                                                      Command="{Binding $parent[ListBox].DataContext.BatchEditMetadataCommand}"
-                                                      CommandParameter="{Binding $parent[ListBox].SelectedItems}">
-                                                <MenuItem.Icon>
-                                                    <TextBlock Text="&#xE8AC;" FontFamily="Segoe Fluent Icons" FontSize="12" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
+                                            <MenuItem
+                                                Command="{Binding $parent[ListBox].DataContext.PlaySongCommand}"
+                                                CommandParameter="{Binding FilePath}"
+                                                Header="{DynamicResource StringPlay}" />
+                                            <MenuItem
+                                                Command="{Binding $parent[ListBox].DataContext.ToggleFavoriteCommand}"
+                                                CommandParameter="{Binding}"
+                                                Header="{DynamicResource StringFavorite}" />
                                             <Separator />
-                                            <MenuItem Header="{DynamicResource StringAddToPlaylist}"
-                                                      Command="{Binding $parent[ListBox].DataContext.AddToPlaylistCommand}"
-                                                      CommandParameter="{Binding FilePath}">
-                                                <MenuItem.Icon>
-                                                    <TextBlock Text="&#xE710;" FontFamily="Segoe Fluent Icons" FontSize="12" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
+                                            <MenuItem Header="{DynamicResource StringAddToPlaylist}" />
+                                            <Separator />
+                                            <MenuItem
+                                                Command="{Binding $parent[ListBox].DataContext.AddToCurrentPlaylistCommand}"
+                                                CommandParameter="{Binding}"
+                                                Header="{DynamicResource StringQueue}" />
+                                            <Separator />
+                                            <MenuItem
+                                                Command="{Binding $parent[ListBox].DataContext.EditSongMetadataCommand}"
+                                                CommandParameter="{Binding}"
+                                                Header="{DynamicResource StringEditInfo}" />
                                         </ContextMenu>
                                     </Border.ContextMenu>
-                                    <Grid ColumnDefinitions="40,*,150,80">
-                                        <Border Grid.Column="0"
+                                    <Grid ColumnDefinitions="44,Auto,3*,1.5*,3*,Auto,Auto,Auto,Auto,Auto,Auto">
+                                        <!--  封面缩略图  -->
+                                        <Button
+                                            Grid.Column="0"
+                                            Command="{Binding $parent[ListBox].DataContext.PlaySongCommand}"
+                                            CommandParameter="{Binding FilePath}"
+                                            Theme="{StaticResource CircularHoverButtonTheme}">
+                                            <Border
                                                 Width="40"
                                                 Height="40"
-                                                CornerRadius="8"
                                                 Background="{StaticResource BgElement2Brush}"
-                                                BorderBrush="{StaticResource BorderSubtleBrush}"
-                                                BorderThickness="1"
                                                 ClipToBounds="True"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center">
-                                            <Image
-                                                Source="{Binding AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
-                                                Stretch="UniformToFill" />
-                                        </Border>
+                                                CornerRadius="5">
+                                                <Image Source="{Binding AlbumArtPath, Converter={StaticResource AlbumArtConverter}}" Stretch="UniformToFill" />
+                                            </Border>
+                                        </Button>
 
-                                        <StackPanel Grid.Column="1"
-                                                    Spacing="4"
-                                                    Margin="12,0"
-                                                    VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Title}"
-                                                       FontSize="14"
-                                                       FontWeight="Medium"
-                                                       Foreground="{StaticResource TextPrimaryBrush}"
-                                                       TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{Binding Artist}"
-                                                       FontSize="12"
-                                                       Foreground="{StaticResource TextMutedBrush}"
-                                                       TextTrimming="CharacterEllipsis" />
-                                        </StackPanel>
+                                        <!--  收藏按钮  -->
+                                        <Button
+                                            Grid.Column="1"
+                                            Margin="0,5,5,5"
+                                            Padding="3"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding $parent[ListBox].DataContext.ToggleFavoriteCommand}"
+                                            CommandParameter="{Binding}"
+                                            Theme="{StaticResource NoHoverButtonTheme}">
+                                            <TextBlock
+                                                FontFamily="Segoe Fluent Icons"
+                                                FontSize="14"
+                                                Foreground="#FFFF5555"
+                                                Text="{Binding IsFavorite, Converter={StaticResource BoolToFavouriteIconConverter}}" />
+                                        </Button>
 
-                                        <TextBlock Grid.Column="2"
-                                                   FontSize="13"
-                                                   Foreground="{StaticResource TextMutedBrush}"
-                                                   FontFamily="{StaticResource FontFamilyMono}"
-                                                   VerticalAlignment="Center"
-                                                   HorizontalAlignment="Right">
-                                            <TextBlock.Text>
-                                                <Binding Path="Duration"
-                                                         Converter="{StaticResource TimeSpanToStringConverter}" />
-                                            </TextBlock.Text>
-                                        </TextBlock>
+                                        <!--  歌曲名  -->
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Margin="8,0"
+                                            VerticalAlignment="Center"
+                                            FontSize="14"
+                                            FontWeight="Medium"
+                                            Foreground="{StaticResource TextPrimaryBrush}"
+                                            Text="{Binding Title}"
+                                            TextTrimming="CharacterEllipsis" />
+
+                                        <!--  艺术家  -->
+                                        <Button
+                                            Grid.Column="3"
+                                            Margin="8,5,5,5"
+                                            Padding="5"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding $parent[ListBox].DataContext.NavigateToArtistCommand}"
+                                            CommandParameter="{Binding Artist}"
+                                            Theme="{StaticResource NoHoverButtonTheme}">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                Foreground="{StaticResource TextMutedBrush}"
+                                                Text="{Binding Artist}"
+                                                TextTrimming="CharacterEllipsis" />
+                                        </Button>
+
+                                        <!--  时长  -->
+                                        <TextBlock
+                                            Grid.Column="9"
+                                            Margin="0,0,8,0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            FontFamily="{StaticResource FontFamilyMono}"
+                                            FontSize="13"
+                                            Foreground="{StaticResource TextMutedBrush}"
+                                            Text="{Binding Duration, Converter={StaticResource TimeSpanToStringConverter}}" />
+
+                                        <!--  添加到队列  -->
+                                        <Button
+                                            Grid.Column="10"
+                                            Margin="5"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding $parent[ListBox].DataContext.AddToCurrentPlaylistCommand}"
+                                            CommandParameter="{Binding}"
+                                            Theme="{StaticResource NoHoverButtonTheme}">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                FontFamily="Segoe Fluent Icons"
+                                                FontSize="14"
+                                                Foreground="{StaticResource TextMutedBrush}"
+                                                Text="&#xE710;" />
+                                        </Button>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <Grid Grid.Row="1"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          IsVisible="{Binding Songs.Count, Converter={StaticResource CountToBoolConverter}, ConverterParameter=invert}">
-                        <StackPanel Spacing="16" HorizontalAlignment="Center">
-                            <TextBlock Text="&#xE93C;"
-                                       FontFamily="Segoe Fluent Icons"
-                                       FontSize="48"
-                                       Foreground="{StaticResource TextMutedBrush}"
-                                       HorizontalAlignment="Center" />
-                            <TextBlock Text="{DynamicResource StringNoSongs}"
-                                       FontSize="16"
-                                       FontWeight="Medium"
-                                       Foreground="{StaticResource TextSecondaryBrush}"
-                                       HorizontalAlignment="Center" />
-                            <TextBlock Text="{DynamicResource StringNoSongsInAlbum}"
-                                       FontSize="13"
-                                       Foreground="{StaticResource TextMutedBrush}"
-                                       HorizontalAlignment="Center" />
+                    <!--  空状态  -->
+                    <Grid
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsVisible="{Binding Songs.Count, Converter={StaticResource CountToBoolConverter}, ConverterParameter=invert}">
+                        <StackPanel HorizontalAlignment="Center" Spacing="16">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="48"
+                                Foreground="{StaticResource TextMutedBrush}"
+                                Text="&#xE93C;" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                FontSize="16"
+                                FontWeight="Medium"
+                                Foreground="{StaticResource TextSecondaryBrush}"
+                                Text="{DynamicResource StringNoSongs}" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                FontSize="13"
+                                Foreground="{StaticResource TextMutedBrush}"
+                                Text="{DynamicResource StringNoSongsInAlbum}" />
                         </StackPanel>
                     </Grid>
                 </Grid>

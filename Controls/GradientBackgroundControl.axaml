@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LocalMusicPlayer.Controls.GradientBackgroundControl">
+
+    <Grid x:Name="RootGrid" ClipToBounds="True">
+        <Grid.Styles>
+            <Style Selector="Ellipse">
+                <Setter Property="Stretch" Value="Fill" />
+            </Style>
+        </Grid.Styles>
+
+        <Ellipse x:Name="Blob1"
+                 Width="600" Height="600"
+                 Opacity="0.6"
+                 IsHitTestVisible="False">
+            <Ellipse.Effect>
+                <BlurEffect Radius="200" />
+            </Ellipse.Effect>
+        </Ellipse>
+
+        <Ellipse x:Name="Blob2"
+                 Width="500" Height="500"
+                 Opacity="0.5"
+                 IsHitTestVisible="False">
+            <Ellipse.Effect>
+                <BlurEffect Radius="180" />
+            </Ellipse.Effect>
+        </Ellipse>
+
+        <Ellipse x:Name="Blob3"
+                 Width="550" Height="550"
+                 Opacity="0.5"
+                 IsHitTestVisible="False">
+            <Ellipse.Effect>
+                <BlurEffect Radius="190" />
+            </Ellipse.Effect>
+        </Ellipse>
+
+        <Ellipse x:Name="Blob4"
+                 Width="450" Height="450"
+                 Opacity="0.4"
+                 IsHitTestVisible="False">
+            <Ellipse.Effect>
+                <BlurEffect Radius="160" />
+            </Ellipse.Effect>
+        </Ellipse>
+
+        <Border x:Name="DarkOverlay"
+                Background="#CC000000"
+                IsVisible="True" />
+    </Grid>
+</UserControl>

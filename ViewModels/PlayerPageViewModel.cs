@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -40,6 +41,10 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
     public static float[] AvailablePlaybackRates => [0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f];
 
     [ObservableProperty] private string _gradientBackground = "#1E1E2E";
+
+    [ObservableProperty] private byte[]? _imageBytes;
+
+    [ObservableProperty] private bool _isBackgroundEnabled = true;
 
     [ObservableProperty] private double _lyricFontSize = 28;
 
@@ -342,11 +347,21 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
         if (CurrentSong == null)
         {
             GradientBackground = "#1E1E2E";
+            ImageBytes = null;
             return;
         }
 
         try
         {
+            if (!string.IsNullOrEmpty(CurrentSong.AlbumArtPath) && File.Exists(CurrentSong.AlbumArtPath))
+            {
+                ImageBytes = await File.ReadAllBytesAsync(CurrentSong.AlbumArtPath);
+            }
+            else
+            {
+                ImageBytes = null;
+            }
+
             var dominantColor = await _albumArtService.ExtractDominantColorAsync(CurrentSong.AlbumArtPath);
 
             if (dominantColor.HasValue)
@@ -362,6 +377,7 @@ public partial class PlayerPageViewModel : ViewModelBase, IPlaybackProgress
         }
         catch
         {
+            ImageBytes = null;
             GradientBackground = "#1E1E2E";
         }
     }

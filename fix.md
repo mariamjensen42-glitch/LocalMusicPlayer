@@ -56,3 +56,33 @@
 **文件**: `ViewModels/HomeViewModel.cs`
 **问题描述**: `Songs` 属性声明为 `ReadOnlyObservableCollection<Song>`，但 `_musicLibraryService.FilteredSongs` 返回 `ObservableCollection<Song>`，无法隐式转换。
 **修复方案**: 将属性类型从 `ReadOnlyObservableCollection<Song>` 改为 `ObservableCollection<Song>`。
+
+## 2026-04-14 - 迷你模式窗口大小异常修复
+
+### 问题 #1 [严重] - 迷你模式切换后窗口变大
+**文件**: `Views/Main/MainWindow.axaml.cs`
+**问题描述**: 迷你模式没有生效，切换后窗口一会儿就变大了。原因是：
+1. `OnDataContextChanged` 中每次 DataContext 改变都会添加新的事件订阅，但从未移除旧的事件订阅
+2. 由于 ViewModel 是 Transient 生命周期，旧 ViewModel 的事件处理器仍然会被触发
+3. 当旧 ViewModel 触发 `PlaybackStateChanged` 等事件时（如播放状态改变），会导致 `IsMiniMode` 属性被错误地检查和更新
+
+**修复方案**:
+1. 在添加新的事件订阅之前，先检查并移除旧的事件订阅
+2. 在 `Dispatcher` 回调中缓存 `IsMiniMode` 的值，避免在异步执行期间值发生变化
+
+**修改代码**:
+```csharp
+// OnDataContextChanged 中添加移除旧订阅的逻辑
+if (_mainWindowViewModel != null)
+{
+    _mainWindowViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+}
+
+// OnViewModelPropertyChanged 中缓存 IsMiniMode 值
+var isMiniMode = vm.IsMiniMode;
+Dispatcher.UIThread.Post(() =>
+{
+    if (isMiniMode) { ... }
+    else { ... }
+});
+```

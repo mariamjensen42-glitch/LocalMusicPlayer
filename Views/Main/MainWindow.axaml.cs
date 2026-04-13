@@ -75,6 +75,11 @@ public partial class MainWindow : Window
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
+        if (_mainWindowViewModel != null)
+        {
+            _mainWindowViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        }
+
         if (DataContext is MainWindowViewModel vm)
         {
             _mainWindowViewModel = vm;
@@ -86,16 +91,18 @@ public partial class MainWindow : Window
     {
         if (e.PropertyName == nameof(ViewModels.MainWindowViewModel.IsMiniMode))
         {
+            var vm = sender as ViewModels.MainWindowViewModel;
+            if (vm == null) return;
+
+            var isMiniMode = vm.IsMiniMode;
             Dispatcher.UIThread.Post(() =>
             {
-                var vm = sender as ViewModels.MainWindowViewModel;
-                if (vm == null) return;
-                if (vm.IsMiniMode)
+                if (isMiniMode)
                 {
-                    Width = 400;
-                    Height = 90;
-                    MinWidth = 400;
-                    MinHeight = 90;
+                    Width = 300;
+                    Height = 520;
+                    MinWidth = 300;
+                    MinHeight = 520;
                     CanResize = false;
                     Topmost = true;
                 }

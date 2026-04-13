@@ -1,0 +1,128 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocalMusicPlayer.ViewModels"
+             xmlns:models="using:LocalMusicPlayer.Models"
+             xmlns:converters="using:LocalMusicPlayer.Converters.Metadata"
+             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="LocalMusicPlayer.Views.Library.FolderBrowseView"
+             x:DataType="vm:FolderBrowseViewModel"
+             x:CompileBindings="False">
+
+    <UserControl.Resources>
+        <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
+        <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
+    </UserControl.Resources>
+
+    <Grid Margin="10,0,0,0">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding Folders}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="models:FolderGroup">
+                        <Border Background="{StaticResource BgCardBrush}"
+                                CornerRadius="12"
+                                BorderBrush="{StaticResource BorderSubtleBrush}"
+                                BorderThickness="1"
+                                Margin="0,0,16,16"
+                                Width="180"
+                                Cursor="Hand">
+                            <i:Interaction.Behaviors>
+                                <behaviors:TapCommandBehavior
+                                    Command="{Binding $parent[ItemsControl].DataContext.NavigateToFolderSongsCommand}"
+                                    CommandParameter="{Binding}" />
+                            </i:Interaction.Behaviors>
+
+                            <Border.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="{DynamicResource StringPlay}"
+                                              Command="{Binding $parent[ItemsControl].DataContext.PlayCommand}" />
+                                    <MenuItem Header="{DynamicResource StringAddToFavourite}"
+                                              Command="{Binding $parent[ItemsControl].DataContext.AddToFavouriteCommand}" />
+                                    <MenuItem Header="{DynamicResource StringMenuRescan}"
+                                              Command="{Binding $parent[ItemsControl].DataContext.RescanFolderCommand}" />
+                                </ContextMenu>
+                            </Border.ContextMenu>
+
+                            <StackPanel Spacing="8" Margin="12">
+                                <!-- 封面区域 -->
+                                <Border Width="156"
+                                        Height="156"
+                                        CornerRadius="8"
+                                        Background="{StaticResource BgElement2Brush}"
+                                        ClipToBounds="True">
+                                    <Grid>
+                                        <!-- 默认占位图标（底层） -->
+                                        <TextBlock Text="&#xE8B8;"
+                                                   FontFamily="Segoe Fluent Icons"
+                                                   FontSize="50"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+
+                                        <!-- 封面图片（上层，会覆盖图标） -->
+                                        <Image Source="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
+                                               Stretch="UniformToFill" />
+                                    </Grid>
+                                </Border>
+
+                                <!-- 文件夹名称 -->
+                                <TextBlock Text="{Binding FolderName}"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="Wrap"
+                                           MaxLines="2" />
+
+                                <!-- 歌曲数量 -->
+                                <StackPanel Orientation="Horizontal" Spacing="2">
+                                    <TextBlock Text="{Binding SongCount}"
+                                               FontSize="11"
+                                               Foreground="{StaticResource TextMutedBrush}" />
+                                    <TextBlock Text="{DynamicResource StringSongsUnit}"
+                                               FontSize="11"
+                                               Foreground="{StaticResource TextMutedBrush}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- 空状态提示 -->
+        <Grid IsVisible="{Binding Folders.Count, Converter={StaticResource CountToBoolConverter}, ConverterParameter=invert}"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Margin="0,64,0,32">
+            <StackPanel Spacing="16" HorizontalAlignment="Center">
+                <TextBlock Text="&#xE8B8;"
+                           FontFamily="Segoe Fluent Icons"
+                           FontSize="48"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           HorizontalAlignment="Center" />
+
+                <TextBlock Text="{DynamicResource StringNoFolders}"
+                           FontSize="16"
+                           FontWeight="Medium"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           HorizontalAlignment="Center" />
+
+                <TextBlock Text="{DynamicResource StringAddMusicFolder}"
+                           FontSize="13"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,17 +1,21 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:LocalMusicPlayer.ViewModels"
-             xmlns:services="using:LocalMusicPlayer.Services"
-             xmlns:player="using:LocalMusicPlayer.Views.Player"
-             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
-             xmlns:converters="using:LocalMusicPlayer.Converters"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
-             x:Class="LocalMusicPlayer.Views.Player.PlayerPageView"
-             x:DataType="vm:PlayerPageViewModel"
-             x:Name="RootUserControl">
+<UserControl
+    x:Class="LocalMusicPlayer.Views.Player.PlayerPageView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+    xmlns:controls="using:LocalMusicPlayer.Controls"
+    xmlns:converters="using:LocalMusicPlayer.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:player="using:LocalMusicPlayer.Views.Player"
+    xmlns:services="using:LocalMusicPlayer.Services"
+    xmlns:vm="using:LocalMusicPlayer.ViewModels"
+    x:Name="RootUserControl"
+    d:DesignHeight="800"
+    d:DesignWidth="1200"
+    x:DataType="vm:PlayerPageViewModel"
+    mc:Ignorable="d">
 
     <Design.DataContext>
         <vm:PlayerPageViewModel />
@@ -24,300 +28,310 @@
         <converters:LyricTranslationFontSizeConverter x:Key="LyricTranslationFontSizeConverter" />
     </UserControl.Resources>
 
-    <Grid Background="{Binding GradientBackground, Converter={StaticResource StringToBrushConverter}}"
-          Margin="0,-48,0,0">
-        <Grid RowDefinitions="Auto,*" Margin="0,48,0,0">
-            <!-- Header -->
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="32,24,32,0">
-                <!-- 窗口拖拽区域 -->
-                <Border Grid.ColumnSpan="3"
-                        Background="Transparent"
-                        IsHitTestVisible="True"
-                        ZIndex="-1">
+    <Grid Margin="0,-48,0,0">
+        <controls:GradientBackgroundControl
+            ImageBytes="{Binding ImageBytes}"
+            IsBackgroundEnable="{Binding IsBackgroundEnabled}"
+            IsDark="True"
+            UseImageDominantTheme="False" />
+
+        <Grid Margin="0,48,0,0" RowDefinitions="Auto,*">
+            <Grid
+                Grid.Row="0"
+                Margin="32,24,32,0"
+                ColumnDefinitions="Auto,*,Auto">
+                <Border
+                    Grid.ColumnSpan="3"
+                    Background="Transparent"
+                    IsHitTestVisible="True"
+                    ZIndex="-1">
                     <i:Interaction.Behaviors>
                         <behaviors:WindowDragBehavior />
                     </i:Interaction.Behaviors>
                 </Border>
 
-                <!-- Left: Back Button + Title -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16">
-                    <!-- Back Button -->
-                    <Button Theme="{StaticResource CircleIconButtonTheme}"
-                            Command="{Binding NavigateBackCommand}">
-                        <TextBlock Text="&#xE74A;"
-                                   FontFamily="Segoe Fluent Icons"
-                                   FontSize="16"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                <StackPanel
+                    Grid.Column="0"
+                    Orientation="Horizontal"
+                    Spacing="16">
+                    <Button Command="{Binding NavigateBackCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
+                        <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="16"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            Text="&#xE74A;" />
                     </Button>
-                    <TextBlock Text="{StaticResource StringNowPlaying}"
-                               Theme="{StaticResource TitleTextStyle}"
-                               VerticalAlignment="Center" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Text="{StaticResource StringNowPlaying}"
+                        Theme="{StaticResource TitleTextStyle}" />
                 </StackPanel>
 
-                <!-- Right: Queue + FullScreen + More Buttons -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16">
-                    <!-- Queue Button -->
-                    <Button Theme="{StaticResource CircleIconButtonTheme}"
-                            Command="{Binding ToggleQueuePanelCommand}">
-                        <TextBlock Text="&#xE8FA;"
-                                   FontFamily="Segoe Fluent Icons"
-                                   FontSize="18"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                <StackPanel
+                    Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="16">
+                    <Button Command="{Binding ToggleQueuePanelCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
+                        <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="18"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            Text="&#xE8FA;" />
                     </Button>
-                    <!-- FullScreen Button -->
-                    <Button Theme="{StaticResource CircleIconButtonTheme}"
-                            Command="{Binding ToggleFullScreenCommand}"
-                            ToolTip.Tip="{DynamicResource StringFullscreen}">
-                        <TextBlock Text="&#xE73E;"
-                                   FontFamily="Segoe Fluent Icons"
-                                   FontSize="16"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                    <Button
+                        Command="{Binding ToggleFullScreenCommand}"
+                        Theme="{StaticResource CircularHoverButtonTheme}"
+                        ToolTip.Tip="{DynamicResource StringFullscreen}">
+                        <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="16"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            Text="&#xE73E;" />
                     </Button>
-                    <!-- More Button -->
-                    <Button Theme="{StaticResource CircleIconButtonTheme}">
-                        <TextBlock Text="&#xE712;"
-                                   FontFamily="Segoe Fluent Icons"
-                                   FontSize="18"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                    <Button Theme="{StaticResource CircularHoverButtonTheme}">
+                        <TextBlock
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="18"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            Text="&#xE712;" />
                     </Button>
                 </StackPanel>
             </Grid>
 
-            <!-- Content Area -->
-            <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="32,24,32,32">
-                <!-- Left: Cover Area + Controls -->
-                <Grid Grid.Column="0" RowDefinitions="*,Auto,Auto,Auto" HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch" Margin="32,0">
-                    <!-- Cover -->
-                    <Border HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            MaxWidth="480"
-                            MaxHeight="480"
-                            CornerRadius="24"
-                            Background="Transparent"
-                            BorderThickness="0">
-                        <Border.Effect>
-                            <DropShadowEffect Color="#000000"
-                                              BlurRadius="64"
-                                              OffsetX="0"
-                                              OffsetY="24"
-                                              Opacity="0.6" />
-                        </Border.Effect>
-                        <Image
-                            Source="{Binding CurrentSong.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
-                            Stretch="Uniform"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
-                    </Border>
+            <Grid
+                Grid.Row="1"
+                Margin="32,24,32,32"
+                ColumnDefinitions="*,*">
+                <Grid
+                    Grid.Column="0"
+                    Margin="32,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    RowDefinitions="*,Auto,Auto,Auto">
+                    <controls:AlbumArtControl
+                        MaxWidth="480"
+                        MaxHeight="480"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        CornerRadiusValue="16"
+                        ImageBytes="{Binding ImageBytes}"
+                        IsActive="{Binding IsBackgroundEnabled}"
+                        IsDark="True"
+                        IsShadowEnabled="True" />
 
-                    <!-- Title Section -->
-                    <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,24,0,0" Spacing="4">
-                        <TextBlock Text="{Binding CurrentSong.Title}"
-                                   FontSize="20"
-                                   FontWeight="SemiBold"
-                                   Foreground="White"
-                                   TextAlignment="Center"
-                                   TextWrapping="Wrap"
-                                   MaxWidth="480" />
-                        <TextBlock Text="{Binding CurrentSong.Artist}"
-                                   FontSize="14"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   TextAlignment="Center"
-                                   TextWrapping="Wrap"
-                                   MaxWidth="480" />
+                    <StackPanel
+                        Grid.Row="1"
+                        Margin="0,24,0,0"
+                        HorizontalAlignment="Center"
+                        Spacing="4">
+                        <TextBlock
+                            MaxWidth="480"
+                            FontSize="20"
+                            FontWeight="SemiBold"
+                            Foreground="White"
+                            Text="{Binding CurrentSong.Title}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                        <TextBlock
+                            MaxWidth="480"
+                            FontSize="14"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            Text="{Binding CurrentSong.Artist}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
                     </StackPanel>
 
-                    <!-- Progress Section -->
-                    <StackPanel Grid.Row="2" Spacing="12" Margin="0,24,0,24">
-                        <!-- Progress Bar -->
+                    <StackPanel
+                        Grid.Row="2"
+                        Margin="0,24,0,24"
+                        Spacing="12">
                         <player:MusicProgressBar />
                     </StackPanel>
 
-                    <!-- Controls Section -->
                     <StackPanel Grid.Row="3" Spacing="24">
-                        <!-- Control Buttons -->
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
-                                    Spacing="32">
-                            <!-- Shuffle -->
-                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                    Command="{Binding ShuffleCommand}">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="32">
+                            <Button Command="{Binding ShuffleCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
                                 <Panel>
-                                    <TextBlock Text="&#xE8B1;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="24"
-                                               Foreground="{StaticResource AccentPurpleBrush}"
-                                               IsVisible="{Binding IsShuffle}" />
-                                    <TextBlock Text="&#xE8B1;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="24"
-                                               Foreground="{StaticResource TextMutedBrush}"
-                                               IsVisible="{Binding !IsShuffle}" />
+                                    <TextBlock
+                                        FontFamily="Segoe Fluent Icons"
+                                        FontSize="24"
+                                        Foreground="{StaticResource AccentPurpleBrush}"
+                                        IsVisible="{Binding IsShuffle}"
+                                        Text="&#xE8B1;" />
+                                    <TextBlock
+                                        FontFamily="Segoe Fluent Icons"
+                                        FontSize="24"
+                                        Foreground="{StaticResource TextMutedBrush}"
+                                        IsVisible="{Binding !IsShuffle}"
+                                        Text="&#xE8B1;" />
                                 </Panel>
                             </Button>
-                            <!-- Previous -->
-                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                    Command="{Binding PreviousCommand}">
-                                <TextBlock Text="&#xE892;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="32"
-                                           Foreground="White" />
+                            <Button Command="{Binding PreviousCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                <TextBlock
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="32"
+                                    Foreground="White"
+                                    Text="&#xE892;" />
                             </Button>
-                            <!-- Play/Pause -->
-                            <Button Theme="{StaticResource CircleIconButtonLargeTheme}"
-                                    Command="{Binding PlayCommand}"
-                                    IsVisible="{Binding !IsPlaying}">
-                                <TextBlock Text="&#xE768;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="32"
-                                           Foreground="White"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
+                            <Button
+                                Command="{Binding PlayCommand}"
+                                IsVisible="{Binding !IsPlaying}"
+                                Theme="{StaticResource CircleIconButtonLargeTheme}">
+                                <TextBlock
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="32"
+                                    Foreground="White"
+                                    Text="&#xE768;" />
                             </Button>
-                            <Button Theme="{StaticResource CircleIconButtonLargeTheme}"
-                                    Command="{Binding PauseCommand}"
-                                    IsVisible="{Binding IsPlaying}">
-                                <TextBlock Text="&#xE769;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="32"
-                                           Foreground="White"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
+                            <Button
+                                Command="{Binding PauseCommand}"
+                                IsVisible="{Binding IsPlaying}"
+                                Theme="{StaticResource CircleIconButtonLargeTheme}">
+                                <TextBlock
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="32"
+                                    Foreground="White"
+                                    Text="&#xE769;" />
                             </Button>
-                            <!-- Next -->
-                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                    Command="{Binding NextCommand}">
-                                <TextBlock Text="&#xE893;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="32"
-                                           Foreground="White" />
+                            <Button Command="{Binding NextCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                <TextBlock
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="32"
+                                    Foreground="White"
+                                    Text="&#xE893;" />
                             </Button>
-                            <!-- Repeat -->
-                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                    Command="{Binding RepeatCommand}">
+                            <Button Command="{Binding RepeatCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
                                 <Grid>
                                     <Panel>
-                                        <TextBlock Text="&#xE8ED;"
-                                                   FontFamily="Segoe Fluent Icons"
-                                                   FontSize="24"
-                                                   Foreground="{StaticResource AccentPurpleBrush}"
-                                                   IsVisible="{Binding IsRepeat}" />
-                                        <TextBlock Text="&#xE8ED;"
-                                                   FontFamily="Segoe Fluent Icons"
-                                                   FontSize="24"
-                                                   Foreground="{StaticResource TextMutedBrush}"
-                                                   IsVisible="{Binding !IsRepeat}" />
+                                        <TextBlock
+                                            FontFamily="Segoe Fluent Icons"
+                                            FontSize="24"
+                                            Foreground="{StaticResource AccentPurpleBrush}"
+                                            IsVisible="{Binding IsRepeat}"
+                                            Text="&#xE8ED;" />
+                                        <TextBlock
+                                            FontFamily="Segoe Fluent Icons"
+                                            FontSize="24"
+                                            Foreground="{StaticResource TextMutedBrush}"
+                                            IsVisible="{Binding !IsRepeat}"
+                                            Text="&#xE8ED;" />
                                     </Panel>
-                                    <TextBlock Text="1"
-                                               FontSize="9"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource AccentPurpleBrush}"
-                                               IsVisible="{Binding IsSingleLoop}"
-                                               HorizontalAlignment="Right"
-                                               VerticalAlignment="Bottom"
-                                               Margin="0,0,2,2" />
+                                    <TextBlock
+                                        Margin="0,0,2,2"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        FontSize="9"
+                                        FontWeight="Bold"
+                                        Foreground="{StaticResource AccentPurpleBrush}"
+                                        IsVisible="{Binding IsSingleLoop}"
+                                        Text="1" />
                                 </Grid>
                             </Button>
                         </StackPanel>
 
-                        <!-- Bottom Actions -->
-                        <Grid ColumnDefinitions="*,*" Margin="24,0,0,0">
-                            <!-- Left: Like + Share -->
-                            <StackPanel Grid.Column="0"
-                                        Orientation="Horizontal"
-                                        Spacing="20">
-                                <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                        Command="{Binding ToggleFavoriteCommand}">
+                        <Grid Margin="24,0,0,0" ColumnDefinitions="*,*">
+                            <StackPanel
+                                Grid.Column="0"
+                                Orientation="Horizontal"
+                                Spacing="20">
+                                <Button Command="{Binding ToggleFavoriteCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
                                     <Panel>
-                                        <TextBlock Text="&#xEB52;"
-                                                   FontFamily="Segoe Fluent Icons"
-                                                   FontSize="24"
-                                                   Foreground="{StaticResource AccentPinkBrush}"
-                                                   IsVisible="{Binding CurrentSong.IsFavorite}" />
-                                        <TextBlock Text="&#xEB51;"
-                                                   FontFamily="Segoe Fluent Icons"
-                                                   FontSize="24"
-                                                   Foreground="{StaticResource TextMutedBrush}"
-                                                   IsVisible="{Binding !CurrentSong.IsFavorite}" />
+                                        <TextBlock
+                                            FontFamily="Segoe Fluent Icons"
+                                            FontSize="24"
+                                            Foreground="{StaticResource AccentPinkBrush}"
+                                            IsVisible="{Binding CurrentSong.IsFavorite}"
+                                            Text="&#xEB52;" />
+                                        <TextBlock
+                                            FontFamily="Segoe Fluent Icons"
+                                            FontSize="24"
+                                            Foreground="{StaticResource TextMutedBrush}"
+                                            IsVisible="{Binding !CurrentSong.IsFavorite}"
+                                            Text="&#xEB51;" />
                                     </Panel>
                                 </Button>
-                                <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                        Foreground="{StaticResource TextMutedBrush}">
-                                    <TextBlock Text="&#xE72D;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="20" />
+                                <Button Foreground="{StaticResource TextMutedBrush}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                    <TextBlock
+                                        FontFamily="Segoe Fluent Icons"
+                                        FontSize="20"
+                                        Text="&#xE72D;" />
                                 </Button>
                             </StackPanel>
-                            <!-- Right: Speed + Volume -->
-                            <StackPanel Grid.Column="1"
-                                        Orientation="Horizontal"
-                                        Spacing="20"
-                                        HorizontalAlignment="Right">
-                                <Popup HorizontalAlignment="Left"
-                                       IsLightDismissEnabled="True"
-                                       x:Name="SpeedPopup">
-                                    <Border Background="{StaticResource BgCardBrush}"
-                                            CornerRadius="12"
-                                            Padding="8"
-                                            BoxShadow="0 8 32 0 #00000060">
+                            <StackPanel
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal"
+                                Spacing="20">
+                                <Popup
+                                    x:Name="SpeedPopup"
+                                    HorizontalAlignment="Left"
+                                    IsLightDismissEnabled="True">
+                                    <Border
+                                        Padding="8"
+                                        Background="{StaticResource BgCardBrush}"
+                                        BoxShadow="0 8 32 0 #00000060"
+                                        CornerRadius="12">
                                         <StackPanel Spacing="2">
-                                            <TextBlock Text="{DynamicResource StringPlaybackSpeed}"
-                                                       FontSize="12"
-                                                       Foreground="{StaticResource TextMutedBrush}"
-                                                       Margin="8,4,8,8"
-                                                       HorizontalAlignment="Center" />
+                                            <TextBlock
+                                                Margin="8,4,8,8"
+                                                HorizontalAlignment="Center"
+                                                FontSize="12"
+                                                Foreground="{StaticResource TextMutedBrush}"
+                                                Text="{DynamicResource StringPlaybackSpeed}" />
                                             <ItemsControl ItemsSource="{Binding AvailablePlaybackRates}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Button Content="{Binding StringFormat='{}{0}x'}"
-                                                                Command="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).ChangePlaybackRateCommand}"
-                                                                CommandParameter="{Binding}"
-                                                                HorizontalAlignment="Stretch"
-                                                                HorizontalContentAlignment="Center"
-                                                                Padding="16,8"
-                                                                CornerRadius="8"
-                                                                Background="Transparent"
-                                                                Foreground="{StaticResource TextPrimaryBrush}"
-                                                                FontSize="14" />
+                                                        <Button
+                                                            Padding="16,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Center"
+                                                            Background="Transparent"
+                                                            Command="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).ChangePlaybackRateCommand}"
+                                                            CommandParameter="{Binding}"
+                                                            Content="{Binding StringFormat='{}{0}x'}"
+                                                            CornerRadius="8"
+                                                            FontSize="14"
+                                                            Foreground="{StaticResource TextPrimaryBrush}" />
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
                                         </StackPanel>
                                     </Border>
                                 </Popup>
-                                <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                        Foreground="{StaticResource TextMutedBrush}"
-                                        Click="OnSpeedButtonClick">
+                                <Button
+                                    Click="OnSpeedButtonClick"
+                                    Foreground="{StaticResource TextMutedBrush}"
+                                    Theme="{StaticResource CircularHoverButtonTheme}">
                                     <StackPanel Orientation="Horizontal" Spacing="4">
-                                        <TextBlock Text="&#xEC57;"
-                                                   FontFamily="Segoe Fluent Icons"
-                                                   FontSize="18"
-                                                   VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding PlaybackRate, StringFormat='{}{0:0.##}x'}"
-                                                   FontSize="12"
-                                                   VerticalAlignment="Center" />
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            FontFamily="Segoe Fluent Icons"
+                                            FontSize="18"
+                                            Text="&#xEC57;" />
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Text="{Binding PlaybackRate, StringFormat='{}{0:0.##}x'}" />
                                     </StackPanel>
                                 </Button>
-                                <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                        Command="{Binding ToggleMuteCommand}"
-                                        Foreground="{StaticResource TextMutedBrush}">
+                                <Button
+                                    Command="{Binding ToggleMuteCommand}"
+                                    Foreground="{StaticResource TextMutedBrush}"
+                                    Theme="{StaticResource CircularHoverButtonTheme}">
                                     <Panel>
-                                        <TextBlock Text="&#xE15D;"
-                                                   FontFamily="Segoe Fluent Icons"
-                                                   FontSize="20"
-                                                   IsVisible="{Binding !IsMuted}" />
-                                        <TextBlock Text="&#xE198;"
-                                                   FontFamily="Segoe Fluent Icons"
-                                                   FontSize="20"
-                                                   IsVisible="{Binding IsMuted}" />
+                                        <TextBlock
+                                            FontFamily="Segoe Fluent Icons"
+                                            FontSize="20"
+                                            IsVisible="{Binding !IsMuted}"
+                                            Text="&#xE15D;" />
+                                        <TextBlock
+                                            FontFamily="Segoe Fluent Icons"
+                                            FontSize="20"
+                                            IsVisible="{Binding IsMuted}"
+                                            Text="&#xE198;" />
                                     </Panel>
                                 </Button>
                             </StackPanel>
@@ -325,138 +339,140 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- Right: Lyrics Area -->
                 <Grid Grid.Column="1" Margin="32,0,0,0">
                     <Grid RowDefinitions="Auto,*">
-                        <!-- Lyrics Settings Bar -->
-                        <StackPanel Grid.Row="0" Orientation="Horizontal"
-                                    Spacing="12" HorizontalAlignment="Right"
-                                    Margin="0,0,0,16">
-                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                    Command="{Binding SearchOnlineLyricsCommand}"
-                                    Foreground="{StaticResource TextMutedBrush}"
-                                    IsVisible="{Binding !IsSearchingLyrics}"
-                                    ToolTip.Tip="{DynamicResource StringSearchLyrics}">
-                                <TextBlock Text="&#xE721;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="16" />
+                        <StackPanel
+                            Grid.Row="0"
+                            Margin="0,0,0,16"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="12">
+                            <Button
+                                Command="{Binding SearchOnlineLyricsCommand}"
+                                Foreground="{StaticResource TextMutedBrush}"
+                                IsVisible="{Binding !IsSearchingLyrics}"
+                                Theme="{StaticResource CircularHoverButtonTheme}"
+                                ToolTip.Tip="{DynamicResource StringSearchLyrics}">
+                                <TextBlock
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="16"
+                                    Text="&#xE721;" />
                             </Button>
-                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                    Foreground="{StaticResource AccentPurpleBrush}"
-                                    IsVisible="{Binding IsSearchingLyrics}"
-                                    ToolTip.Tip="{DynamicResource StringSearching}">
-                                <TextBlock Text="&#xE895;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="16" />
+                            <Button
+                                Foreground="{StaticResource AccentPurpleBrush}"
+                                IsVisible="{Binding IsSearchingLyrics}"
+                                Theme="{StaticResource CircularHoverButtonTheme}"
+                                ToolTip.Tip="{DynamicResource StringSearching}">
+                                <TextBlock
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="16"
+                                    Text="&#xE895;" />
                             </Button>
-                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                    Command="{Binding ToggleTranslationCommand}"
-                                    Foreground="{StaticResource TextMutedBrush}">
+                            <Button
+                                Command="{Binding ToggleTranslationCommand}"
+                                Foreground="{StaticResource TextMutedBrush}"
+                                Theme="{StaticResource CircularHoverButtonTheme}">
                                 <Panel>
-                                    <TextBlock Text="&#xE8BD;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="16"
-                                               Foreground="{StaticResource AccentPurpleBrush}"
-                                               IsVisible="{Binding ShowTranslation}" />
-                                    <TextBlock Text="&#xE8BD;"
-                                               FontFamily="Segoe Fluent Icons"
-                                               FontSize="16"
-                                               IsVisible="{Binding !ShowTranslation}" />
+                                    <TextBlock
+                                        FontFamily="Segoe Fluent Icons"
+                                        FontSize="16"
+                                        Foreground="{StaticResource AccentPurpleBrush}"
+                                        IsVisible="{Binding ShowTranslation}"
+                                        Text="&#xE8BD;" />
+                                    <TextBlock
+                                        FontFamily="Segoe Fluent Icons"
+                                        FontSize="16"
+                                        IsVisible="{Binding !ShowTranslation}"
+                                        Text="&#xE8BD;" />
                                 </Panel>
                             </Button>
-                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                    Command="{Binding DecreaseLyricFontSizeCommand}"
-                                    Foreground="{StaticResource TextMutedBrush}">
-                                <TextBlock Text="&#xE8D7;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="16" />
+                            <Button
+                                Command="{Binding DecreaseLyricFontSizeCommand}"
+                                Foreground="{StaticResource TextMutedBrush}"
+                                Theme="{StaticResource CircularHoverButtonTheme}">
+                                <TextBlock
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="16"
+                                    Text="&#xE8D7;" />
                             </Button>
-                            <TextBlock Text="{Binding LyricFontSize, StringFormat='{}{0:0}'}"
-                                       FontSize="12"
-                                       Foreground="{StaticResource TextSecondaryBrush}"
-                                       VerticalAlignment="Center"
-                                       Width="24"
-                                       TextAlignment="Center" />
-                            <Button Theme="{StaticResource TransparentIconButtonTheme}"
-                                    Command="{Binding IncreaseLyricFontSizeCommand}"
-                                    Foreground="{StaticResource TextMutedBrush}">
-                                <TextBlock Text="&#xE8D8;"
-                                           FontFamily="Segoe Fluent Icons"
-                                           FontSize="16" />
+                            <TextBlock
+                                Width="24"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Foreground="{StaticResource TextSecondaryBrush}"
+                                Text="{Binding LyricFontSize, StringFormat='{}{0:0}'}"
+                                TextAlignment="Center" />
+                            <Button
+                                Command="{Binding IncreaseLyricFontSizeCommand}"
+                                Foreground="{StaticResource TextMutedBrush}"
+                                Theme="{StaticResource CircularHoverButtonTheme}">
+                                <TextBlock
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="16"
+                                    Text="&#xE8D8;" />
                             </Button>
                         </StackPanel>
 
-                        <ScrollViewer Grid.Row="1" x:Name="LyricsScrollViewer"
-                                      VerticalScrollBarVisibility="Hidden"
-                                      HorizontalScrollBarVisibility="Disabled"
-                                      IsVisible="{Binding HasLyrics}">
-                            <ItemsControl ItemsSource="{Binding Lyrics}"
-                                          HorizontalAlignment="Stretch"
-                                          Margin="0,300,0,300">
-                                <i:Interaction.Behaviors>
-                                    <behaviors:LyricsAutoScrollBehavior TargetScrollViewer="{Binding #LyricsScrollViewer}"
-                                                                        CurrentIndex="{Binding CurrentLyricIndex}" />
-                                </i:Interaction.Behaviors>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="services:LyricLine">
-                                        <StackPanel Spacing="6" HorizontalAlignment="Center" Margin="0,6,0,6">
-                                            <Grid HorizontalAlignment="Center">
-                                                <TextBlock x:Name="LyricsTextBlock"
-                                                           Text="{Binding Text}"
-                                                           FontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize}"
-                                                           FontWeight="{Binding IsActive, Converter={StaticResource BoolToFontWeightConverter}}"
-                                                           FontFamily="{StaticResource FontFamilyPrimary}"
-                                                           Foreground="{Binding IsActive, Converter={StaticResource BoolToLyricColorConverter}}"
-                                                           TextAlignment="Center"
-                                                           TextWrapping="Wrap" />
-                                                <Border x:Name="LyricsClipBorder"
-                                                        ClipToBounds="True"
-                                                        HorizontalAlignment="Left"
-                                                        Background="Transparent">
-                                                    <TextBlock Text="{Binding Text}"
-                                                               FontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize}"
-                                                               FontWeight="{Binding IsActive, Converter={StaticResource BoolToFontWeightConverter}}"
-                                                               FontFamily="{StaticResource FontFamilyPrimary}"
-                                                               Foreground="{Binding IsActive, Converter={StaticResource BoolToLyricColorConverter}}"
-                                                               TextAlignment="Center"
-                                                               TextWrapping="Wrap"
-                                                               HorizontalAlignment="Left" />
-                                                </Border>
-                                            </Grid>
-                                            <TextBlock x:Name="TranslationTextBlock"
-                                                       Text="{Binding Translation}"
-                                                       FontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize, Converter={StaticResource LyricTranslationFontSizeConverter}}"
-                                                       FontFamily="{StaticResource FontFamilyPrimary}"
-                                                       Foreground="{StaticResource TextMutedBrush}"
-                                                       TextAlignment="Center"
-                                                       TextWrapping="Wrap"
-                                                       Opacity="0.9"
-                                                       IsVisible="{Binding IsTranslationVisible}" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
+                        <Border Grid.Row="1" ClipToBounds="True">
+                            <Border.OpacityMask>
+                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                                    <GradientStop Offset="0" Color="Transparent" />
+                                    <GradientStop Offset="0.05" Color="Transparent" />
+                                    <GradientStop Offset="0.35" Color="White" />
+                                    <GradientStop Offset="0.65" Color="White" />
+                                    <GradientStop Offset="0.95" Color="Transparent" />
+                                    <GradientStop Offset="1" Color="Transparent" />
+                                </LinearGradientBrush>
+                            </Border.OpacityMask>
+                            <ScrollViewer
+                                x:Name="LyricsScrollViewer"
+                                HorizontalScrollBarVisibility="Disabled"
+                                IsVisible="{Binding HasLyrics}"
+                                VerticalScrollBarVisibility="Hidden">
+                                <ItemsControl
+                                    Margin="0,300,0,300"
+                                    HorizontalAlignment="Stretch"
+                                    ItemsSource="{Binding Lyrics}">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:LyricsAutoScrollBehavior CurrentIndex="{Binding CurrentLyricIndex}" TargetScrollViewer="{Binding #LyricsScrollViewer}" />
+                                    </i:Interaction.Behaviors>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="services:LyricLine">
+                                            <controls:LyricsLineControl
+                                                ActiveForeground="White"
+                                                InactiveForeground="{StaticResource TextMutedBrush}"
+                                                IsCurrentLine="{Binding IsActive}"
+                                                IsTranslationVisible="{Binding IsTranslationVisible}"
+                                                IsWFWLyrics="True"
+                                                LyricsFontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize}"
+                                                LyricsText="{Binding Text}"
+                                                TranslateFontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize, Converter={StaticResource LyricTranslationFontSizeConverter}}"
+                                                TranslateText="{Binding Translation}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
                     </Grid>
 
-                    <!-- No Lyrics Message -->
-                    <TextBlock IsVisible="{Binding !HasLyrics}"
-                               Text="{StaticResource StringNoLyrics}"
-                               FontSize="16"
-                               FontFamily="{StaticResource FontFamilyPrimary}"
-                               Foreground="{StaticResource TextMutedBrush}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource FontFamilyPrimary}"
+                        FontSize="16"
+                        Foreground="{StaticResource TextMutedBrush}"
+                        IsVisible="{Binding !HasLyrics}"
+                        Text="{StaticResource StringNoLyrics}" />
 
-                    <!-- Lyric Search Status -->
-                    <TextBlock IsVisible="{Binding LyricSearchStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                               Text="{Binding LyricSearchStatus}"
-                               FontSize="14"
-                               FontFamily="{StaticResource FontFamilyPrimary}"
-                               Foreground="{StaticResource AccentPurpleBrush}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Bottom"
-                               Margin="0,0,0,20" />
+                    <TextBlock
+                        Margin="0,0,0,20"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        FontFamily="{StaticResource FontFamilyPrimary}"
+                        FontSize="14"
+                        Foreground="{StaticResource AccentPurpleBrush}"
+                        IsVisible="{Binding LyricSearchStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        Text="{Binding LyricSearchStatus}" />
                 </Grid>
             </Grid>
         </Grid>

@@ -28,6 +28,9 @@ public class ViewLocator : IDataTemplate
         [typeof(HomeViewModel)] = () => new Views.Library.HomeView(),
         [typeof(ArtistsPageViewModel)] = () => new Views.Library.ArtistsPageView(),
         [typeof(AlbumsPageViewModel)] = () => new Views.Library.AlbumsPageView(),
+        [typeof(MusicBrowseViewModel)] = () => new Views.Library.MusicBrowseView(),
+        [typeof(FolderBrowseViewModel)] = () => new Views.Library.FolderBrowseView(),
+        [typeof(SongListViewModel)] = () => new Views.Library.SongListView(),
     };
 
     public Control? Build(object? param)

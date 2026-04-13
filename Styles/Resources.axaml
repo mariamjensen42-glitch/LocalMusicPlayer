@@ -1,5 +1,4 @@
-<ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Color x:Key="BgPrimary">#FF0A0A0A</Color>
     <Color x:Key="BgSidebar">#FF0F0F0F</Color>
@@ -143,12 +142,14 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Padding="{TemplateBinding Padding}">
-                    <ContentPresenter Content="{TemplateBinding Content}"
-                                      HorizontalAlignment="Stretch"
-                                      VerticalAlignment="Center" />
+                <Border
+                    Padding="{TemplateBinding Padding}"
+                    Background="{TemplateBinding Background}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+                    <ContentPresenter
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Content="{TemplateBinding Content}" />
                 </Border>
             </ControlTemplate>
         </Setter>
@@ -399,29 +400,37 @@
         <Setter Property="Foreground" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Height="20" VerticalAlignment="Center" Background="Transparent" IsHitTestVisible="True">
+                <Border
+                    Height="20"
+                    VerticalAlignment="Center"
+                    Background="Transparent"
+                    IsHitTestVisible="True">
                     <Grid VerticalAlignment="Center">
-                        <Border Name="TrackBackground"
-                                Background="{StaticResource SliderTrackBgBrush}"
-                                CornerRadius="3"
-                                Height="5"
-                                VerticalAlignment="Center"
-                                IsHitTestVisible="False" />
-                        <Track Name="PART_Track"
-                               VerticalAlignment="Center"
-                               IsDirectionReversed="False"
-                               Orientation="Horizontal"
-                               Minimum="{TemplateBinding Minimum}"
-                               Maximum="{TemplateBinding Maximum}"
-                               Value="{TemplateBinding Value, Mode=TwoWay}">
+                        <Border
+                            Name="TrackBackground"
+                            Height="5"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource SliderTrackBgBrush}"
+                            CornerRadius="3"
+                            IsHitTestVisible="False" />
+                        <Track
+                            Name="PART_Track"
+                            VerticalAlignment="Center"
+                            IsDirectionReversed="False"
+                            Maximum="{TemplateBinding Maximum}"
+                            Minimum="{TemplateBinding Minimum}"
+                            Orientation="Horizontal"
+                            Value="{TemplateBinding Value,
+                                                    Mode=TwoWay}">
                             <Track.DecreaseButton>
                                 <RepeatButton Focusable="False" IsHitTestVisible="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
-                                            <Border CornerRadius="3"
-                                                    Height="5"
-                                                    VerticalAlignment="Center"
-                                                    Background="{StaticResource PurplePinkHorizontalGradientBrush}" />
+                                            <Border
+                                                Height="5"
+                                                VerticalAlignment="Center"
+                                                Background="{StaticResource PurplePinkHorizontalGradientBrush}"
+                                                CornerRadius="3" />
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
@@ -430,20 +439,26 @@
                                 <RepeatButton Focusable="False" IsHitTestVisible="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
-                                            <Border Background="Transparent"
-                                                    Height="5"
-                                                    VerticalAlignment="Center" />
+                                            <Border
+                                                Height="5"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent" />
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
                             </Track.IncreaseButton>
                             <Track.Thumb>
-                                <Thumb Width="12" Height="12" Focusable="False">
+                                <Thumb
+                                    Width="12"
+                                    Height="12"
+                                    Focusable="False">
                                     <Thumb.Template>
                                         <ControlTemplate>
-                                            <Border Width="12" Height="12"
-                                                    CornerRadius="6"
-                                                    Background="White" />
+                                            <Border
+                                                Width="12"
+                                                Height="12"
+                                                Background="White"
+                                                CornerRadius="6" />
                                         </ControlTemplate>
                                     </Thumb.Template>
                                 </Thumb>
@@ -460,28 +475,35 @@
         <Setter Property="Foreground" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Height="16" VerticalAlignment="Center" Background="Transparent">
+                <Border
+                    Height="16"
+                    VerticalAlignment="Center"
+                    Background="Transparent">
                     <Grid VerticalAlignment="Center">
-                        <Border Name="TrackBackground"
-                                Background="{StaticResource SliderTrackOverlayBrush}"
-                                CornerRadius="3"
-                                Height="5"
-                                VerticalAlignment="Center" />
-                        <Track Name="PART_Track"
-                               VerticalAlignment="Center"
-                               IsDirectionReversed="False"
-                               Orientation="Horizontal"
-                               Minimum="{TemplateBinding Minimum}"
-                               Maximum="{TemplateBinding Maximum}"
-                               Value="{TemplateBinding Value, Mode=TwoWay}">
+                        <Border
+                            Name="TrackBackground"
+                            Height="5"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource SliderTrackOverlayBrush}"
+                            CornerRadius="3" />
+                        <Track
+                            Name="PART_Track"
+                            VerticalAlignment="Center"
+                            IsDirectionReversed="False"
+                            Maximum="{TemplateBinding Maximum}"
+                            Minimum="{TemplateBinding Minimum}"
+                            Orientation="Horizontal"
+                            Value="{TemplateBinding Value,
+                                                    Mode=TwoWay}">
                             <Track.DecreaseButton>
                                 <RepeatButton Focusable="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
-                                            <Border CornerRadius="3"
-                                                    Height="5"
-                                                    VerticalAlignment="Center"
-                                                    Background="{StaticResource AccentPurpleBrush}" />
+                                            <Border
+                                                Height="5"
+                                                VerticalAlignment="Center"
+                                                Background="{StaticResource AccentPurpleBrush}"
+                                                CornerRadius="3" />
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
@@ -490,9 +512,10 @@
                                 <RepeatButton Focusable="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
-                                            <Border Background="Transparent"
-                                                    Height="5"
-                                                    VerticalAlignment="Center" />
+                                            <Border
+                                                Height="5"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent" />
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
@@ -501,9 +524,11 @@
                                 <Thumb Width="10" Height="10">
                                     <Thumb.Template>
                                         <ControlTemplate>
-                                            <Border Width="10" Height="10"
-                                                    CornerRadius="5"
-                                                    Background="White" />
+                                            <Border
+                                                Width="10"
+                                                Height="10"
+                                                Background="White"
+                                                CornerRadius="5" />
                                         </ControlTemplate>
                                     </Thumb.Template>
                                 </Thumb>
@@ -520,28 +545,35 @@
         <Setter Property="Foreground" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Height="20" VerticalAlignment="Center" Background="Transparent">
+                <Border
+                    Height="20"
+                    VerticalAlignment="Center"
+                    Background="Transparent">
                     <Grid VerticalAlignment="Center">
-                        <Border Name="TrackBackground"
-                                Background="{StaticResource SliderTrackOverlayBrush}"
-                                CornerRadius="4"
-                                Height="8"
-                                VerticalAlignment="Center" />
-                        <Track Name="PART_Track"
-                               VerticalAlignment="Center"
-                               IsDirectionReversed="False"
-                               Orientation="Horizontal"
-                               Minimum="{TemplateBinding Minimum}"
-                               Maximum="{TemplateBinding Maximum}"
-                               Value="{TemplateBinding Value, Mode=TwoWay}">
+                        <Border
+                            Name="TrackBackground"
+                            Height="8"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource SliderTrackOverlayBrush}"
+                            CornerRadius="4" />
+                        <Track
+                            Name="PART_Track"
+                            VerticalAlignment="Center"
+                            IsDirectionReversed="False"
+                            Maximum="{TemplateBinding Maximum}"
+                            Minimum="{TemplateBinding Minimum}"
+                            Orientation="Horizontal"
+                            Value="{TemplateBinding Value,
+                                                    Mode=TwoWay}">
                             <Track.DecreaseButton>
                                 <RepeatButton Focusable="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
-                                            <Border CornerRadius="4"
-                                                    Height="8"
-                                                    VerticalAlignment="Center"
-                                                    Background="{StaticResource PurplePinkHorizontalGradientBrush}" />
+                                            <Border
+                                                Height="8"
+                                                VerticalAlignment="Center"
+                                                Background="{StaticResource PurplePinkHorizontalGradientBrush}"
+                                                CornerRadius="4" />
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
@@ -550,20 +582,26 @@
                                 <RepeatButton Focusable="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
-                                            <Border Background="Transparent"
-                                                    Height="8"
-                                                    VerticalAlignment="Center" />
+                                            <Border
+                                                Height="8"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent" />
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
                             </Track.IncreaseButton>
                             <Track.Thumb>
-                                <Thumb Width="12" Height="12" Opacity="0">
+                                <Thumb
+                                    Width="12"
+                                    Height="12"
+                                    Opacity="0">
                                     <Thumb.Template>
                                         <ControlTemplate>
-                                            <Border Width="12" Height="12"
-                                                    CornerRadius="6"
-                                                    Background="Transparent" />
+                                            <Border
+                                                Width="12"
+                                                Height="12"
+                                                Background="Transparent"
+                                                CornerRadius="6" />
                                         </ControlTemplate>
                                     </Thumb.Template>
                                 </Thumb>
@@ -575,21 +613,21 @@
         </Setter>
     </ControlTheme>
 
-    <!-- ==================== 首页UI重构 - 新增颜色 ==================== -->
+    <!--  ==================== 首页UI重构 - 新增颜色 ====================  -->
 
-    <!-- 导航项状态颜色 -->
+    <!--  导航项状态颜色  -->
     <Color x:Key="NavHover">#FF1A1A1A</Color>
     <Color x:Key="NavSelected">#20A855F7</Color>
 
-    <!-- 播放控制栏颜色 -->
+    <!--  播放控制栏颜色  -->
     <Color x:Key="PlayButtonGradientStart">#FFA855F7</Color>
     <Color x:Key="PlayButtonGradientEnd">#FFEC4899</Color>
 
-    <!-- 专辑封面卡片阴影 -->
+    <!--  专辑封面卡片阴影  -->
     <Color x:Key="AlbumCardShadow">#40000000</Color>
     <Color x:Key="AlbumCardShadowBlur">#26000000</Color>
 
-    <!-- 新增画刷 -->
+    <!--  新增画刷  -->
     <SolidColorBrush x:Key="NavHoverBrush" Color="{StaticResource NavHover}" />
     <SolidColorBrush x:Key="NavSelectedBrush" Color="{StaticResource NavSelected}" />
     <SolidColorBrush x:Key="AlbumCardShadowBrush" Color="{StaticResource AlbumCardShadow}" />
@@ -599,9 +637,9 @@
         <GradientStop Offset="1" Color="#FFEC4899" />
     </LinearGradientBrush>
 
-    <!-- ==================== 首页UI重构 - 新增样式 ==================== -->
+    <!--  ==================== 首页UI重构 - 新增样式 ====================  -->
 
-    <!-- 侧边栏导航项样式 -->
+    <!--  侧边栏导航项样式  -->
     <ControlTheme x:Key="SidebarNavItemTheme" TargetType="ToggleButton">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
@@ -613,18 +651,20 @@
         <Setter Property="FontSize" Value="{StaticResource FontSizeNormal}" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Padding="{TemplateBinding Padding}">
-                    <StackPanel Orientation="Horizontal"
-                                Spacing="10"
-                                VerticalAlignment="Center">
-                        <ContentPresenter Content="{TemplateBinding (Button.Tag)}"
-                                          VerticalAlignment="Center" />
-                        <ContentPresenter Content="{TemplateBinding Content}"
-                                          Foreground="{TemplateBinding Foreground}"
-                                          FontSize="{TemplateBinding FontSize}"
-                                          VerticalAlignment="Center" />
+                <Border
+                    Padding="{TemplateBinding Padding}"
+                    Background="{TemplateBinding Background}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+                    <StackPanel
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="10">
+                        <ContentPresenter VerticalAlignment="Center" Content="{TemplateBinding (Button.Tag)}" />
+                        <ContentPresenter
+                            VerticalAlignment="Center"
+                            Content="{TemplateBinding Content}"
+                            FontSize="{TemplateBinding FontSize}"
+                            Foreground="{TemplateBinding Foreground}" />
                     </StackPanel>
                 </Border>
             </ControlTemplate>
@@ -641,7 +681,7 @@
         </Style>
     </ControlTheme>
 
-    <!-- 歌曲列表行容器样式 -->
+    <!--  歌曲列表行容器样式  -->
     <ControlTheme x:Key="SongListItemRowTheme" TargetType="Border">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="CornerRadius" Value="8" />
@@ -653,7 +693,7 @@
         </Style>
     </ControlTheme>
 
-    <!-- 当前播放行特殊标识 -->
+    <!--  当前播放行特殊标识  -->
     <ControlTheme x:Key="SongListActiveRowTheme" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource BgActiveRowBrush}" />
         <Setter Property="CornerRadius" Value="8" />
@@ -663,7 +703,7 @@
         <Setter Property="BorderBrush" Value="{StaticResource ActiveRowBorderBrush}" />
     </ControlTheme>
 
-    <!-- 播放大按钮样式 (48x48 渐变背景 圆形) -->
+    <!--  播放大按钮样式 (48x48 渐变背景 圆形)  -->
     <ControlTheme x:Key="PlayButtonLargeTheme" TargetType="Button">
         <Setter Property="Width" Value="48" />
         <Setter Property="Height" Value="48" />
@@ -676,43 +716,43 @@
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Width="{TemplateBinding Width}"
-                        Height="{TemplateBinding Height}">
+                <Border
+                    Width="{TemplateBinding Width}"
+                    Height="{TemplateBinding Height}"
+                    Background="{TemplateBinding Background}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
                     <Border.RenderTransform>
-                        <ScaleTransform ScaleX="1"
-                                        ScaleY="1" />
+                        <ScaleTransform ScaleX="1" ScaleY="1" />
                     </Border.RenderTransform>
                     <Border.Transitions>
                         <Transitions>
                             <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
                         </Transitions>
                     </Border.Transitions>
-                    <ContentPresenter HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"
-                                      Content="{TemplateBinding Content}" />
+                    <ContentPresenter
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="{TemplateBinding Content}" />
                 </Border>
             </ControlTemplate>
         </Setter>
         <Style Selector="^:pointerover">
             <Setter Property="Opacity" Value="0.9" />
             <Style.Animations>
-                <Animation Duration="0:0:0.2"
-                           FillMode="Forward"
-                           IterationCount="1">
+                <Animation
+                    FillMode="Forward"
+                    IterationCount="1"
+                    Duration="0:0:0.2">
                     <KeyFrame Cue="100%">
-                        <Setter Property="ScaleTransform.ScaleX"
-                                Value="1.05" />
-                        <Setter Property="ScaleTransform.ScaleY"
-                                Value="1.05" />
+                        <Setter Property="ScaleTransform.ScaleX" Value="1.05" />
+                        <Setter Property="ScaleTransform.ScaleY" Value="1.05" />
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
         </Style>
     </ControlTheme>
 
-    <!-- 控制按钮样式 (透明背景 32x32) -->
+    <!--  控制按钮样式 (透明背景 32x32)  -->
     <ControlTheme x:Key="PlayerControlButtonTheme" TargetType="Button">
         <Setter Property="Width" Value="32" />
         <Setter Property="Height" Value="32" />
@@ -724,18 +764,20 @@
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Padding="{TemplateBinding Padding}">
+                <Border
+                    Padding="{TemplateBinding Padding}"
+                    Background="{TemplateBinding Background}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
                     <Border.Transitions>
                         <Transitions>
                             <BrushTransition Property="Background" Duration="0:0:0.15" />
                             <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
                         </Transitions>
                     </Border.Transitions>
-                    <ContentPresenter HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"
-                                      Content="{TemplateBinding Content}" />
+                    <ContentPresenter
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="{TemplateBinding Content}" />
                 </Border>
             </ControlTemplate>
         </Setter>
@@ -744,7 +786,7 @@
         </Style>
     </ControlTheme>
 
-    <!-- 专辑封面卡片样式 (180x180 圆角12px 带阴影) -->
+    <!--  专辑封面卡片样式 (180x180 圆角12px 带阴影)  -->
     <ControlTheme x:Key="AlbumCoverCardTheme" TargetType="Border">
         <Setter Property="Width" Value="180" />
         <Setter Property="Height" Value="180" />
@@ -760,6 +802,184 @@
         </Style>
     </ControlTheme>
 
+    <ControlTheme x:Key="CircularHoverButtonTheme" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="CornerRadius" Value="50" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Background="{TemplateBinding Background}">
+                    <Ellipse
+                        x:Name="HoverOverlay"
+                        Fill="{StaticResource BgElementBrush}"
+                        IsHitTestVisible="False"
+                        Opacity="0" />
+                    <ContentPresenter
+                        x:Name="ContentPresenter"
+                        Padding="{TemplateBinding Padding}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Content="{TemplateBinding Content}" />
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover /template/ Ellipse#HoverOverlay">
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="^:pressed /template/ Ellipse#HoverOverlay">
+            <Setter Property="Opacity" Value="0.6" />
+        </Style>
+        <Style Selector="^:disabled /template/ ContentPresenter#ContentPresenter">
+            <Setter Property="Opacity" Value="0.3" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="NoHoverButtonTheme" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Background="{TemplateBinding Background}">
+                    <ContentPresenter
+                        Padding="{TemplateBinding Padding}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Content="{TemplateBinding Content}" />
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pressed">
+            <Setter Property="Opacity" Value="0.7" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Opacity" Value="0.3" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="GhostSliderTheme" TargetType="Slider">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    Height="20"
+                    VerticalAlignment="Center"
+                    Background="Transparent"
+                    IsHitTestVisible="True">
+                    <Grid VerticalAlignment="Center">
+                        <Border
+                            Name="TrackBackground"
+                            Height="4"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource SliderTrackBgBrush}"
+                            CornerRadius="2"
+                            IsHitTestVisible="False" />
+                        <Track
+                            Name="PART_Track"
+                            VerticalAlignment="Center"
+                            IsDirectionReversed="False"
+                            Maximum="{TemplateBinding Maximum}"
+                            Minimum="{TemplateBinding Minimum}"
+                            Orientation="Horizontal"
+                            Value="{TemplateBinding Value,
+                                                    Mode=TwoWay}">
+                            <Track.DecreaseButton>
+                                <RepeatButton Focusable="False" IsHitTestVisible="False">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate>
+                                            <Border
+                                                Height="4"
+                                                VerticalAlignment="Center"
+                                                Background="{StaticResource PurplePinkHorizontalGradientBrush}"
+                                                CornerRadius="2" />
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.DecreaseButton>
+                            <Track.IncreaseButton>
+                                <RepeatButton Focusable="False" IsHitTestVisible="False">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate>
+                                            <Border
+                                                Height="4"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent" />
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.IncreaseButton>
+                            <Track.Thumb>
+                                <Thumb
+                                    Width="10"
+                                    Height="6"
+                                    Focusable="False">
+                                    <Thumb.Template>
+                                        <ControlTemplate>
+                                            <Border
+                                                Width="10"
+                                                Height="6"
+                                                Background="White"
+                                                CornerRadius="3" />
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <Color x:Key="MenuHoverBg">#20FFFFFF</Color>
+    <SolidColorBrush x:Key="MenuHoverBgBrush" Color="{StaticResource MenuHoverBg}" />
+
+    <ControlTheme x:Key="AnimatedMenuItemTheme" TargetType="MenuItem">
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="FontSize" Value="13" />
+    </ControlTheme>
+
+    <!--  ==================== 专辑页面样式 ====================  -->
+
+    <!--  专辑卡片容器样式  -->
+    <ControlTheme x:Key="AlbumCardTheme" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource CardCornerRadius}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <!--  专辑分组标题样式  -->
+    <ControlTheme x:Key="AlbumGroupHeaderTheme" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="Margin" Value="16,12,8,4" />
+    </ControlTheme>
+
+    <!--  歌曲表头样式  -->
+    <ControlTheme x:Key="SongTableHeaderTheme" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource BgTableHeaderBrush}" />
+        <Setter Property="CornerRadius" Value="12,12,0,0" />
+        <Setter Property="Padding" Value="20,10" />
+    </ControlTheme>
+
+    <!--  详情页封面容器  -->
+    <ControlTheme x:Key="DetailCoverTheme" TargetType="Border">
+        <Setter Property="Width" Value="150" />
+        <Setter Property="Height" Value="150" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="Background" Value="{StaticResource BgElement2Brush}" />
+    </ControlTheme>
+
 
 </ResourceDictionary>
-

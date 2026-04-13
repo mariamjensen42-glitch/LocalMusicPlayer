@@ -24,4 +24,5 @@ public interface IViewModelFactory
     MetadataEditorViewModel CreateMetadataEditorViewModel(Song song, System.Action? onSaved = null);
     BatchMetadataEditorViewModel CreateBatchMetadataEditorViewModel(IEnumerable<Song> songs, System.Action? onSaved = null);
     SmartPlaylistSongsViewModel CreateSmartPlaylistSongsViewModel(SmartPlaylist smartPlaylist);
+    MusicBrowseViewModel CreateMusicBrowseViewModel();
 }

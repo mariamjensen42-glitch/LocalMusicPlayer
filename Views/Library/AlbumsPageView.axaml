@@ -1,78 +1,120 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:LocalMusicPlayer.ViewModels"
-             xmlns:models="using:LocalMusicPlayer.Models"
-             xmlns:converters="using:LocalMusicPlayer.Converters"
-             xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
-             x:Class="LocalMusicPlayer.Views.Library.AlbumsPageView"
-             x:DataType="vm:AlbumsPageViewModel"
-             x:CompileBindings="True">
+<UserControl
+    x:Class="LocalMusicPlayer.Views.Library.AlbumsPageView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:LocalMusicPlayer.Behaviors"
+    xmlns:converters="using:LocalMusicPlayer.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:LocalMusicPlayer.Models"
+    xmlns:vm="using:LocalMusicPlayer.ViewModels"
+    d:DesignHeight="800"
+    d:DesignWidth="1200"
+    x:CompileBindings="True"
+    x:DataType="vm:AlbumsPageViewModel"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
-        <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
     </UserControl.Resources>
 
     <Grid RowDefinitions="Auto,*">
-        <Border Grid.Row="0"
-                Background="{StaticResource BgCardBrush}"
-                BorderBrush="{StaticResource BorderSubtleBrush}"
-                BorderThickness="0,0,0,1"
-                Padding="24,16">
-            <TextBlock Text="{DynamicResource StringAlbums}"
-                       FontSize="24"
-                       FontWeight="Bold"
-                       Foreground="{StaticResource TextPrimaryBrush}" />
+        <!--  标题栏  -->
+        <Border
+            Grid.Row="0"
+            Padding="24,16"
+            Background="{StaticResource BgCardBrush}"
+            BorderBrush="{StaticResource BorderSubtleBrush}"
+            BorderThickness="0,0,0,1">
+            <TextBlock
+                FontSize="24"
+                FontWeight="Bold"
+                Foreground="{StaticResource TextPrimaryBrush}"
+                Text="{DynamicResource StringAlbums}" />
         </Border>
 
-        <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding AlbumGroups}"
-                          Margin="24,20">
+        <!--  分组专辑列表  -->
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding GroupedAlbums}">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="models:AlbumGroup">
-                        <Border Background="{StaticResource BgCardBrush}"
-                                CornerRadius="12"
-                                Margin="0,0,16,16"
-                                Width="180"
-                                Cursor="Hand">
-                            <i:Interaction.Behaviors>
-                                <behaviors:TapCommandBehavior
-                                    Command="{Binding $parent[ItemsControl].DataContext.SelectItemCommand}"
-                                    CommandParameter="{Binding}" />
-                            </i:Interaction.Behaviors>
-                            <StackPanel Spacing="8" Margin="12">
-                                <Border Width="156"
-                                        Height="156"
-                                        CornerRadius="8"
-                                        Background="{StaticResource BgElement2Brush}">
-                                    <Image Source="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}"
-                                           Stretch="UniformToFill" />
-                                </Border>
-                                <TextBlock Text="{Binding AlbumName}"
-                                           FontSize="14"
-                                           FontWeight="SemiBold"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                           TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{Binding ArtistName}"
-                                           FontSize="12"
-                                           Foreground="{StaticResource TextMutedBrush}"
-                                           TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{Binding SongCount, StringFormat={}{0} 首}"
-                                           FontSize="11"
-                                           Foreground="{StaticResource TextSecondaryBrush}" />
-                            </StackPanel>
-                        </Border>
+                    <DataTemplate x:DataType="models:AlbumGrouping">
+                        <StackPanel Spacing="4">
+                            <!--  分组标题  -->
+                            <TextBlock Text="{Binding GroupKey}" Theme="{StaticResource AlbumGroupHeaderTheme}" />
+
+                            <!--  该组的专辑卡片  -->
+                            <ItemsControl
+                                MaxWidth="1200"
+                                Margin="0,0,0,16"
+                                ItemsSource="{Binding Albums}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="models:AlbumGroup">
+                                        <Border
+                                            Width="170"
+                                            Margin="0,6,12,6"
+                                            x:CompileBindings="False"
+                                            Theme="{StaticResource AlbumCardTheme}">
+                                            <i:Interaction.Behaviors>
+                                                <behaviors:TapCommandBehavior Command="{Binding DataContext.SelectItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                            </i:Interaction.Behaviors>
+                                            <StackPanel Margin="10" Spacing="6">
+                                                <!--  封面 150x150  -->
+                                                <Border
+                                                    Width="150"
+                                                    Height="150"
+                                                    HorizontalAlignment="Center"
+                                                    Background="{StaticResource BgElement2Brush}"
+                                                    ClipToBounds="True"
+                                                    CornerRadius="5">
+                                                    <Image Source="{Binding CoverArtPath, Converter={StaticResource AlbumArtConverter}}" Stretch="UniformToFill" />
+                                                </Border>
+
+                                                <!--  专辑名  -->
+                                                <TextBlock
+                                                    MaxHeight="40"
+                                                    FontSize="13"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{StaticResource TextPrimaryBrush}"
+                                                    Text="{Binding AlbumName}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="Wrap" />
+
+                                                <!--  底部信息行：艺术家 | 歌曲数  -->
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        FontSize="12"
+                                                        Foreground="{StaticResource TextMutedBrush}"
+                                                        Text="{Binding ArtistName}"
+                                                        TextTrimming="CharacterEllipsis" />
+                                                    <StackPanel
+                                                        Grid.Column="1"
+                                                        Orientation="Horizontal"
+                                                        Spacing="2">
+                                                        <TextBlock
+                                                            FontSize="12"
+                                                            Foreground="{StaticResource TextMutedBrush}"
+                                                            Text="{Binding SongCount}" />
+                                                        <TextBlock
+                                                            FontSize="12"
+                                                            Foreground="{StaticResource TextMutedBrush}"
+                                                            Text="{DynamicResource StringSongsUnit}" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
             </ItemsControl>
         </ScrollViewer>
     </Grid>

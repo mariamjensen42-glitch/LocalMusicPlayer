@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LocalMusicPlayer.Controls.AlbumArtControl"
+             x:Name="Root">
+
+    <Grid x:Name="ContainerGrid">
+        <Border x:Name="CurrentImageBorder"
+                CornerRadius="16"
+                ClipToBounds="True"
+                Opacity="0">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000"
+                                  BlurRadius="64"
+                                  OffsetX="0"
+                                  OffsetY="24"
+                                  Opacity="0.6" />
+            </Border.Effect>
+            <Image x:Name="CurrentImage"
+                   Stretch="UniformToFill" />
+        </Border>
+
+        <Border x:Name="IncomingImageBorder"
+                CornerRadius="16"
+                ClipToBounds="True"
+                Opacity="0">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000"
+                                  BlurRadius="64"
+                                  OffsetX="0"
+                                  OffsetY="24"
+                                  Opacity="0.6" />
+            </Border.Effect>
+            <Image x:Name="IncomingImage"
+                   Stretch="UniformToFill" />
+        </Border>
+
+        <Border x:Name="DefaultCoverBorder"
+                CornerRadius="16"
+                ClipToBounds="True"
+                Opacity="1">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000"
+                                  BlurRadius="64"
+                                  OffsetX="0"
+                                  OffsetY="24"
+                                  Opacity="0.6" />
+            </Border.Effect>
+            <Image x:Name="DefaultCoverImage"
+                   Stretch="UniformToFill" />
+        </Border>
+    </Grid>
+</UserControl>
