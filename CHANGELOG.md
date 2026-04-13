@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.3.0...v1.4.0) (2026-04-13)
+
+
+### ✨ 新功能
+
+* add mini mode and smart playlist features ([97eedd8](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/97eedd861b55af21a3c01f468293660f31863359))
+
+
+### 🐛 修复
+
+* resolve build errors in smart playlist and mini mode ([08b2dbb](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/08b2dbb92324f87986cd065546d42d1278b45150))
+
 ## [1.3.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.2.0...v1.3.0) (2026-04-13)
 
 
