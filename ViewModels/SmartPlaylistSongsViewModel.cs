@@ -54,13 +54,14 @@ public partial class SmartPlaylistSongsViewModel : ViewModelBase
         if (Songs.Count == 0) return;
         var playlist = _playlistService.CreatePlaylist(SmartPlaylist.Name);
         _playlistService.ClearPlaylist();
-        foreach (var song in Songs)
-            _playlistService.AddSongToPlaylist(playlist, song);
-        if (_playlistService.PlayNext() is Song song)
+        foreach (var s in Songs)
+            _playlistService.AddSongToPlaylist(playlist, s);
+        _playlistService.PlayNext();
+        if (_playlistService.CurrentSong is Song first)
         {
-            _statisticsService.RecordPlayStart(song);
-            _playHistoryService.AddToHistory(song);
-            _playbackStateService.Play(song);
+            _statisticsService.RecordPlayStart(first);
+            _playHistoryService.AddToHistory(first);
+            _playbackStateService.Play(first);
         }
     }
 
@@ -74,14 +75,15 @@ public partial class SmartPlaylistSongsViewModel : ViewModelBase
         while (n > 1) { n--; int k = rng.Next(n + 1); (shuffled[k], shuffled[n]) = (shuffled[n], shuffled[k]); }
         var playlist = _playlistService.CreatePlaylist(SmartPlaylist.Name);
         _playlistService.ClearPlaylist();
-        foreach (var song in shuffled)
-            _playlistService.AddSongToPlaylist(playlist, song);
+        foreach (var s in shuffled)
+            _playlistService.AddSongToPlaylist(playlist, s);
         _playbackStateService.PlaybackMode = PlaybackMode.Shuffle;
-        if (_playlistService.PlayNext() is Song song)
+        _playlistService.PlayNext();
+        if (_playlistService.CurrentSong is Song first)
         {
-            _statisticsService.RecordPlayStart(song);
-            _playHistoryService.AddToHistory(song);
-            _playbackStateService.Play(song);
+            _statisticsService.RecordPlayStart(first);
+            _playHistoryService.AddToHistory(first);
+            _playbackStateService.Play(first);
         }
     }
 }

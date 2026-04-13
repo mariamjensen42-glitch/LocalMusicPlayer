@@ -6,12 +6,10 @@
         mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="90"
         x:Class="LocalMusicPlayer.Views.MiniMode.MiniModeWindow"
         x:DataType="vm:MainWindowViewModel"
-        WindowStyle="None"
         Background="Transparent"
         CanResize="False"
         Topmost="True"
         ShowInTaskbar="False"
-        Decorations="None"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         Width="320" Height="90">
