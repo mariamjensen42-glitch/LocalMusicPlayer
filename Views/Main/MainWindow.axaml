@@ -145,6 +145,39 @@
                             <TextBlock Text="{DynamicResource StringRecentPlays}" />
                         </ToggleButton>
 
+                        <!-- 智能播放列表 -->
+                        <StackPanel Margin="4,0">
+                            <TextBlock Text="智能播放列表"
+                                       FontSize="11" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       Margin="12,8,0,4" />
+                            <ItemsControl ItemsSource="{Binding SmartPlaylists}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="models:SmartPlaylist">
+                                        <Button Background="Transparent"
+                                                CornerRadius="8"
+                                                Padding="12,8"
+                                                HorizontalAlignment="Stretch"
+                                                Cursor="Hand"
+                                                Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).NavigateToSmartPlaylistCommand}"
+                                                CommandParameter="{Binding}">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="&#xE9D9;"
+                                                           FontFamily="Segoe Fluent Icons"
+                                                           FontSize="14"
+                                                           Foreground="{StaticResource AccentPurpleBrush}"
+                                                           VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Name}"
+                                                           FontSize="13"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                                           VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
                         <!-- 歌单 -->
                         <Grid Margin="4,0">
                             <ToggleButton Theme="{StaticResource SidebarNavItemTheme}"
@@ -527,6 +560,18 @@
                         <Button Theme="{StaticResource PlayerControlButtonTheme}"
                                 Command="{Binding ToggleQueuePanelCommand}">
                             <TextBlock Text="&#xE8F1;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="18"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Button>
+
+                        <!-- 迷你模式 -->
+                        <Button Theme="{StaticResource PlayerControlButtonTheme}"
+                                Command="{Binding ToggleMiniModeCommand}"
+                                ToolTip.Tip="迷你模式">
+                            <TextBlock Text="&#xE8A7;"
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="18"
                                        Foreground="{StaticResource TextPrimaryBrush}"

@@ -1,0 +1,82 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:LocalMusicPlayer.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="90"
+        x:Class="LocalMusicPlayer.Views.MiniMode.MiniModeWindow"
+        x:DataType="vm:MainWindowViewModel"
+        WindowStyle="None"
+        Background="Transparent"
+        CanResize="False"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Decorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        Width="320" Height="90">
+
+    <Border Background="{StaticResource BgCardBrush}"
+            CornerRadius="12"
+            Margin="8"
+            BoxShadow="0 4 16 0 #40000000">
+        <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,8">
+            <!-- Album Art -->
+            <Border Grid.Column="0" Width="56" Height="56" CornerRadius="6" Margin="0,0,12,0">
+                <Panel>
+                    <Image Source="{Binding CurrentSong.AlbumArtPath}"
+                           IsVisible="{Binding CurrentSong.HasAlbumArt}"
+                           Stretch="UniformToFill" />
+                    <Border Background="{StaticResource BgSecondaryBrush}"
+                            IsVisible="{Binding !CurrentSong.HasAlbumArt}"
+                            CornerRadius="6">
+                        <TextBlock Text="&#xE8D6;"
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="24"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                </Panel>
+            </Border>
+
+            <!-- Title & Artist -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock Text="{Binding CurrentSong.Title, FallbackValue='Not Playing'}"
+                           FontSize="14" FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{Binding CurrentSong.Artist, FallbackValue='-'}"
+                           FontSize="12"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+
+            <!-- Controls -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                <Button Command="{Binding PauseCommand}" Width="32" Height="32"
+                        Background="Transparent" CornerRadius="16"
+                        IsVisible="{Binding IsPlaying}">
+                    <TextBlock Text="&#xE769;" FontFamily="Segoe Fluent Icons" FontSize="14"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                </Button>
+                <Button Command="{Binding PlayCommand}" Width="32" Height="32"
+                        Background="Transparent" CornerRadius="16"
+                        IsVisible="{Binding !IsPlaying}">
+                    <TextBlock Text="&#xE768;" FontFamily="Segoe Fluent Icons" FontSize="14"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                </Button>
+                <Button Command="{Binding NextCommand}" Width="32" Height="32"
+                        Background="Transparent" CornerRadius="16">
+                    <TextBlock Text="&#xE893;" FontFamily="Segoe Fluent Icons" FontSize="14"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                </Button>
+                <Button Command="{Binding ToggleMiniModeCommand}" Width="32" Height="32"
+                        Background="Transparent" CornerRadius="16">
+                    <TextBlock Text="&#xE8BB;" FontFamily="Segoe Fluent Icons" FontSize="14"
+                               Foreground="{StaticResource TextMutedBrush}" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

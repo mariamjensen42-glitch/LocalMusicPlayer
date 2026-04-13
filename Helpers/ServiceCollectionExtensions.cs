@@ -70,6 +70,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IPlaylistService, PlaylistService>();
         services.AddSingleton<IUserPlaylistService, UserPlaylistService>();
         services.AddSingleton<IPlayHistoryService, PlayHistoryService>();
+        services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
     }
 
     private static void AddSystemServices(IServiceCollection services)
@@ -114,5 +115,6 @@ public static class ServiceCollectionExtensions
         services.AddTransient<AlbumsPageViewModel>();
         services.AddTransient<MetadataEditorViewModel>();
         services.AddTransient<BatchMetadataEditorViewModel>();
+        services.AddTransient<SmartPlaylistSongsViewModel>();
     }
 }

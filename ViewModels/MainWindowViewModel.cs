@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
 using LocalMusicPlayer.Services;
+using LocalMusicPlayer.Views.MiniMode;
 
 namespace LocalMusicPlayer.ViewModels;
 
@@ -40,6 +41,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private readonly ISystemTrayService _systemTrayService;
     private readonly IPlayHistoryService _playHistoryService;
     private readonly IDialogService _dialogService;
+    private readonly ISmartPlaylistService _smartPlaylistService;
+    private Window? _miniModeWindow;
 
     [ObservableProperty] private ViewModelBase _currentPage = null!;
 
@@ -82,6 +85,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
 
     [ObservableProperty] private ObservableCollection<Song> _selectedSongs = new();
     [ObservableProperty] private bool _isSelectAll;
+
+    [ObservableProperty] private bool _isMiniMode;
 
     public bool IsGridView => HomeViewModel.IsGridView;
 
@@ -162,6 +167,26 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             PlaybackMode.Loop => PlaybackMode.SingleLoop,
             _ => PlaybackMode.Normal
         };
+    }
+
+    [RelayCommand]
+    private void ToggleMiniMode()
+    {
+        IsMiniMode = !IsMiniMode;
+        if (IsMiniMode)
+        {
+            if (_miniModeWindow == null)
+            {
+                _miniModeWindow = new MiniModeWindow { DataContext = this };
+                _miniModeWindow.Closed += (s, e) => { IsMiniMode = false; _miniModeWindow = null; };
+                _miniModeWindow.Show();
+            }
+        }
+        else
+        {
+            _miniModeWindow?.Close();
+            _miniModeWindow = null;
+        }
     }
 
     [RelayCommand]
@@ -483,12 +508,23 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
 
     public ObservableCollection<UserPlaylist> UserPlaylists => _userPlaylistService.UserPlaylists;
 
+    public ObservableCollection<SmartPlaylist> SmartPlaylists { get; } = new();
+
+    public SmartPlaylistSongsViewModel? SmartPlaylistSongsViewModel { get; private set; }
+
     [ObservableProperty] private bool _isPlaylistSectionExpanded = true;
 
     [RelayCommand]
     private void NavigateToPlaylistDetailFromSidebar(UserPlaylist playlist)
     {
         NavigateToPlaylistDetail(playlist);
+    }
+
+    [RelayCommand]
+    private void NavigateToSmartPlaylist(SmartPlaylist smartPlaylist)
+    {
+        SmartPlaylistSongsViewModel = _viewModelFactory.CreateSmartPlaylistSongsViewModel(smartPlaylist);
+        CurrentPage = SmartPlaylistSongsViewModel;
     }
 
     public MainWindowViewModel(
@@ -504,7 +540,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         IScanService scanService,
         ISystemTrayService systemTrayService,
         IPlayHistoryService playHistoryService,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        ISmartPlaylistService smartPlaylistService)
     {
         _playbackStateService = playbackStateService;
         _navigationService = navigationService;
@@ -518,6 +555,10 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         _systemTrayService = systemTrayService;
         _playHistoryService = playHistoryService;
         _dialogService = dialogService;
+        _smartPlaylistService = smartPlaylistService;
+
+        foreach (var sp in _smartPlaylistService.GetSmartPlaylists())
+            SmartPlaylists.Add(sp);
 
         // 初始化页面查找字典
         _pageLookup = CreatePageLookup();
@@ -573,6 +614,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private void OnPlaybackStateChanged(object? sender, PlayState state)
     {
         OnPropertyChanged(nameof(IsPlaying));
+        OnPropertyChanged(nameof(IsMiniMode));
         _systemTrayService.UpdateTrayIcon(IsPlaying);
     }
 
@@ -585,6 +627,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private void OnCurrentSongChanged(object? sender, Song? song)
     {
         OnPropertyChanged(nameof(CurrentSong));
+        OnPropertyChanged(nameof(IsMiniMode));
         if (CurrentSong != null && _configService.CurrentSettings.ShowSongChangeNotification)
         {
             _systemTrayService.ShowNotification("NowPlaying", $"{CurrentSong.Title} - {CurrentSong.Artist}");
@@ -598,6 +641,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         OnPropertyChanged(nameof(PositionSeconds));
         OnPropertyChanged(nameof(DurationSeconds));
         OnPropertyChanged(nameof(IsPlaying));
+        OnPropertyChanged(nameof(IsMiniMode));
     }
 
     private void OnQueuePanelChanged(object? sender, bool isOpen)

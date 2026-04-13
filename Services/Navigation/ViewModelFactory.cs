@@ -66,4 +66,7 @@ public class ViewModelFactory : IViewModelFactory
     public BatchMetadataEditorViewModel CreateBatchMetadataEditorViewModel(
         System.Collections.Generic.IEnumerable<Song> songs, Action? onSaved = null)
         => ActivatorUtilities.CreateInstance<BatchMetadataEditorViewModel>(_serviceProvider, songs, onSaved!);
+
+    public SmartPlaylistSongsViewModel CreateSmartPlaylistSongsViewModel(SmartPlaylist smartPlaylist)
+        => ActivatorUtilities.CreateInstance<SmartPlaylistSongsViewModel>(_serviceProvider, smartPlaylist);
 }
