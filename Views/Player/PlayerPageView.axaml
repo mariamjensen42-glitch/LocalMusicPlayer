@@ -336,7 +336,7 @@
                                     Command="{Binding SearchOnlineLyricsCommand}"
                                     Foreground="{StaticResource TextMutedBrush}"
                                     IsVisible="{Binding !IsSearchingLyrics}"
-                                    ToolTip.Tip="搜索歌词">
+                                    ToolTip.Tip="{DynamicResource StringSearchLyrics}">
                                 <TextBlock Text="&#xE721;"
                                            FontFamily="Segoe Fluent Icons"
                                            FontSize="16" />
@@ -344,7 +344,7 @@
                             <Button Theme="{StaticResource TransparentIconButtonTheme}"
                                     Foreground="{StaticResource AccentPurpleBrush}"
                                     IsVisible="{Binding IsSearchingLyrics}"
-                                    ToolTip.Tip="搜索中...">
+                                    ToolTip.Tip="{DynamicResource StringSearching}">
                                 <TextBlock Text="&#xE895;"
                                            FontFamily="Segoe Fluent Icons"
                                            FontSize="16" />

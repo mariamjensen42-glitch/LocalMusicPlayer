@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Avalonia.Logging;
 
 namespace LocalMusicPlayer.Services;
 
@@ -52,8 +53,9 @@ public class LyricsService : ILyricsService
                 lyrics = ParseLrc(lrcContent, translatedLrc);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"[LyricsService] Failed to load lyrics for file: {filePath}, Error: {ex.Message}");
         }
 
         return lyrics;

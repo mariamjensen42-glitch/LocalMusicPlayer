@@ -67,7 +67,7 @@
                                            FontSize="14"
                                            Foreground="{StaticResource TextPrimaryBrush}"
                                            VerticalAlignment="Center" />
-                                <TextBlock Text="添加到播放列表"
+                                <TextBlock Text="{DynamicResource StringAddToPlaylist}"
                                            FontSize="13"
                                            FontWeight="Medium"
                                            Foreground="{StaticResource TextPrimaryBrush}"
@@ -86,7 +86,7 @@
                                            FontSize="14"
                                            Foreground="{StaticResource TextPrimaryBrush}"
                                            VerticalAlignment="Center" />
-                                <TextBlock Text="移除"
+                                <TextBlock Text="{DynamicResource StringRemove}"
                                            FontSize="13"
                                            FontWeight="Medium"
                                            Foreground="{StaticResource TextPrimaryBrush}"

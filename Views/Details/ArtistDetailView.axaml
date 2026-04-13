@@ -11,7 +11,7 @@
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
              x:Class="LocalMusicPlayer.Views.Details.ArtistDetailView"
              x:DataType="vm:ArtistDetailViewModel"
-             x:CompileBindings="False">
+             x:CompileBindings="True">
 
     <UserControl.Resources>
         <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
@@ -45,17 +45,17 @@
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextMutedBrush}" />
                             <TextBlock Grid.Column="1"
-                                       Text="标题 / 艺术家"
+                                       Text="{DynamicResource StringTitleArtist}"
                                        FontSize="11"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextMutedBrush}" />
                             <TextBlock Grid.Column="2"
-                                       Text="专辑"
+                                       Text="{DynamicResource StringAlbum}"
                                        FontSize="11"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextMutedBrush}" />
                             <TextBlock Grid.Column="3"
-                                       Text="时长"
+                                       Text="{DynamicResource StringDuration}"
                                        FontSize="11"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextMutedBrush}"
@@ -193,12 +193,12 @@
                                        FontSize="48"
                                        Foreground="{StaticResource TextMutedBrush}"
                                        HorizontalAlignment="Center" />
-                            <TextBlock Text="暂无歌曲"
+                            <TextBlock Text="{DynamicResource StringNoSongs}"
                                        FontSize="16"
                                        FontWeight="Medium"
                                        Foreground="{StaticResource TextSecondaryBrush}"
                                        HorizontalAlignment="Center" />
-                            <TextBlock Text="该艺术家暂无歌曲"
+                            <TextBlock Text="{DynamicResource StringNoSongsInArtist}"
                                        FontSize="13"
                                        Foreground="{StaticResource TextMutedBrush}"
                                        HorizontalAlignment="Center" />

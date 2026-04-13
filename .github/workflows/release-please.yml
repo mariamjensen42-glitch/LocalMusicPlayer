@@ -78,12 +78,24 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -r ${{ matrix.target }} --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/${{ matrix.target }}
 
+      - name: Verify publish output
+        run: |
+          if (Test-Path "./publish/${{ matrix.target }}") {
+            Write-Host "Publish directory exists with $(Get-ChildItem './publish/${{ matrix.target }}' -File).Count files"
+          } else {
+            Write-Host "ERROR: Publish directory not found"
+            exit 1
+          }
+
       - name: Build Windows Installer
         if: ${{ runner.os == 'Windows' }}
         run: |
+          New-Item -ItemType Directory -Force -Path installer\installer-output | Out-Null
           choco install innosetup -y
           $version = "${{ needs.release-please.outputs.tag_name }}".Replace('v', '')
-          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" /DMyAppVersion=$version /DMyAppArch=${{ matrix.setup_arch }} /DMyAppTarget=${{ matrix.setup_target }} installer\LocalMusicPlayer.iss
+          Set-Location installer
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" /DMyAppVersion=$version /DMyAppArch=${{ matrix.setup_arch }} /DMyAppTarget=${{ matrix.setup_target }} LocalMusicPlayer.iss
+          Set-Location ..
 
       - name: Package
         run: |

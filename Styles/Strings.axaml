@@ -173,4 +173,18 @@
     <x:String x:Key="StringGridView">网格视图</x:String>
     <x:String x:Key="StringNoSongs">暂无歌曲</x:String>
     <x:String x:Key="StringAddMusicFolder">请前往设置添加音乐文件夹</x:String>
+
+    <!-- 详情页 -->
+    <x:String x:Key="StringTitleArtist">标题 / 艺术家</x:String>
+    <x:String x:Key="StringNoSongsInArtist">该艺术家暂无歌曲</x:String>
+    <x:String x:Key="StringNoSongsInAlbum">该专辑暂无歌曲</x:String>
+    <x:String x:Key="StringNoSongsInPlaylist">该播放列表暂无歌曲</x:String>
+    <x:String x:Key="StringSongCountFormat">{0} 首</x:String>
+
+    <!-- 播放器 -->
+    <x:String x:Key="StringSearchLyrics">搜索歌词</x:String>
+    <x:String x:Key="StringSearching">搜索中...</x:String>
+
+    <!-- 秒 -->
+    <x:String x:Key="StringSecondsFormat">{0} 秒</x:String>
 </ResourceDictionary>

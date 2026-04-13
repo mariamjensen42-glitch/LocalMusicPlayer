@@ -10,7 +10,7 @@
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
              x:Class="LocalMusicPlayer.Views.Library.AlbumsPageView"
              x:DataType="vm:AlbumsPageViewModel"
-             x:CompileBindings="False">
+             x:CompileBindings="True">
 
     <UserControl.Resources>
         <converters:AlbumArtConverter x:Key="AlbumArtConverter" />
@@ -23,7 +23,7 @@
                 BorderBrush="{StaticResource BorderSubtleBrush}"
                 BorderThickness="0,0,0,1"
                 Padding="24,16">
-            <TextBlock Text="专辑"
+            <TextBlock Text="{DynamicResource StringAlbums}"
                        FontSize="24"
                        FontWeight="Bold"
                        Foreground="{StaticResource TextPrimaryBrush}" />
@@ -61,7 +61,7 @@
                                            FontSize="12"
                                            Foreground="{StaticResource TextMutedBrush}"
                                            TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{Binding SongCount, StringFormat='{}{0} 首'}"
+                                <TextBlock Text="{Binding SongCount, StringFormat={}{0} 首}"
                                            FontSize="11"
                                            Foreground="{StaticResource TextSecondaryBrush}" />
                             </StackPanel>

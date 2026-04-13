@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="LocalMusicPlayer.Views.Shared.DetailHeaderView"
-             x:CompileBindings="False"
+             x:CompileBindings="True"
              x:Name="Self">
 
     <Grid DataContext="{Binding #Self}"
@@ -36,7 +36,7 @@
                                    FontSize="16"
                                    Foreground="White"
                                    VerticalAlignment="Center" />
-                        <TextBlock Text="播放全部"
+                        <TextBlock Text="{DynamicResource StringPlayAll}"
                                    FontSize="13"
                                    FontWeight="Medium"
                                    Foreground="White"
@@ -52,7 +52,7 @@
                                    FontSize="16"
                                    Foreground="{StaticResource TextSecondaryBrush}"
                                    VerticalAlignment="Center" />
-                        <TextBlock Text="随机播放"
+                        <TextBlock Text="{DynamicResource StringShuffle}"
                                    FontSize="13"
                                    FontWeight="Medium"
                                    VerticalAlignment="Center" />

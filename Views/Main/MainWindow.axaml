@@ -18,7 +18,7 @@
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
-        x:CompileBindings="False">
+        x:CompileBindings="True">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
@@ -75,7 +75,7 @@
                                     <Binding Source="{x:Static vm:NavigationPage.Home}" />
                                 </MultiBinding>
                             </ToggleButton.IsChecked>
-                            所有歌曲
+                            <TextBlock Text="{DynamicResource StringAllSongs}" />
                         </ToggleButton>
 
                         <ToggleButton Theme="{StaticResource SidebarNavItemTheme}"
@@ -87,7 +87,7 @@
                                          ConverterParameter="{x:Static vm:NavigationPage.Artists}"
                                          Mode="OneWay" />
                             </ToggleButton.IsChecked>
-                            艺术家
+                            <TextBlock Text="{DynamicResource StringArtists}" />
                         </ToggleButton>
 
                         <!-- 专辑 -->
@@ -100,7 +100,7 @@
                                          ConverterParameter="{x:Static vm:NavigationPage.Albums}"
                                          Mode="OneWay" />
                             </ToggleButton.IsChecked>
-                            专辑
+                            <TextBlock Text="{DynamicResource StringAlbums}" />
                         </ToggleButton>
 
                         <!-- 文件夹 -->
@@ -116,7 +116,7 @@
                                     <Binding Source="{x:Static models:BrowserCategory.Folders}" />
                                 </MultiBinding>
                             </ToggleButton.IsChecked>
-                            文件夹
+                            <TextBlock Text="{DynamicResource StringFolders}" />
                         </ToggleButton>
 
                         <!-- 听歌排行 -->
@@ -129,7 +129,7 @@
                                     <Binding Source="{x:Static vm:NavigationPage.Statistics}" />
                                 </MultiBinding>
                             </ToggleButton.IsChecked>
-                            听歌排行
+                            <TextBlock Text="{DynamicResource StringTopCharts}" />
                         </ToggleButton>
 
                         <!-- 最近播放 -->
@@ -142,7 +142,7 @@
                                     <Binding Source="{x:Static vm:NavigationPage.History}" />
                                 </MultiBinding>
                             </ToggleButton.IsChecked>
-                            最近播放
+                            <TextBlock Text="{DynamicResource StringRecentPlays}" />
                         </ToggleButton>
 
                         <!-- 歌单 -->
@@ -151,7 +151,7 @@
                                           HorizontalAlignment="Stretch"
                                           Command="{Binding NavigateToPlaylistCommand}"
                                           Tag="&#xE8FC;"
-                                          Content="播放列表" />
+                                          Content="{DynamicResource StringPlaylists}" />
                             <Button Width="24"
                                     Height="24"
                                     Background="Transparent"

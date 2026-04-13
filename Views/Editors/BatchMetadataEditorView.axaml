@@ -11,7 +11,7 @@
         Height="520"
         WindowStartupLocation="CenterOwner"
         CanResize="False"
-        x:CompileBindings="False">
+        x:CompileBindings="True">
 
     <Design.DataContext>
         <vm:BatchMetadataEditorViewModel />

@@ -401,7 +401,7 @@
                                                Foreground="{StaticResource TextMutedBrush}"
                                                VerticalAlignment="Center" />
                                 </Grid>
-                                <TextBlock Text="{Binding CrossfadeDurationSeconds, StringFormat='{}{0} 秒'}"
+                                <TextBlock Text="{Binding CrossfadeDurationSeconds, StringFormat={}{0} 秒}"
                                            FontSize="12"
                                            Foreground="{StaticResource TextSecondaryBrush}"
                                            HorizontalAlignment="Center" />

@@ -10,7 +10,7 @@
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
              x:Class="LocalMusicPlayer.Views.Library.LibraryBrowserView"
              x:DataType="vm:LibraryBrowserViewModel"
-             x:CompileBindings="False">
+             x:CompileBindings="True">
 
     <Design.DataContext>
         <vm:LibraryBrowserViewModel />

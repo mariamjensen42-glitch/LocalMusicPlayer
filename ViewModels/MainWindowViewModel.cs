@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -518,6 +519,9 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         _playHistoryService = playHistoryService;
         _dialogService = dialogService;
 
+        // 初始化页面查找字典
+        _pageLookup = CreatePageLookup();
+
         CurrentPlaylist = _playlistService.CreatePlaylist("DefaultPlaylist");
         _playlistService.SetCurrentPlaylist(CurrentPlaylist);
 
@@ -535,15 +539,33 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         CurrentPage = HomeViewModel;
         _navigationService.NavigateTo<HomeViewModel>();
 
-        _playbackStateService.PlaybackStateChanged += OnPlaybackStateChanged;
-        _playbackStateService.CurrentSongChanged += OnCurrentSongChanged;
-        _playbackStateService.PositionChanged += OnPositionChanged;
-        _playbackStateService.PlaybackModeChanged += OnPlaybackModeChanged;
+        // 使用 SubscribeEvent 辅助方法进行事件订阅，便于自动清理
+        SubscribeEvent(
+            () =>
+            {
+                _playbackStateService.PlaybackStateChanged += OnPlaybackStateChanged;
+                _playbackStateService.CurrentSongChanged += OnCurrentSongChanged;
+                _playbackStateService.PositionChanged += OnPositionChanged;
+                _playbackStateService.PlaybackModeChanged += OnPlaybackModeChanged;
 
-        _navigationService.QueuePanelChanged += OnQueuePanelChanged;
-        _navigationService.CurrentPageChanged += OnCurrentPageChanged;
+                _navigationService.QueuePanelChanged += OnQueuePanelChanged;
+                _navigationService.CurrentPageChanged += OnCurrentPageChanged;
 
-        Library.Songs.CollectionChanged += OnSongsCollectionChanged;
+                Library.Songs.CollectionChanged += OnSongsCollectionChanged;
+            },
+            () =>
+            {
+                _playbackStateService.PlaybackStateChanged -= OnPlaybackStateChanged;
+                _playbackStateService.CurrentSongChanged -= OnCurrentSongChanged;
+                _playbackStateService.PositionChanged -= OnPositionChanged;
+                _playbackStateService.PlaybackModeChanged -= OnPlaybackModeChanged;
+
+                _navigationService.QueuePanelChanged -= OnQueuePanelChanged;
+                _navigationService.CurrentPageChanged -= OnCurrentPageChanged;
+
+                Library.Songs.CollectionChanged -= OnSongsCollectionChanged;
+            }
+        );
 
         _ = InitializeAsync(scanService);
     }
@@ -585,35 +607,38 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
 
     private void OnCurrentPageChanged(object? sender, Type? pageType)
     {
-        if (pageType == typeof(HomeViewModel))
-            CurrentPage = HomeViewModel;
-        else if (pageType == typeof(PlayerPageViewModel))
-            CurrentPage = PlayerPageViewModel;
-        else if (pageType == typeof(SettingsViewModel) && SettingsViewModel != null)
-            CurrentPage = SettingsViewModel;
-        else if (pageType == typeof(StatisticsViewModel) && StatisticsViewModel != null)
-            CurrentPage = StatisticsViewModel;
-        else if (pageType == typeof(PlaylistManagementViewModel) && PlaylistManagementViewModel != null)
-            CurrentPage = PlaylistManagementViewModel;
-        else if (pageType == typeof(PlaylistListViewModel) && PlaylistListViewModel != null)
-            CurrentPage = PlaylistListViewModel;
-        else if (pageType == typeof(LibraryCategoryViewModel) && LibraryCategoryViewModel != null)
-            CurrentPage = LibraryCategoryViewModel;
-        else if (pageType == typeof(ArtistDetailViewModel) && ArtistDetailViewModel != null)
-            CurrentPage = ArtistDetailViewModel;
-        else if (pageType == typeof(AlbumDetailViewModel) && AlbumDetailViewModel != null)
-            CurrentPage = AlbumDetailViewModel;
-        else if (pageType == typeof(PlayHistoryViewModel) && PlayHistoryViewModel != null)
-            CurrentPage = PlayHistoryViewModel;
-        else if (pageType == typeof(LibraryBrowserViewModel) && LibraryBrowserViewModel != null)
-            CurrentPage = LibraryBrowserViewModel;
-        else if (pageType == typeof(ArtistsPageViewModel) && ArtistsPageViewModel != null)
-            CurrentPage = ArtistsPageViewModel;
-        else if (pageType == typeof(AlbumsPageViewModel) && AlbumsPageViewModel != null)
-            CurrentPage = AlbumsPageViewModel;
-        else if (pageType == typeof(StatisticsReportViewModel) && StatisticsReportViewModel != null)
-            CurrentPage = StatisticsReportViewModel;
+        if (pageType == null) return;
+
+        // 使用字典查找替代 if-else 链，提高可维护性
+        if (_pageLookup.TryGetValue(pageType, out var getViewModel))
+        {
+            CurrentPage = getViewModel() ?? CurrentPage;
+        }
     }
+
+    // 页面类型到 ViewModel 的映射字典
+    private Dictionary<Type, Func<ViewModelBase?>> CreatePageLookup()
+    {
+        return new Dictionary<Type, Func<ViewModelBase?>>
+        {
+            [typeof(HomeViewModel)] = () => HomeViewModel,
+            [typeof(PlayerPageViewModel)] = () => PlayerPageViewModel,
+            [typeof(SettingsViewModel)] = () => SettingsViewModel,
+            [typeof(StatisticsViewModel)] = () => StatisticsViewModel,
+            [typeof(PlaylistManagementViewModel)] = () => PlaylistManagementViewModel,
+            [typeof(PlaylistListViewModel)] = () => PlaylistListViewModel,
+            [typeof(LibraryCategoryViewModel)] = () => LibraryCategoryViewModel,
+            [typeof(ArtistDetailViewModel)] = () => ArtistDetailViewModel,
+            [typeof(AlbumDetailViewModel)] = () => AlbumDetailViewModel,
+            [typeof(PlayHistoryViewModel)] = () => PlayHistoryViewModel,
+            [typeof(LibraryBrowserViewModel)] = () => LibraryBrowserViewModel,
+            [typeof(ArtistsPageViewModel)] = () => ArtistsPageViewModel,
+            [typeof(AlbumsPageViewModel)] = () => AlbumsPageViewModel,
+            [typeof(StatisticsReportViewModel)] = () => StatisticsReportViewModel
+        };
+    }
+
+    private readonly Dictionary<Type, Func<ViewModelBase?>> _pageLookup;
 
     private void OnSongsCollectionChanged(object? sender,
         System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -624,12 +649,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
 
     protected override void DisposeCore()
     {
-        _playbackStateService.PlaybackStateChanged -= OnPlaybackStateChanged;
-        _playbackStateService.CurrentSongChanged -= OnCurrentSongChanged;
-        _playbackStateService.PositionChanged -= OnPositionChanged;
-        _navigationService.QueuePanelChanged -= OnQueuePanelChanged;
-        _navigationService.CurrentPageChanged -= OnCurrentPageChanged;
-        Library.Songs.CollectionChanged -= OnSongsCollectionChanged;
+        // 事件订阅已在 SubscribeEvent 中自动管理
         base.DisposeCore();
     }
 
