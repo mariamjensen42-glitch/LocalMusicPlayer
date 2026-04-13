@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.3.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.2.0...v1.3.0) (2026-04-13)
+
+
+### ✨ 新功能
+
+* 启用XAML编译绑定并重构视图定位器 ([44509d6](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/44509d6d8b13d4c2ffbaa3a501f5637430ffe85d))
+
+
+### 🐛 修复
+
+* 修复字符串资源重复键错误 ([44509d6](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/44509d6d8b13d4c2ffbaa3a501f5637430ffe85d))
+
+
+### 📝 文档
+
+* 添加代码优化和修复的规则文档 ([44509d6](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/44509d6d8b13d4c2ffbaa3a501f5637430ffe85d))
+
+
+### 💄 代码样式
+
+* 更新UI设计文件颜色和样式 ([44509d6](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/44509d6d8b13d4c2ffbaa3a501f5637430ffe85d))
+
+
+### ♻️ 重构
+
+* 优化MainWindowViewModel事件订阅管理 ([44509d6](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/44509d6d8b13d4c2ffbaa3a501f5637430ffe85d))
+
+
+### 🧹 其他
+
+* 添加构建验证步骤到CI工作流 ([44509d6](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/44509d6d8b13d4c2ffbaa3a501f5637430ffe85d))
+
 ## [1.2.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.1.0...v1.2.0) (2026-04-13)
 
 
