@@ -46,8 +46,10 @@
 
             <!-- ==================== 左侧边栏 (220px) ==================== -->
             <Border Grid.Column="0"
+                    x:Name="Sidebar"
                     Width="220"
-                    Background="{StaticResource BgSidebarBrush}">
+                    Background="{StaticResource BgSidebarBrush}"
+                    IsVisible="{Binding !IsMiniMode}">
                 <Grid RowDefinitions="Auto,*,Auto">
 
                     <!-- 顶部应用标题区 -->
@@ -238,7 +240,8 @@
                 <Border Grid.Row="0"
                         x:Name="TitleBar"
                         Background="{StaticResource BgPrimaryBrush}"
-                        Height="48">
+                        Height="48"
+                        IsVisible="{Binding !IsMiniMode}">
                     <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto,Auto">
 
                         <!-- 返回按钮 (Column 0) -->

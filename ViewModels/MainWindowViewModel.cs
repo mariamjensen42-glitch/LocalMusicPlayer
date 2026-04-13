@@ -10,7 +10,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
 using LocalMusicPlayer.Services;
-using LocalMusicPlayer.Views.MiniMode;
 
 namespace LocalMusicPlayer.ViewModels;
 
@@ -42,7 +41,6 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private readonly IPlayHistoryService _playHistoryService;
     private readonly IDialogService _dialogService;
     private readonly ISmartPlaylistService _smartPlaylistService;
-    private Window? _miniModeWindow;
 
     [ObservableProperty] private ViewModelBase _currentPage = null!;
 
@@ -173,20 +171,6 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private void ToggleMiniMode()
     {
         IsMiniMode = !IsMiniMode;
-        if (IsMiniMode)
-        {
-            if (_miniModeWindow == null)
-            {
-                _miniModeWindow = new MiniModeWindow { DataContext = this };
-                _miniModeWindow.Closed += (s, e) => { IsMiniMode = false; _miniModeWindow = null; };
-                _miniModeWindow.Show();
-            }
-        }
-        else
-        {
-            _miniModeWindow?.Close();
-            _miniModeWindow = null;
-        }
     }
 
     [RelayCommand]

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -76,6 +77,33 @@ public partial class MainWindow : Window
         if (DataContext is MainWindowViewModel vm)
         {
             _mainWindowViewModel = vm;
+            vm.PropertyChanged += OnViewModelPropertyChanged;
+        }
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ViewModels.MainWindowViewModel.IsMiniMode))
+        {
+            var vm = sender as ViewModels.MainWindowViewModel;
+            if (vm != null && vm.IsMiniMode)
+            {
+                Width = 400;
+                Height = 90;
+                MinWidth = 400;
+                MinHeight = 90;
+                CanResize = false;
+                Topmost = true;
+            }
+            else
+            {
+                Width = 1400;
+                Height = 900;
+                MinWidth = 1200;
+                MinHeight = 700;
+                CanResize = true;
+                Topmost = false;
+            }
         }
     }
 
