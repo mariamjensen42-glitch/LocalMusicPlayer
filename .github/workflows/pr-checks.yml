@@ -6,12 +6,11 @@ on:
     types: [opened, synchronize, reopened]
 
 env:
-  DOTNET_VERSION: '9.0.x'
+  DOTNET_VERSION: "9.0.x"
 
 jobs:
-  # 必需：构建检查
   build:
-    name: Build
+    name: Build (${{ matrix.os }}, ${{ matrix.configuration }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -19,39 +18,45 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         configuration: [Debug, Release]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore dependencies
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.props') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore
         run: dotnet restore
 
       - name: Build
         run: dotnet build --no-restore --configuration ${{ matrix.configuration }}
 
-  # 必需：代码质量检查
   code-quality:
     name: Code Quality
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore tools
-        run: |
-          dotnet new tool-manifest --force
-          dotnet tool install dotnet-format --local
+      - name: Cache tools
+        uses: actions/cache@v4
+        with:
+          path: ~/.dotnet/tools
+          key: ${{ runner.os }}-dotnet-tools-${{ hashFiles('.config/dotnet-tools.json') }}
+          restore-keys: |
+            ${{ runner.os }}-dotnet-tools-
 
-      - name: Restore dependencies
+      - name: Restore
         run: dotnet restore
 
       - name: Check formatting
@@ -60,23 +65,18 @@ jobs:
       - name: Build with analyzers
         run: dotnet build --configuration Release --verbosity normal
 
-  # 必需：安全扫描
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore dependencies
+      - name: Restore
         run: dotnet restore
 
-      - name: Run security audit
-        run: |
-          dotnet list package --vulnerable --include-transitive
-          # 如果有漏洞，命令会返回非零退出码，导致检查失败
+      - name: Audit
+        run: dotnet list package --vulnerable --include-transitive

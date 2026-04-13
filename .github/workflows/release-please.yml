@@ -1,13 +1,15 @@
-name: Release Please
+name: Release
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
 
-permissions:
-  contents: write
-  pull-requests: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_VERSION: "9.0.x"
 
 jobs:
   release-please:
@@ -23,8 +25,7 @@ jobs:
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
 
-  # 当 release-please 创建 release 后，触发构建
-  build-and-release:
+  build:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ${{ matrix.os }}
@@ -32,101 +33,69 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Windows x64 - 生成安装包
           - os: windows-latest
             target: win-x64
-            artifact_name: LocalMusicPlayer-win-x64
             asset_name: LocalMusicPlayer-win-x64.zip
             setup_arch: x64
             setup_target: win-x64
-          # Windows x86 - 生成安装包
           - os: windows-latest
             target: win-x86
-            artifact_name: LocalMusicPlayer-win-x86
             asset_name: LocalMusicPlayer-win-x86.zip
             setup_arch: x86
             setup_target: win-x86
-          # Linux 和 macOS 保持压缩包格式
           - os: ubuntu-latest
             target: linux-x64
-            artifact_name: LocalMusicPlayer-linux-x64
             asset_name: LocalMusicPlayer-linux-x64.tar.gz
           - os: macos-latest
             target: osx-x64
-            artifact_name: LocalMusicPlayer-osx-x64
             asset_name: LocalMusicPlayer-osx-x64.tar.gz
           - os: macos-latest
             target: osx-arm64
-            artifact_name: LocalMusicPlayer-osx-arm64
             asset_name: LocalMusicPlayer-osx-arm64.tar.gz
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Install Linux dependencies
-        if: matrix.os == 'ubuntu-latest'
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libvlc-dev vlc
-
-      - name: Install macOS dependencies
-        if: matrix.os == 'macos-latest'
-        run: brew install vlc
-
-      - name: Restore dependencies
-        run: dotnet restore
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            sudo apt-get update && sudo apt-get install -y libvlc-dev vlc
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            brew install vlc
+          fi
+        shell: bash
 
       - name: Publish
-        run: |
-          dotnet publish -c Release -r ${{ matrix.target }} --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/${{ matrix.target }}
-
-      # Windows: 生成安装包
-      - name: Install Inno Setup
-        if: matrix.os == 'windows-latest'
-        run: |
-          choco install innosetup -y
+        run: dotnet publish -c Release -r ${{ matrix.target }} --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/${{ matrix.target }}
 
       - name: Build Windows Installer
-        if: matrix.os == 'windows-latest'
-        shell: pwsh
+        if: ${{ runner.os == 'Windows' }}
         run: |
+          choco install innosetup -y
           $version = "${{ needs.release-please.outputs.tag_name }}".Replace('v', '')
-          if ([string]::IsNullOrEmpty($version)) { $version = "1.0.0" }
-          
-          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" `
-            /DMyAppVersion=$version `
-            /DMyAppArch=${{ matrix.setup_arch }} `
-            /DMyAppTarget=${{ matrix.setup_target }} `
-            "installer\LocalMusicPlayer.iss"
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" /DMyAppVersion=$version /DMyAppArch=${{ matrix.setup_arch }} /DMyAppTarget=${{ matrix.setup_target }} installer\LocalMusicPlayer.iss
 
-      # Linux/macOS: 生成压缩包
-      - name: Create Unix archive
-        if: matrix.os != 'windows-latest'
+      - name: Package
         run: |
-          cd ./publish/${{ matrix.target }}
-          tar -czf ../../${{ matrix.asset_name }} .
-          cd ../..
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cd ./publish/${{ matrix.target }}
+            Compress-Archive -Path * -DestinationPath ../../${{ matrix.asset_name }}
+          else
+            cd ./publish/${{ matrix.target }}
+            tar -czf ../../${{ matrix.asset_name }} .
+          fi
 
-      # Windows: 上传安装包和压缩包
-      - name: Upload Windows Release Assets
-        if: matrix.os == 'windows-latest'
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ needs.release-please.outputs.tag_name }}
-          files: |
-            ./installer-output/*.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Linux/macOS: 上传压缩包
-      - name: Upload Unix Release Assets
-        if: matrix.os != 'windows-latest'
+      - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ needs.release-please.outputs.tag_name }}

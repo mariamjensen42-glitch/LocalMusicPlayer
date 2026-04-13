@@ -206,7 +206,7 @@
                         x:Name="TitleBar"
                         Background="{StaticResource BgPrimaryBrush}"
                         Height="48">
-                    <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto,Auto">
 
                         <!-- 返回按钮 (Column 0) -->
                         <Button Grid.Column="0"
@@ -222,41 +222,14 @@
                                        VerticalAlignment="Center" />
                         </Button>
 
-                        <!-- 播放全部按钮 (Column 1) -->
-                        <Button Grid.Column="1"
-                                Theme="{StaticResource ToolbarButtonTheme}"
-                                Command="{Binding PlayAllCommand}"
-                                ToolTip.Tip="{DynamicResource StringPlayAll}"
-                                Margin="8,0,0,0">
-                            <TextBlock Text="&#xE768;"
-                                       FontFamily="Segoe Fluent Icons"
-                                       FontSize="14"
-                                       Foreground="{StaticResource TextMutedBrush}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
-                        </Button>
-
-                        <!-- 随机播放按钮 (Column 2) -->
-                        <Button Grid.Column="2"
-                                Theme="{StaticResource ToolbarButtonTheme}"
-                                Command="{Binding ShufflePlayAllCommand}"
-                                ToolTip.Tip="{DynamicResource StringShuffle}"
-                                Margin="8,0,0,0">
-                            <TextBlock Text="&#xE81B;"
-                                       FontFamily="Segoe Fluent Icons"
-                                       FontSize="14"
-                                       Foreground="{StaticResource TextMutedBrush}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
-                        </Button>
-
-                        <!-- 搜索框 (Column 3) -->
-                        <Border Grid.Column="3"
+                        <!-- 搜索框 (Column 1) -->
+                        <Border Grid.Column="1"
                                 Background="{StaticResource BgCardBrush}"
                                 CornerRadius="8"
                                 Width="400"
                                 Height="36"
-                                HorizontalAlignment="Center">
+                                HorizontalAlignment="Center"
+                                Margin="8,0,0,0">
                             <Grid ColumnDefinitions="Auto,*">
                                 <TextBlock Grid.Column="0"
                                            Text="&#xE71E;"
@@ -278,11 +251,42 @@
                             </Grid>
                         </Border>
 
-                        <!-- 视图切换按钮 (Column 4) -->
-                        <Button Grid.Column="4"
+                        <!-- 播放全部按钮 (Column 2) -->
+                        <Button Grid.Column="2"
+                                Theme="{StaticResource ToolbarButtonTheme}"
+                                Command="{Binding PlayAllCommand}"
+                                ToolTip.Tip="{DynamicResource StringPlayAll}"
+                                Margin="8,0,0,0">
+                            <TextBlock Text="&#xE768;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Button>
+
+                        <!-- 随机播放按钮 (Column 3) -->
+                        <Button Grid.Column="3"
+                                Theme="{StaticResource ToolbarButtonTheme}"
+                                Command="{Binding ShufflePlayAllCommand}"
+                                ToolTip.Tip="{DynamicResource StringShuffle}">
+                            <TextBlock Text="&#xE81B;"
+                                       FontFamily="Segoe Fluent Icons"
+                                       FontSize="14"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Button>
+
+                        <!-- 间距 (Column 4) -->
+                        <Border Grid.Column="4" Width="4" />
+
+                        <!-- 视图切换按钮 (Column 5) -->
+                        <Button Grid.Column="5"
                                 Theme="{StaticResource ToolbarButtonTheme}"
                                 Command="{Binding ToggleViewCommand}"
-                                ToolTip.Tip="{DynamicResource StringGridView}">
+                                ToolTip.Tip="{DynamicResource StringGridView}"
+                                Margin="0,0,4,0">
                             <Panel>
                                 <TextBlock Text="&#xE80A;"
                                            FontFamily="Segoe Fluent Icons"
@@ -301,8 +305,8 @@
                             </Panel>
                         </Button>
 
-                        <!-- 设置按钮 (Column 5) -->
-                        <Button Grid.Column="5"
+                        <!-- 设置按钮 (Column 6) -->
+                        <Button Grid.Column="6"
                                 Theme="{StaticResource ToolbarButtonTheme}"
                                 Command="{Binding NavigateToSettingsCommand}"
                                 ToolTip.Tip="{DynamicResource StringSettings}">
@@ -314,8 +318,8 @@
                                        VerticalAlignment="Center" />
                         </Button>
 
-                        <!-- 窗口控制按钮组 (Column 6) -->
-                        <StackPanel Grid.Column="6"
+                        <!-- 窗口控制按钮组 (Column 7) -->
+                        <StackPanel Grid.Column="7"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"

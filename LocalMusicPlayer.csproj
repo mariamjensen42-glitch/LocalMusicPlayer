@@ -4,7 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <ApplicationManifest>Configs\app.manifest</ApplicationManifest>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <ApplicationIcon>Assets\avalonia-logo.ico</ApplicationIcon>
         <Version>1.0.0</Version>
