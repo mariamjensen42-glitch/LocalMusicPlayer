@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -85,25 +86,29 @@ public partial class MainWindow : Window
     {
         if (e.PropertyName == nameof(ViewModels.MainWindowViewModel.IsMiniMode))
         {
-            var vm = sender as ViewModels.MainWindowViewModel;
-            if (vm != null && vm.IsMiniMode)
+            Dispatcher.UIThread.Post(() =>
             {
-                Width = 400;
-                Height = 90;
-                MinWidth = 400;
-                MinHeight = 90;
-                CanResize = false;
-                Topmost = true;
-            }
-            else
-            {
-                Width = 1400;
-                Height = 900;
-                MinWidth = 1200;
-                MinHeight = 700;
-                CanResize = true;
-                Topmost = false;
-            }
+                var vm = sender as ViewModels.MainWindowViewModel;
+                if (vm == null) return;
+                if (vm.IsMiniMode)
+                {
+                    Width = 400;
+                    Height = 90;
+                    MinWidth = 400;
+                    MinHeight = 90;
+                    CanResize = false;
+                    Topmost = true;
+                }
+                else
+                {
+                    Width = 1400;
+                    Height = 900;
+                    MinWidth = 1200;
+                    MinHeight = 700;
+                    CanResize = true;
+                    Topmost = false;
+                }
+            });
         }
     }
 
