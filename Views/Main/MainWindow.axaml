@@ -11,8 +11,8 @@
     xmlns:services="using:LocalMusicPlayer.Services"
     xmlns:vm="using:LocalMusicPlayer.ViewModels"
     Title="{DynamicResource StringAppTitle}"
-    MinWidth="1200"
-    MinHeight="700"
+    MinWidth="800"
+    MinHeight="600"
     d:DesignHeight="900"
     d:DesignWidth="1400"
     x:CompileBindings="True"
@@ -54,16 +54,14 @@
         <!--  Row 0: 主区域  -->
         <Grid
             Grid.Row="0"
-            ColumnDefinitions="Auto,*"
-            IsVisible="{Binding !IsMiniMode}">
+            ColumnDefinitions="Auto,*">
 
             <!--  ==================== 左侧边栏 (220px) ====================  -->
             <Border
                 x:Name="Sidebar"
                 Grid.Column="0"
                 Width="48"
-                Background="{StaticResource BgSidebarBrush}"
-                IsVisible="{Binding !IsMiniMode}">
+                Background="{StaticResource BgSidebarBrush}">
                 <Grid RowDefinitions="Auto,*,Auto">
 
                     <Border
@@ -152,6 +150,28 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="18"
                                 Text="&#xE93C;" />
+                        </ToggleButton>
+
+                        <ToggleButton
+                            Width="40"
+                            Height="40"
+                            Padding="0"
+                            HorizontalAlignment="Center"
+                            Command="{Binding NavigateToFavoritesCommand}"
+                            Theme="{StaticResource SidebarNavItemTheme}"
+                            ToolTip.Tip="{DynamicResource StringFavorites}">
+                            <ToggleButton.IsChecked>
+                                <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
+                                    <Binding Path="CurrentNavPage" />
+                                    <Binding Source="{x:Static vm:NavigationPage.Favorites}" />
+                                </MultiBinding>
+                            </ToggleButton.IsChecked>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="18"
+                                Text="&#xE87D;" />
                         </ToggleButton>
 
                         <ToggleButton
@@ -278,8 +298,7 @@
                     x:Name="TitleBar"
                     Grid.Row="0"
                     Height="48"
-                    Background="{StaticResource BgPrimaryBrush}"
-                    IsVisible="{Binding !IsMiniMode}">
+                    Background="{StaticResource BgPrimaryBrush}">
                     <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto,Auto">
 
                         <!--  返回按钮 (Column 0)  -->
@@ -643,19 +662,7 @@
                                 Text="&#xE8F1;" />
                         </Button>
 
-                        <!--  迷你模式  -->
-                        <Button
-                            Command="{Binding ToggleMiniModeCommand}"
-                            Theme="{StaticResource CircularHoverButtonTheme}"
-                            ToolTip.Tip="迷你模式">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="18"
-                                Foreground="{StaticResource TextPrimaryBrush}"
-                                Text="&#xE8A7;" />
-                        </Button>
+
                     </StackPanel>
 
                     <!--  进度条和时间显示  -->
@@ -742,127 +749,6 @@
             </Grid>
         </Border>
 
-        <!--  ==================== 迷你模式覆盖层（歌词小窗） ====================  -->
-        <Border
-            Grid.RowSpan="2"
-            ClipToBounds="True"
-            IsVisible="{Binding IsMiniMode}"
-            ZIndex="300">
-            <Grid
-                Margin="0"
-                Background="{Binding PlayerPageViewModel.GradientBackground, Converter={StaticResource StringToBrushConverter}}"
-                RowDefinitions="Auto,*">
-
-                <!--  窗口拖拽区域  -->
-                <Border
-                    Grid.RowSpan="2"
-                    Background="Transparent"
-                    IsHitTestVisible="True"
-                    ZIndex="-1">
-                    <i:Interaction.Behaviors>
-                        <behaviors:WindowDragBehavior />
-                    </i:Interaction.Behaviors>
-                </Border>
-
-                <!--  Row 0: 封面 + 歌曲信息  -->
-                <Grid
-                    Grid.Row="0"
-                    Margin="20,20,20,12"
-                    ColumnDefinitions="Auto,*">
-                    <!--  专辑封面  -->
-                    <Border
-                        Grid.Column="0"
-                        Width="64"
-                        Height="64"
-                        ClipToBounds="True"
-                        CornerRadius="8">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                BlurRadius="20"
-                                OffsetX="0"
-                                OffsetY="8"
-                                Opacity="0.4"
-                                Color="#000000" />
-                        </Border.Effect>
-                        <Image Source="{Binding CurrentSong.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}" Stretch="UniformToFill" />
-                    </Border>
-
-                    <!--  歌曲信息  -->
-                    <StackPanel
-                        Grid.Column="1"
-                        Margin="14,0,0,0"
-                        VerticalAlignment="Center"
-                        Spacing="3">
-                        <TextBlock
-                            MaxWidth="196"
-                            FontSize="15"
-                            FontWeight="SemiBold"
-                            Foreground="White"
-                            Text="{Binding CurrentSong.Title, FallbackValue=''}"
-                            TextTrimming="CharacterEllipsis" />
-                        <TextBlock
-                            MaxWidth="196"
-                            FontSize="12"
-                            Foreground="{StaticResource TextSecondaryBrush}"
-                            Text="{Binding CurrentSong.Artist, FallbackValue=''}"
-                            TextTrimming="CharacterEllipsis" />
-                    </StackPanel>
-                </Grid>
-
-                <!--  Row 1: 歌词滚动区域  -->
-                <ScrollViewer
-                    x:Name="MiniModeLyricsScrollViewer"
-                    Grid.Row="1"
-                    Margin="20,0,20,24"
-                    HorizontalScrollBarVisibility="Disabled"
-                    IsVisible="{Binding PlayerPageViewModel.HasLyrics}"
-                    VerticalScrollBarVisibility="Hidden">
-                    <ItemsControl HorizontalAlignment="Stretch" ItemsSource="{Binding PlayerPageViewModel.Lyrics}">
-                        <i:Interaction.Behaviors>
-                            <behaviors:LyricsAutoScrollBehavior CurrentIndex="{Binding PlayerPageViewModel.CurrentLyricIndex}" TargetScrollViewer="{Binding #MiniModeLyricsScrollViewer}" />
-                        </i:Interaction.Behaviors>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="services:LyricLine">
-                                <StackPanel
-                                    Margin="0,5,0,5"
-                                    HorizontalAlignment="Center"
-                                    Spacing="4">
-                                    <TextBlock
-                                        FontFamily="{StaticResource FontFamilyPrimary}"
-                                        FontSize="14"
-                                        FontWeight="{Binding IsActive, Converter={StaticResource BoolToFontWeightConverter}}"
-                                        Foreground="{Binding IsActive, Converter={StaticResource BoolToLyricColorConverter}}"
-                                        Text="{Binding Text}"
-                                        TextAlignment="Center"
-                                        TextWrapping="Wrap" />
-                                    <TextBlock
-                                        FontFamily="{StaticResource FontFamilyPrimary}"
-                                        FontSize="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).PlayerPageViewModel.LyricFontSize, Converter={StaticResource LyricTranslationFontSizeConverter}}"
-                                        Foreground="{StaticResource TextMutedBrush}"
-                                        IsVisible="{Binding IsTranslationVisible}"
-                                        Opacity="0.7"
-                                        Text="{Binding Translation}"
-                                        TextAlignment="Center"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-
-                <!--  无歌词提示  -->
-                <TextBlock
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontFamily="{StaticResource FontFamilyPrimary}"
-                    FontSize="14"
-                    Foreground="{StaticResource TextMutedBrush}"
-                    IsVisible="{Binding !PlayerPageViewModel.HasLyrics}"
-                    Text="{StaticResource StringNoLyrics}" />
-
-            </Grid>
-        </Border>
     </Grid>
 
 </Window>

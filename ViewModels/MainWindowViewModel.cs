@@ -85,8 +85,6 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     [ObservableProperty] private ObservableCollection<Song> _selectedSongs = new();
     [ObservableProperty] private bool _isSelectAll;
 
-    [ObservableProperty] private bool _isMiniMode;
-
     public bool IsGridView => HomeViewModel.IsGridView;
 
     [RelayCommand]
@@ -169,12 +167,6 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     }
 
     [RelayCommand]
-    private void ToggleMiniMode()
-    {
-        IsMiniMode = !IsMiniMode;
-    }
-
-    [RelayCommand]
     private void Seek(TimeSpan position)
     {
         _playbackStateService.Seek(position);
@@ -222,8 +214,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private void NavigateToLibrary()
     {
         CurrentNavPage = NavigationPage.Home;
-        CurrentPage = MusicBrowseViewModel;
-        _navigationService.NavigateTo<MusicBrowseViewModel>();
+        CurrentPage = HomeViewModel;
+        _navigationService.NavigateTo<HomeViewModel>();
     }
 
     [RelayCommand]
@@ -490,15 +482,12 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     public HomeViewModel HomeViewModel { get; }
     public ArtistsPageViewModel? ArtistsPageViewModel { get; private set; }
     public AlbumsPageViewModel? AlbumsPageViewModel { get; private set; }
-    public MusicBrowseViewModel MusicBrowseViewModel { get; }
 
     [ObservableProperty] private bool _isPlayerBarVisible = true;
 
-    public bool IsBottomPlayerBarVisible => !IsMiniMode && IsPlayerBarVisible;
+    public bool IsBottomPlayerBarVisible => IsPlayerBarVisible;
 
     partial void OnIsPlayerBarVisibleChanged(bool value) => OnPropertyChanged(nameof(IsBottomPlayerBarVisible));
-
-    partial void OnIsMiniModeChanged(bool value) => OnPropertyChanged(nameof(IsBottomPlayerBarVisible));
 
     public ObservableCollection<UserPlaylist> UserPlaylists => _userPlaylistService.UserPlaylists;
 
@@ -571,9 +560,8 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             if (e.PropertyName == nameof(HomeViewModel.IsGridView))
                 OnPropertyChanged(nameof(IsGridView));
         };
-        MusicBrowseViewModel = _viewModelFactory.CreateMusicBrowseViewModel();
-        CurrentPage = MusicBrowseViewModel;
-        _navigationService.NavigateTo<MusicBrowseViewModel>();
+        CurrentPage = HomeViewModel;
+        _navigationService.NavigateTo<HomeViewModel>();
 
         // 使用 SubscribeEvent 辅助方法进行事件订阅，便于自动清理
         SubscribeEvent(
@@ -609,7 +597,6 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private void OnPlaybackStateChanged(object? sender, PlayState state)
     {
         OnPropertyChanged(nameof(IsPlaying));
-        OnPropertyChanged(nameof(IsMiniMode));
         _systemTrayService.UpdateTrayIcon(IsPlaying);
     }
 
@@ -622,7 +609,6 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private void OnCurrentSongChanged(object? sender, Song? song)
     {
         OnPropertyChanged(nameof(CurrentSong));
-        OnPropertyChanged(nameof(IsMiniMode));
         if (CurrentSong != null && _configService.CurrentSettings.ShowSongChangeNotification)
         {
             _systemTrayService.ShowNotification("NowPlaying", $"{CurrentSong.Title} - {CurrentSong.Artist}");
@@ -636,7 +622,6 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
         OnPropertyChanged(nameof(PositionSeconds));
         OnPropertyChanged(nameof(DurationSeconds));
         OnPropertyChanged(nameof(IsPlaying));
-        OnPropertyChanged(nameof(IsMiniMode));
     }
 
     private void OnQueuePanelChanged(object? sender, bool isOpen)
@@ -647,8 +632,6 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     private void OnCurrentPageChanged(object? sender, Type? pageType)
     {
         if (pageType == null) return;
-
-        IsPlayerBarVisible = pageType != typeof(MusicBrowseViewModel);
 
         // 使用字典查找替代 if-else 链，提高可维护性
         if (_pageLookup.TryGetValue(pageType, out var getViewModel))
@@ -675,8 +658,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
             [typeof(LibraryBrowserViewModel)] = () => LibraryBrowserViewModel,
             [typeof(ArtistsPageViewModel)] = () => ArtistsPageViewModel,
             [typeof(AlbumsPageViewModel)] = () => AlbumsPageViewModel,
-            [typeof(StatisticsReportViewModel)] = () => StatisticsReportViewModel,
-            [typeof(MusicBrowseViewModel)] = () => MusicBrowseViewModel
+            [typeof(StatisticsReportViewModel)] = () => StatisticsReportViewModel
         };
     }
 

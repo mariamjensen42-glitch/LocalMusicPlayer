@@ -69,7 +69,4 @@ public class ViewModelFactory : IViewModelFactory
 
     public SmartPlaylistSongsViewModel CreateSmartPlaylistSongsViewModel(SmartPlaylist smartPlaylist)
         => ActivatorUtilities.CreateInstance<SmartPlaylistSongsViewModel>(_serviceProvider, smartPlaylist);
-
-    public MusicBrowseViewModel CreateMusicBrowseViewModel()
-        => ActivatorUtilities.CreateInstance<MusicBrowseViewModel>(_serviceProvider);
 }

@@ -1,5 +1,31 @@
 # 功能变更记录 (fc.md)
 
+## 2026-04-14
+
+### 重构: 删除 MusicBrowseView 中的重复 tab 导航栏
+- **文件**: `Views/Library/MusicBrowseView.axaml`
+- **说明**: 侧边栏已有导航功能，MusicBrowseView 中的 tab 导航栏是重复的。删除 song/album/artist/folder/favourite/playlist 等 RadioButton tab，只保留工具栏（排序选项、搜索框）。
+
+### 功能: 在侧边栏添加"我喜欢的"导航入口
+- **文件**: `Views/Main/MainWindow.axaml`
+- **说明**: 收藏功能是音乐播放器的核心功能，添加"我喜欢的"入口到侧边栏，方便用户快速访问收藏的歌曲。
+- **修改**: 在侧边栏添加 ToggleButton，绑定 `NavigateToFavoritesCommand`，使用 `&#xE87D;`（实心爱心图标）和 `StringFavorites` 资源
+
+### 重构: 删除 MusicBrowseView，统一使用 HomeView
+- **文件**: `ViewModels/MainWindowViewModel.cs`, `Services/Navigation/IViewModelFactory.cs`, `Services/Navigation/ViewModelFactory.cs`, `ViewModels/ViewLocator.cs`
+- **说明**: 简化导航结构，统一使用 HomeView 作为主内容页面，删除 MusicBrowseView 及其相关代码。
+- **修改**:
+  - `NavigateToLibrary()` 跳转到 `HomeViewModel` 而非 `MusicBrowseViewModel`
+  - 删除 `MusicBrowseViewModel` 属性和相关初始化代码
+  - 从 `ViewLocator` 字典中移除 `MusicBrowseViewModel` 映射
+  - 从 `IViewModelFactory` 和 `ViewModelFactory` 中删除 `CreateMusicBrowseViewModel()` 方法
+  - 初始页面改为 `HomeViewModel`
+
+### 修复: SongListViewModel 绑定到错误的集合
+- **文件**: `ViewModels/SongListViewModel.cs`
+- **说明**: "所有歌曲"页面绑定了 `FilteredSongs`（筛选结果），应该直接绑定到 `Songs`（所有歌曲），因为导航栏已经有各种分类，不需要二次筛选。
+- **修改**: `public ObservableCollection<Song> Songs => _musicLibraryService.Songs;`
+
 ## 2026-04-12
 
 ### 新增: HomeViewModel

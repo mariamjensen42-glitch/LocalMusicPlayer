@@ -86,3 +86,19 @@ Dispatcher.UIThread.Post(() =>
     else { ... }
 });
 ```
+
+## 2026-04-14 - 所有歌曲页面无法显示歌曲列表
+
+### 问题 #1 [严重] - SongListViewModel 绑定了错误的集合
+**文件**: `ViewModels/SongListViewModel.cs`
+**问题描述**: "所有歌曲"页面无法显示歌曲列表。用户指出这个项目不需要 FilteredSongs，导航栏已经有各种分类了。
+**修复方案**: 将 `Songs` 属性从绑定 `FilteredSongs` 改为绑定 `Songs`，直接显示所有歌曲。
+
+**修改代码**:
+```csharp
+// 修改前
+public ObservableCollection<Song> Songs => _musicLibraryService.FilteredSongs;
+
+// 修改后
+public ObservableCollection<Song> Songs => _musicLibraryService.Songs;
+```

@@ -767,3 +767,33 @@
 - MusicBrowseViewModel 集成为 MainWindow 默认页面
 - DI 容器注册和 ViewLocator 映射更新
 - Strings.axaml 新增 36 个国际化字符串
+
+### 9. 歌词页面响应式布局适配
+
+- **日期**: 2026-04-14
+- **目标**: 优化播放器页面的歌词显示区域，使其能够自适应各种窗口大小
+- **修改文件**:
+  - `Views/Player/PlayerPageView.axaml` — 主播放器页面布局重构
+  - `Controls/LyricsLineControl.axaml` — 歌词行控件优化
+- **布局优化**:
+  - **左侧区域**:
+    - 专辑封面从固定 `MaxWidth="480" MaxHeight="480"` 改为 `MinWidth="200" MinHeight="200"` 范围限制
+    - 使用 `StackPanel` + `HorizontalAlignment="Center"` 实现内容居中自适应
+    - 封面最小宽度 200px，最大 480px，中间尺寸自动填充
+    - 按钮间距从固定像素改为更灵活的间距
+  - **右侧歌词区域**:
+    - 歌词行 `LyricsLineControl` 边距从 `Margin="20,0,20,0"` 改为 `Margin="16,0,16,0"`
+    - 间距微调使布局更紧凑
+  - **整体间距**:
+    - 顶部/底部/左右边距统一使用 `24px` 替代原来的 `32px`，提高空间利用率
+    - 组件间间距适当缩小，使布局更紧凑
+- **响应式设计原则**:
+  - 使用 Avalonia 布局系统（StackPanel + Grid）实现自然流动
+  - 通过 `MinWidth/MinHeight` 设置最小尺寸，`MaxWidth/MaxHeight` 设置最大尺寸
+  - 专辑封面等关键元素使用范围限制而非固定尺寸
+  - 窗口缩小时布局自动调整，无需 JavaScript 式断点检测
+- **效果**:
+  - 大窗口（1200px+）: 完整两栏布局，480px 大封面
+  - 中等窗口（800-1200px）: 两栏布局，封面自动缩小
+  - 小窗口（600-800px）: 布局紧凑但完整
+  - 歌词区域始终保持足够空间显示内容

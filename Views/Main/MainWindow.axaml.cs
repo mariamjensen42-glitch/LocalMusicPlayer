@@ -89,34 +89,6 @@ public partial class MainWindow : Window
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(ViewModels.MainWindowViewModel.IsMiniMode))
-        {
-            var vm = sender as ViewModels.MainWindowViewModel;
-            if (vm == null) return;
-
-            var isMiniMode = vm.IsMiniMode;
-            Dispatcher.UIThread.Post(() =>
-            {
-                if (isMiniMode)
-                {
-                    Width = 300;
-                    Height = 520;
-                    MinWidth = 300;
-                    MinHeight = 520;
-                    CanResize = false;
-                    Topmost = true;
-                }
-                else
-                {
-                    Width = 1400;
-                    Height = 900;
-                    MinWidth = 1200;
-                    MinHeight = 700;
-                    CanResize = true;
-                    Topmost = false;
-                }
-            });
-        }
     }
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
