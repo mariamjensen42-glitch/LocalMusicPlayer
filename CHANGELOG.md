@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.5.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.4.0...v1.5.0) (2026-04-14)
+
+
+### ✨ 新功能
+
+* 添加音乐浏览、文件夹浏览和歌曲列表功能 ([606134a](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/606134acdeb79094e748fd8b671ff07b9bcce99d))
+
+
+### 🐛 修复
+
+* dispatch IsMiniMode window resize to UI thread ([1eeaf5a](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/1eeaf5a36e0f436011498824c7981dfe1dc9e2dc))
+
+
+### ♻️ 重构
+
+* mini mode is same window, not separate window ([db5ac31](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/db5ac31151cb407ff901bc78c4225a0dc3f774de))
+* **视图:** 删除冗余视图和ViewModel，简化导航结构 ([a8170b4](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/a8170b4e8decda859177851365ee76e2d703417e))
+
 ## [1.4.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.3.0...v1.4.0) (2026-04-13)
 
 
