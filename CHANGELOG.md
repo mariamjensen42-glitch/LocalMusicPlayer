@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.8.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.7.0...v1.8.0) (2026-04-14)
+
+
+### ✨ 新功能
+
+* **UI:** 实现极简主义UI设计并添加均衡器预设功能 ([dfdca0d](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/dfdca0d3750b8ee89d405d9328f319d9942f9cd7))
+
+
+### ♻️ 重构
+
+* 重构音乐库视图和导航结构 ([a88fc2a](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/a88fc2a3271a263aa78f599e6a88262c6bf989d5))
+
 ## [1.7.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.6.0...v1.7.0) (2026-04-14)
 
 
