@@ -44,9 +44,6 @@ public partial class App : Application
                 var mainWindowViewModel = _services.GetRequiredService<MainWindowViewModel>();
                 desktop.MainWindow!.DataContext = mainWindowViewModel;
 
-                var systemTrayService = _services.GetRequiredService<ISystemTrayService>();
-                systemTrayService.Initialize();
-
                 if (configService.CurrentSettings.ResumeLastPlayback)
                 {
                     var settings = configService.CurrentSettings;

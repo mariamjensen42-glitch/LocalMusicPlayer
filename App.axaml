@@ -4,8 +4,6 @@
              xmlns:local="using:LocalMusicPlayer.ViewModels"
              xmlns:converters="using:LocalMusicPlayer.Converters"
              RequestedThemeVariant="Default">
-    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
@@ -21,7 +19,6 @@
                 <ResourceInclude Source="avares://LocalMusicPlayer/Styles/Strings.axaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- 全局转换器 -->
             <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
             <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
             <converters:SongIsPlayingConverter x:Key="SongIsPlayingConverter" />
@@ -29,10 +26,9 @@
             <converters:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
             <converters:BoolToLyricColorConverter x:Key="BoolToLyricColorConverter" />
             <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
-            <converters:EnumBooleanConverter x:Key="EnumBooleanConverter" />
-            <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
             <converters:PlayCountConverter x:Key="PlayCountConverter" />
             <converters:LyricTranslationFontSizeConverter x:Key="LyricTranslationFontSizeConverter" />
+            <converters:EnumBooleanConverter x:Key="EnumBooleanConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

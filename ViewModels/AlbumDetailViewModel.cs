@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocalMusicPlayer.Models;
@@ -42,10 +41,9 @@ public partial class AlbumDetailViewModel : DetailViewModelBase
         AlbumGroup albumGroup,
         IMusicPlayerService musicPlayerService,
         IPlaylistService playlistService,
-        IStatisticsService statisticsService,
         INavigationService navigationService,
         IDialogService dialogService)
-        : base(musicPlayerService, playlistService, statisticsService, navigationService, dialogService)
+        : base(musicPlayerService, playlistService, navigationService, dialogService)
     {
         AlbumName = albumGroup.AlbumName;
         ArtistName = albumGroup.ArtistName;

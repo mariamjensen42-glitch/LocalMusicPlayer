@@ -16,10 +16,9 @@ public partial class ArtistDetailViewModel : DetailViewModelBase
         ArtistGroup artistGroup,
         IMusicPlayerService musicPlayerService,
         IPlaylistService playlistService,
-        IStatisticsService statisticsService,
         INavigationService navigationService,
         IDialogService dialogService)
-        : base(musicPlayerService, playlistService, statisticsService, navigationService, dialogService)
+        : base(musicPlayerService, playlistService, navigationService, dialogService)
     {
         ArtistName = artistGroup.ArtistName;
         CoverArtPath = artistGroup.CoverArtPath;

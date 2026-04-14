@@ -11,21 +11,9 @@ public class MultiEnumToBoolConverter : IMultiValueConverter
 
     public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (values == null || values.Count < 2)
+        if (values == null || values.Count < 2 || values[0] == null || values[1] == null)
             return false;
 
-        for (var i = 0; i < values.Count - 1; i += 2)
-        {
-            var currentValue = values[i];
-            var targetValue = values[i + 1];
-
-            if (currentValue == null || targetValue == null)
-                return false;
-
-            if (!Equals(currentValue, targetValue))
-                return false;
-        }
-
-        return true;
+        return values[0].Equals(values[1]);
     }
 }

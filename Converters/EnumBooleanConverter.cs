@@ -13,19 +13,15 @@ public class EnumBooleanConverter : IValueConverter
         if (value == null || parameter == null)
             return false;
 
-        return string.Equals(value.ToString(), parameter.ToString(), StringComparison.OrdinalIgnoreCase);
+        return value.ToString()?.Equals(parameter.ToString(), StringComparison.OrdinalIgnoreCase) ?? false;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is bool boolValue && boolValue && parameter != null)
+        if (value is true && parameter != null)
         {
-            var paramStr = parameter.ToString();
-            if (targetType.IsEnum && paramStr != null)
-                return Enum.Parse(targetType, paramStr, true);
-            return paramStr;
+            return parameter.ToString();
         }
-
-        return Avalonia.Data.BindingOperations.DoNothing;
+        return null;
     }
 }

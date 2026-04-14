@@ -46,12 +46,9 @@ public class ConfigurationService : IConfigurationService
         settings.LyricLineSpacing = GetJsonValue(entities, nameof(AppSettings.LyricLineSpacing), settings.LyricLineSpacing);
         settings.ShowTranslation = GetJsonValue(entities, nameof(AppSettings.ShowTranslation), settings.ShowTranslation);
         settings.ReplayGainEnabled = GetJsonValue(entities, nameof(AppSettings.ReplayGainEnabled), settings.ReplayGainEnabled);
-        settings.SongStatistics = GetJsonValue(entities, nameof(AppSettings.SongStatistics), settings.SongStatistics);
-        settings.TotalPlayTimeMs = GetJsonValue(entities, nameof(AppSettings.TotalPlayTimeMs), settings.TotalPlayTimeMs);
         settings.FirstScanDate = GetJsonValue(entities, nameof(AppSettings.FirstScanDate), settings.FirstScanDate);
         settings.UserPlaylists = GetJsonValue(entities, nameof(AppSettings.UserPlaylists), settings.UserPlaylists);
         settings.FavoriteFilePaths = GetJsonValue(entities, nameof(AppSettings.FavoriteFilePaths), settings.FavoriteFilePaths);
-        settings.PlayHistory = GetJsonValue(entities, nameof(AppSettings.PlayHistory), settings.PlayHistory);
         settings.LastSongFilePath = GetJsonValue<string?>(entities, nameof(AppSettings.LastSongFilePath), null);
         settings.QueueFilePaths = GetJsonValue(entities, nameof(AppSettings.QueueFilePaths), settings.QueueFilePaths);
         settings.LastPlaybackPosition = GetJsonValue(entities, nameof(AppSettings.LastPlaybackPosition), settings.LastPlaybackPosition);
@@ -80,12 +77,9 @@ public class ConfigurationService : IConfigurationService
         await SaveEntityAsync(db, nameof(AppSettings.LyricLineSpacing), _currentSettings.LyricLineSpacing);
         await SaveEntityAsync(db, nameof(AppSettings.ShowTranslation), _currentSettings.ShowTranslation);
         await SaveEntityAsync(db, nameof(AppSettings.ReplayGainEnabled), _currentSettings.ReplayGainEnabled);
-        await SaveEntityAsync(db, nameof(AppSettings.SongStatistics), _currentSettings.SongStatistics);
-        await SaveEntityAsync(db, nameof(AppSettings.TotalPlayTimeMs), _currentSettings.TotalPlayTimeMs);
         await SaveEntityAsync(db, nameof(AppSettings.FirstScanDate), _currentSettings.FirstScanDate);
         await SaveEntityAsync(db, nameof(AppSettings.UserPlaylists), _currentSettings.UserPlaylists);
         await SaveEntityAsync(db, nameof(AppSettings.FavoriteFilePaths), _currentSettings.FavoriteFilePaths);
-        await SaveEntityAsync(db, nameof(AppSettings.PlayHistory), _currentSettings.PlayHistory);
         await SaveEntityAsync(db, nameof(AppSettings.LastSongFilePath), _currentSettings.LastSongFilePath);
         await SaveEntityAsync(db, nameof(AppSettings.QueueFilePaths), _currentSettings.QueueFilePaths);
         await SaveEntityAsync(db, nameof(AppSettings.LastPlaybackPosition), _currentSettings.LastPlaybackPosition);

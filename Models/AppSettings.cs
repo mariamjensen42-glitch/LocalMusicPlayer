@@ -10,66 +10,29 @@ public class AppSettings
     public int Volume { get; set; } = 80;
     public bool IsMuted { get; set; }
     public DateTime? LastScanTime { get; set; }
+    public DateTime? FirstScanDate { get; set; }
     public string Theme { get; set; } = "Dark";
     public string PlaybackMode { get; set; } = "Normal";
     public float PlaybackRate { get; set; } = 1.0f;
-    public bool CrossfadeEnabled { get; set; }
-    public int CrossfadeDurationMs { get; set; } = 3000;
     public double LyricFontSize { get; set; } = 28;
     public double LyricLineSpacing { get; set; } = 20;
     public bool ShowTranslation { get; set; } = true;
+
+    public bool CrossfadeEnabled { get; set; }
+    public int CrossfadeDurationMs { get; set; } = 3000;
     public bool ReplayGainEnabled { get; set; } = true;
-
-    /// <summary>
-    /// 歌曲统计数据，Key 为文件路径
-    /// </summary>
-    public Dictionary<string, SongStatistics> SongStatistics { get; set; } = new();
-
-    /// <summary>
-    /// 总播放时长（毫秒）
-    /// </summary>
-    public long TotalPlayTimeMs { get; set; }
-
-    /// <summary>
-    /// 首次扫描日期，用于计算使用天数
-    /// </summary>
-    public DateTime? FirstScanDate { get; set; }
-
-    /// <summary>
-    /// 用户自定义播放列表
-    /// </summary>
-    public List<UserPlaylist> UserPlaylists { get; set; } = new();
-
-    /// <summary>
-    /// 收藏歌曲文件路径列表
-    /// </summary>
-    public List<string> FavoriteFilePaths { get; set; } = new();
-
-    /// <summary>
-    /// 播放历史记录
-    /// </summary>
-    public List<PlayHistoryRecord> PlayHistory { get; set; } = new();
-
-    /// <summary>
-    /// 上次播放的歌曲文件路径
-    /// </summary>
-    public string? LastSongFilePath { get; set; }
-
-    /// <summary>
-    /// 上次播放队列的文件路径列表
-    /// </summary>
-    public List<string> QueueFilePaths { get; set; } = new();
-
-    /// <summary>
-    /// 上次播放位置（秒）
-    /// </summary>
-    public double LastPlaybackPosition { get; set; }
     public bool MinimizeToTray { get; set; } = true;
     public bool ShowSongChangeNotification { get; set; } = true;
     public bool AutoStartOnBoot { get; set; }
     public bool ResumeLastPlayback { get; set; } = true;
-    public string AudioQuality { get; set; } = "Standard";
     public bool DownloadAlbumArtwork { get; set; } = true;
     public bool AutoDetectMetadata { get; set; }
+    public string AudioQuality { get; set; } = "Standard";
     public bool IsEqualizerEnabled { get; set; }
+
+    public List<UserPlaylist> UserPlaylists { get; set; } = new();
+    public List<string> FavoriteFilePaths { get; set; } = new();
+    public string? LastSongFilePath { get; set; }
+    public List<string> QueueFilePaths { get; set; } = new();
+    public double LastPlaybackPosition { get; set; }
 }

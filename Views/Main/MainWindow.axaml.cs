@@ -101,7 +101,7 @@ public partial class MainWindow : Window
 
         _keyboardShortcutService?.SetNavigateBackAction(() =>
         {
-            _mainWindowViewModel.NavigateToLibraryCommand.Execute(null);
+            _mainWindowViewModel.NavigateToMusicLibraryCommand.Execute(null);
         });
 
         switch (e.Key)
@@ -191,14 +191,7 @@ public partial class MainWindow : Window
 
     private void CloseButton_Click(object? sender, RoutedEventArgs e)
     {
-        if (_configService?.CurrentSettings.MinimizeToTray == true)
-        {
-            Hide();
-        }
-        else
-        {
-            Close();
-        }
+        Close();
     }
 
     public void PlayPause()

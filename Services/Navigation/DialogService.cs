@@ -11,10 +11,8 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using LocalMusicPlayer.Models;
-using LocalMusicPlayer.Services.OnlineLyrics;
 using LocalMusicPlayer.ViewModels;
 using LocalMusicPlayer.Views.Editors;
-using LocalMusicPlayer.Views.SmartPlaylist;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LocalMusicPlayer.Services;
@@ -183,20 +181,6 @@ public class DialogService : IDialogService
         await dialog.ShowDialog(mainWindow);
     }
 
-    public async Task ShowBatchMetadataEditorDialogAsync(System.Collections.IList songs, Action? onSaved = null)
-    {
-        var mainWindow = GetMainWindow();
-        if (mainWindow == null) return;
-
-        var songList = songs.Cast<Song>().ToList();
-        var viewModel = _viewModelFactory.CreateBatchMetadataEditorViewModel(songList, onSaved);
-        var dialog = new BatchMetadataEditorView
-        {
-            DataContext = viewModel
-        };
-        await dialog.ShowDialog(mainWindow);
-    }
-
     public async Task<IReadOnlyList<string>?> ShowFolderPickerAsync()
     {
         var mainWindow = GetMainWindow();
@@ -310,179 +294,6 @@ public class DialogService : IDialogService
         outerPanel.Children.Add(scrollViewer);
 
         dialog.Content = outerPanel;
-
-        await dialog.ShowDialog(mainWindow);
-    }
-
-    public async Task<OnlineLyricResult?> ShowLyricSearchResultDialogAsync(Song song, OnlineLyricResult? result)
-    {
-        var mainWindow = GetMainWindow();
-        if (mainWindow == null) return null;
-
-        OnlineLyricResult? selectedResult = null;
-
-        var dialog = new Window
-        {
-            Title = "Lyrics Search Result",
-            Width = 420,
-            Height = 520,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false,
-            Background = new SolidColorBrush(Color.Parse("#1E1E2E")),
-            BorderBrush = new SolidColorBrush(Color.Parse("#3B3B5C")),
-            BorderThickness = new Thickness(1)
-        };
-
-        var outerPanel = new StackPanel { Margin = new Thickness(20), Spacing = 16 };
-
-        var songInfoPanel = new StackPanel { Spacing = 4 };
-        songInfoPanel.Children.Add(new TextBlock
-        {
-            Text = song.Title,
-            FontSize = 16,
-            FontWeight = Avalonia.Media.FontWeight.SemiBold,
-            Foreground = new SolidColorBrush(Color.Parse("#E0E0E0")),
-            TextWrapping = Avalonia.Media.TextWrapping.Wrap
-        });
-        songInfoPanel.Children.Add(new TextBlock
-        {
-            Text = song.Artist ?? "Unknown Artist",
-            FontSize = 13,
-            Foreground = new SolidColorBrush(Color.Parse("#B0B0B0")),
-            TextWrapping = Avalonia.Media.TextWrapping.Wrap
-        });
-        outerPanel.Children.Add(songInfoPanel);
-
-        if (result != null && result.Lyrics.Count > 0)
-        {
-            var resultInfoText = new TextBlock
-            {
-                Text = $"Found {result.Lyrics.Count} lines from {result.Source ?? "unknown"}",
-                FontSize = 13,
-                Foreground = new SolidColorBrush(Color.Parse("#B088F9"))
-            };
-            outerPanel.Children.Add(resultInfoText);
-
-            var lyricsScrollViewer = new ScrollViewer
-            {
-                HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
-                VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
-                MaxHeight = 280
-            };
-
-            var lyricsPanel = new StackPanel { Spacing = 6 };
-
-            var displayCount = Math.Min(result.Lyrics.Count, 15);
-            for (int i = 0; i < displayCount; i++)
-            {
-                var line = result.Lyrics[i];
-                var lineText = new TextBlock
-                {
-                    Text = line.Text,
-                    FontSize = 14,
-                    Foreground = new SolidColorBrush(Color.Parse("#E0E0E0")),
-                    TextWrapping = Avalonia.Media.TextWrapping.Wrap,
-                    Margin = new Thickness(8, 2)
-                };
-                lyricsPanel.Children.Add(lineText);
-            }
-
-            if (result.Lyrics.Count > 15)
-            {
-                lyricsPanel.Children.Add(new TextBlock
-                {
-                    Text = $"... and {result.Lyrics.Count - 15} more lines",
-                    FontSize = 12,
-                    Foreground = new SolidColorBrush(Color.Parse("#808080")),
-                    FontStyle = Avalonia.Media.FontStyle.Italic,
-                    Margin = new Thickness(8, 4)
-                });
-            }
-
-            lyricsScrollViewer.Content = lyricsPanel;
-            outerPanel.Children.Add(lyricsScrollViewer);
-
-            var buttonPanel = new StackPanel
-            {
-                Orientation = Avalonia.Layout.Orientation.Horizontal,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                Spacing = 12
-            };
-
-            var useButton = new Button
-            {
-                Content = "Use These Lyrics",
-                MinWidth = 140,
-                IsDefault = true
-            };
-            var skipButton = new Button
-            {
-                Content = "Skip",
-                MinWidth = 80
-            };
-
-            useButton.Click += (_, _) =>
-            {
-                selectedResult = result;
-                dialog.Close();
-            };
-            skipButton.Click += (_, _) =>
-            {
-                selectedResult = null;
-                dialog.Close();
-            };
-
-            buttonPanel.Children.Add(useButton);
-            buttonPanel.Children.Add(skipButton);
-            outerPanel.Children.Add(buttonPanel);
-        }
-        else
-        {
-            outerPanel.Children.Add(new TextBlock
-            {
-                Text = "No lyrics found online.",
-                FontSize = 14,
-                Foreground = new SolidColorBrush(Color.Parse("#E0E0E0")),
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                Margin = new Thickness(0, 40)
-            });
-
-            var closeButton = new Button
-            {
-                Content = "Close",
-                MinWidth = 80,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-            };
-            closeButton.Click += (_, _) => dialog.Close();
-            outerPanel.Children.Add(closeButton);
-        }
-
-        dialog.Content = outerPanel;
-
-        await dialog.ShowDialog(mainWindow);
-
-        return selectedResult;
-    }
-
-    public async Task ShowSmartPlaylistEditorDialogAsync(SmartPlaylist? playlist, Action? onSaved = null)
-    {
-        var mainWindow = GetMainWindow();
-        if (mainWindow == null) return;
-
-        var viewModel = new SmartPlaylistEditorViewModel(
-            _serviceProvider!.GetRequiredService<ISmartPlaylistService>(),
-            this,
-            playlist);
-
-        viewModel.OnSaved += () =>
-        {
-            onSaved?.Invoke();
-        };
-
-        var dialog = new SmartPlaylistEditorView
-        {
-            DataContext = viewModel
-        };
 
         await dialog.ShowDialog(mainWindow);
     }

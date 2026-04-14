@@ -96,7 +96,7 @@ public partial class MetadataEditorViewModel : ViewModelBase
         }
     }
 
-    public MetadataEditorViewModel(Song song, IDialogService dialogService, Action? onSaved = null)
+    public MetadataEditorViewModel(IDialogService dialogService, Song song, Action? onSaved = null)
     {
         _song = song;
         _dialogService = dialogService;

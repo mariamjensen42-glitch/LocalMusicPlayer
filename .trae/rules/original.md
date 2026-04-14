@@ -1,3 +1,6 @@
+---
+alwaysApply: false
+---
 # original-sound-hq-player-win2d-navi 项目结构索引
 
 ## 目录结构

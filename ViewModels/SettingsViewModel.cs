@@ -15,7 +15,6 @@ public partial class SettingsViewModel : ViewModelBase
     private readonly IMusicLibraryService _musicLibraryService;
     private readonly IConfigurationService _configService;
     private readonly IPlaybackStateService _playbackStateService;
-    private readonly IAutoStartService _autoStartService;
     private readonly IMusicPlayerService _musicPlayerService;
 
     public ObservableCollection<string> ScanFolders { get; } = new();
@@ -51,8 +50,6 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] private bool _minimizeToTray = true;
 
     [ObservableProperty] private bool _showSongChangeNotification = true;
-
-    [ObservableProperty] private bool _autoStartOnBoot;
 
     [ObservableProperty] private bool _resumeLastPlayback = true;
 
@@ -125,7 +122,6 @@ public partial class SettingsViewModel : ViewModelBase
         IMusicLibraryService musicLibraryService,
         IConfigurationService configService,
         IPlaybackStateService playbackStateService,
-        IAutoStartService autoStartService,
         IMusicPlayerService musicPlayerService)
     {
         _dialogService = dialogService;
@@ -133,7 +129,6 @@ public partial class SettingsViewModel : ViewModelBase
         _musicLibraryService = musicLibraryService;
         _configService = configService;
         _playbackStateService = playbackStateService;
-        _autoStartService = autoStartService;
         _musicPlayerService = musicPlayerService;
 
         LoadSettings();
@@ -160,14 +155,10 @@ public partial class SettingsViewModel : ViewModelBase
         ReplayGainEnabled = settings.ReplayGainEnabled;
         MinimizeToTray = settings.MinimizeToTray;
         ShowSongChangeNotification = settings.ShowSongChangeNotification;
-#pragma warning disable CA1416
-        AutoStartOnBoot = _autoStartService.IsAutoStartEnabled();
-#pragma warning restore CA1416
         ResumeLastPlayback = settings.ResumeLastPlayback;
         SongCount = _musicLibraryService.Songs.Count;
         AlbumCount = _musicLibraryService.Songs.Select(s => s.Album).Distinct().Count();
 
-        // Load EQ settings
         IsEqualizerEnabled = settings.IsEqualizerEnabled;
         EqualizerPreamp = _musicPlayerService.EqualizerPreamp;
 
@@ -258,20 +249,6 @@ public partial class SettingsViewModel : ViewModelBase
         _configService.CurrentSettings.ShowSongChangeNotification = value;
         _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
     }
-
-#pragma warning disable CA1416
-    partial void OnAutoStartOnBootChanged(bool value)
-    {
-        _ = HandleAutoStartOnBootChangedAsync(value);
-    }
-
-    private async Task HandleAutoStartOnBootChangedAsync(bool value)
-    {
-        await _autoStartService.SetAutoStartAsync(value);
-        _configService.CurrentSettings.AutoStartOnBoot = value;
-        await _configService.SaveSettingsAsync();
-    }
-#pragma warning restore CA1416
 
     partial void OnResumeLastPlaybackChanged(bool value)
     {

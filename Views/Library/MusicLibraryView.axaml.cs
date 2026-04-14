@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace LocalMusicPlayer.Views.Library;
 
-public partial class AlbumsPageView : UserControl
+public partial class MusicLibraryView : UserControl
 {
-    public AlbumsPageView()
+    public MusicLibraryView()
     {
         InitializeComponent();
     }

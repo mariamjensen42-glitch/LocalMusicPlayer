@@ -13,7 +13,6 @@ public abstract partial class DetailViewModelBase : ViewModelBase
 {
     private readonly IMusicPlayerService _musicPlayerService;
     private readonly IPlaylistService _playlistService;
-    private readonly IStatisticsService _statisticsService;
     private readonly INavigationService _navigationService;
     private readonly IDialogService _dialogService;
 
@@ -30,13 +29,11 @@ public abstract partial class DetailViewModelBase : ViewModelBase
     protected DetailViewModelBase(
         IMusicPlayerService musicPlayerService,
         IPlaylistService playlistService,
-        IStatisticsService statisticsService,
         INavigationService navigationService,
         IDialogService dialogService)
     {
         _musicPlayerService = musicPlayerService;
         _playlistService = playlistService;
-        _statisticsService = statisticsService;
         _navigationService = navigationService;
         _dialogService = dialogService;
     }
@@ -61,7 +58,6 @@ public abstract partial class DetailViewModelBase : ViewModelBase
         var song = Songs.FirstOrDefault(s => s.FilePath == path);
         if (song != null)
         {
-            _statisticsService.RecordPlayStart(song);
             _musicPlayerService.Play(song);
         }
     }
@@ -82,7 +78,6 @@ public abstract partial class DetailViewModelBase : ViewModelBase
         _playlistService.PlayNext();
         if (_playlistService.CurrentSong != null)
         {
-            _statisticsService.RecordPlayStart(_playlistService.CurrentSong);
             _musicPlayerService.Play(_playlistService.CurrentSong);
         }
     }
@@ -104,7 +99,6 @@ public abstract partial class DetailViewModelBase : ViewModelBase
         _playlistService.PlayNext();
         if (_playlistService.CurrentSong != null)
         {
-            _statisticsService.RecordPlayStart(_playlistService.CurrentSong);
             _musicPlayerService.Play(_playlistService.CurrentSong);
         }
     }
@@ -123,18 +117,5 @@ public abstract partial class DetailViewModelBase : ViewModelBase
     private async Task EditSongMetadataAsync(Song song)
     {
         await _dialogService.ShowMetadataEditorDialogAsync(song);
-    }
-
-    [RelayCommand]
-    private async Task BatchEditMetadataAsync(System.Collections.IList selectedItems)
-    {
-        var songs = selectedItems.OfType<Song>().ToList();
-        if (songs.Count < 2)
-        {
-            await _dialogService.ShowMessageDialogAsync("Batch Edit", "Please select at least 2 songs to batch edit.");
-            return;
-        }
-
-        await _dialogService.ShowBatchMetadataEditorDialogAsync(songs);
     }
 }

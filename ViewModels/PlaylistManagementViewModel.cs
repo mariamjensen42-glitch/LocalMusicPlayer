@@ -14,7 +14,6 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     private readonly IUserPlaylistService _playlistService;
     private readonly IMusicPlayerService _musicPlayerService;
     private readonly IPlaylistService _playbackService;
-    private readonly IStatisticsService _statisticsService;
     private readonly IMusicLibraryService _libraryService;
     private readonly IDialogService _dialogService;
 
@@ -120,7 +119,6 @@ public partial class PlaylistManagementViewModel : ViewModelBase
         var song = PlaylistSongs.FirstOrDefault(s => s.FilePath == path);
         if (song != null)
         {
-            _statisticsService.RecordPlayStart(song);
             _musicPlayerService.Play(song);
         }
     }
@@ -152,7 +150,6 @@ public partial class PlaylistManagementViewModel : ViewModelBase
         _playbackService.PlayNext();
         if (_playbackService.CurrentSong != null)
         {
-            _statisticsService.RecordPlayStart(_playbackService.CurrentSong);
             _musicPlayerService.Play(_playbackService.CurrentSong);
         }
     }
@@ -177,7 +174,6 @@ public partial class PlaylistManagementViewModel : ViewModelBase
         _playbackService.PlayNext();
         if (_playbackService.CurrentSong != null)
         {
-            _statisticsService.RecordPlayStart(_playbackService.CurrentSong);
             _musicPlayerService.Play(_playbackService.CurrentSong);
         }
     }
@@ -199,20 +195,6 @@ public partial class PlaylistManagementViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task BatchEditMetadataAsync(System.Collections.IList selectedItems)
-    {
-        var songs = selectedItems.OfType<Song>().ToList();
-        if (songs.Count < 2)
-        {
-            await _dialogService.ShowMessageDialogAsync("Batch Edit", "Please select at least 2 songs to batch edit.");
-            return;
-        }
-
-        await _dialogService.ShowBatchMetadataEditorDialogAsync(songs,
-            () => { UpdatePlaylistSongs(SelectedPlaylist); });
-    }
-
-    [RelayCommand]
     private async Task AddToPlaylistAsync(string filePath)
     {
         var song = PlaylistSongs.FirstOrDefault(s => s.FilePath == filePath);
@@ -226,14 +208,12 @@ public partial class PlaylistManagementViewModel : ViewModelBase
         IUserPlaylistService playlistService,
         IMusicPlayerService musicPlayerService,
         IPlaylistService playbackService,
-        IStatisticsService statisticsService,
         IMusicLibraryService libraryService,
         IDialogService dialogService)
     {
         _playlistService = playlistService;
         _musicPlayerService = musicPlayerService;
         _playbackService = playbackService;
-        _statisticsService = statisticsService;
         _libraryService = libraryService;
         _dialogService = dialogService;
 

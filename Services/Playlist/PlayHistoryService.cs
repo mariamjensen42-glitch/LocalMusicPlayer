@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LocalMusicPlayer.Data;
@@ -59,29 +58,6 @@ public class PlayHistoryService : IPlayHistoryService
         });
 
         HistoryChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    public IReadOnlyList<PlayHistoryEntry> GetHistory()
-    {
-        var entities = Task.Run(() =>
-        {
-            using var db = new AppDbContext();
-            return db.PlayHistory
-                .OrderByDescending(e => e.PlayedAt)
-                .ToList();
-        }).GetAwaiter().GetResult();
-
-        var result = new List<PlayHistoryEntry>();
-        foreach (var entity in entities)
-        {
-            var song = _libraryService.Songs.FirstOrDefault(s => s.FilePath == entity.FilePath);
-            if (song != null)
-            {
-                result.Add(new PlayHistoryEntry(song, entity.PlayedAt));
-            }
-        }
-
-        return result.AsReadOnly();
     }
 
     public void ClearHistory()

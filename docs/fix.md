@@ -280,3 +280,13 @@
 **修复**:
 - **[MainWindowViewModel.cs](file:///c:/Users/yun/Programming/C%23/LocalMusicPlayer/ViewModels/MainWindowViewModel.cs)**: InitializeAsync 中从配置恢复 PlaybackMode；添加 PlaybackModeChanged 事件订阅，在回调中保存配置
 - **[PlayerPageViewModel.cs](file:///c:/Users/yun/Programming/C%23/LocalMusicPlayer/ViewModels/PlayerPageViewModel.cs)**: OnPlaybackModeChanged 回调中添加配置保存逻辑
+
+## 2026-04-14: MetadataEditorViewModel 构造函数参数顺序导致 DI 失败
+
+**问题**: 编辑歌曲元数据时抛出 `InvalidOperationException: A suitable constructor for type 'MetadataEditorViewModel' could not be located`
+
+**根因**: `ViewModelFactory.CreateMetadataEditorViewModel` 使用 `ActivatorUtilities.CreateInstance` 创建实例时，传入 `[song, onSaved]` 两个参数，但 `MetadataEditorViewModel` 的构造函数签名是 `MetadataEditorViewModel(Song song, IDialogService dialogService, Action? onSaved)`。`IDialogService` 是 DI 服务应从 `_serviceProvider` 注入，却被放在了非 DI 参数中间，导致参数匹配失败。
+
+**修复**:
+- **[MetadataEditorViewModel.cs](file:///c:/Users/yun/Programming/C%23/LocalMusicPlayer/ViewModels/MetadataEditorViewModel.cs)**: 调整构造函数参数顺序，将 `IDialogService` 移到首位：`MetadataEditorViewModel(IDialogService dialogService, Song song, Action? onSaved = null)`
+- **[BatchMetadataEditorViewModel.cs](file:///c:/Users/yun/Programming/C%23/LocalMusicPlayer/ViewModels/BatchMetadataEditorViewModel.cs)**: 同样修复：`BatchMetadataEditorViewModel(IDialogService dialogService, IEnumerable<Song> selectedSongs, Action? onSaved = null)`

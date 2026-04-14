@@ -188,6 +188,13 @@
     <!-- 秒 -->
     <x:String x:Key="StringSecondsFormat">{0} 秒</x:String>
 
+    <!-- 均衡器设置 -->
+    <x:String x:Key="StringEqualizer">均衡器</x:String>
+    <x:String x:Key="StringEqualizerSettings">调整音频均衡器设置</x:String>
+    <x:String x:Key="StringEqualizerEnabled">启用均衡器</x:String>
+    <x:String x:Key="StringEqualizerPreset">预设</x:String>
+    <x:String x:Key="StringEqualizerPreamp">前置放大</x:String>
+
     <!-- 专辑页面 -->
     <x:String x:Key="StringAddToFavourite">添加到收藏</x:String>
     <x:String x:Key="StringFavorite">收藏/取消收藏</x:String>

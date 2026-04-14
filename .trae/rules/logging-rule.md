@@ -1,5 +1,6 @@
 ---
-alwaysApply: true
+alwaysApply: false
+description: 
 ---
 # 日志规范
 使用 Microsoft.Extensions.Logging 库进行日志记录，确保日志记录的可维护性和可扩展。

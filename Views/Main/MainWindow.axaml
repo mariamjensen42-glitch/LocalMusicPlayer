@@ -40,9 +40,7 @@
         <converters:LyricTranslationFontSizeConverter x:Key="LyricTranslationFontSizeConverter" />
     </Window.Resources>
 
-    <!--  整体布局：主区域 + 底部播放栏 + 全屏播放器覆盖层  -->
     <Grid RowDefinitions="*,Auto">
-        <!--  全屏播放器（歌词页面）覆盖层  -->
         <Border
             Grid.RowSpan="2"
             Background="{StaticResource BgPrimaryBrush}"
@@ -51,262 +49,120 @@
             <ContentControl Content="{Binding PlayerPageViewModel}" />
         </Border>
 
-        <!--  Row 0: 主区域  -->
         <Grid
             Grid.Row="0"
             ColumnDefinitions="Auto,*">
 
-            <!--  ==================== 左侧边栏 (220px) ====================  -->
             <Border
                 x:Name="Sidebar"
                 Grid.Column="0"
                 Width="48"
                 Background="{StaticResource BgSidebarBrush}">
-                <Grid RowDefinitions="Auto,*,Auto">
+                <StackPanel
+                    Margin="4,0,4,24"
+                    VerticalAlignment="Top"
+                    Spacing="2">
 
-                    <Border
-                        Grid.Row="0"
-                        Height="48"
+                    <ToggleButton
+                        Width="40"
+                        Height="40"
+                        Padding="0"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
+                        Command="{Binding NavigateToMusicLibraryCommand}"
+                        Theme="{StaticResource SidebarNavItemTheme}"
+                        ToolTip.Tip="{DynamicResource StringAllSongs}">
+                        <ToggleButton.IsChecked>
+                            <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
+                                <Binding Path="CurrentNavPage" />
+                                <Binding Source="{x:Static vm:NavigationPage.MusicLibrary}" />
+                            </MultiBinding>
+                        </ToggleButton.IsChecked>
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontFamily="Segoe Fluent Icons"
                             FontSize="18"
-                            Foreground="{StaticResource AccentPurpleBrush}"
                             Text="&#xE8D6;" />
-                    </Border>
+                    </ToggleButton>
 
-                    <StackPanel
-                        Grid.Row="1"
-                        Margin="4,0,4,24"
-                        VerticalAlignment="Top"
-                        Spacing="2">
-
-                        <ToggleButton
-                            Width="40"
-                            Height="40"
-                            Padding="0"
+                    <ToggleButton
+                        Width="40"
+                        Height="40"
+                        Padding="0"
+                        HorizontalAlignment="Center"
+                        Command="{Binding NavigateToFavoritesCommand}"
+                        Theme="{StaticResource SidebarNavItemTheme}"
+                        ToolTip.Tip="{DynamicResource StringFavorites}">
+                        <ToggleButton.IsChecked>
+                            <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
+                                <Binding Path="CurrentNavPage" />
+                                <Binding Source="{x:Static vm:NavigationPage.Favorites}" />
+                            </MultiBinding>
+                        </ToggleButton.IsChecked>
+                        <TextBlock
                             HorizontalAlignment="Center"
-                            Command="{Binding NavigateToLibraryCommand}"
-                            Theme="{StaticResource SidebarNavItemTheme}"
-                            ToolTip.Tip="{DynamicResource StringAllSongs}">
-                            <ToggleButton.IsChecked>
-                                <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                    <Binding Path="CurrentNavPage" />
-                                    <Binding Source="{x:Static vm:NavigationPage.Home}" />
-                                </MultiBinding>
-                            </ToggleButton.IsChecked>
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="18"
-                                Text="&#xE8D6;" />
-                        </ToggleButton>
+                            VerticalAlignment="Center"
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="18"
+                            Text="&#xE87D;" />
+                    </ToggleButton>
 
-                        <ToggleButton
-                            Width="40"
-                            Height="40"
-                            Padding="0"
+                    <ToggleButton
+                        Width="40"
+                        Height="40"
+                        Padding="0"
+                        HorizontalAlignment="Center"
+                        Command="{Binding NavigateToPlaylistCommand}"
+                        Theme="{StaticResource SidebarNavItemTheme}"
+                        ToolTip.Tip="{DynamicResource StringPlaylists}">
+                        <ToggleButton.IsChecked>
+                            <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
+                                <Binding Path="CurrentNavPage" />
+                                <Binding Source="{x:Static vm:NavigationPage.Playlist}" />
+                            </MultiBinding>
+                        </ToggleButton.IsChecked>
+                        <TextBlock
                             HorizontalAlignment="Center"
-                            Command="{Binding NavigateToArtistsPageCommand}"
-                            Theme="{StaticResource SidebarNavItemTheme}"
-                            ToolTip.Tip="{DynamicResource StringArtists}">
-                            <ToggleButton.IsChecked>
-                                <Binding
-                                    Converter="{StaticResource NavigationPageToBoolConverter}"
-                                    ConverterParameter="{x:Static vm:NavigationPage.Artists}"
-                                    Mode="OneWay"
-                                    Path="CurrentNavPage" />
-                            </ToggleButton.IsChecked>
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="18"
-                                Text="&#xE77B;" />
-                        </ToggleButton>
+                            VerticalAlignment="Center"
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="18"
+                            Text="&#xE8FC;" />
+                    </ToggleButton>
 
-                        <ToggleButton
-                            Width="40"
-                            Height="40"
-                            Padding="0"
+                    <Button
+                        Width="40"
+                        Height="40"
+                        Margin="0,24,0,0"
+                        Padding="0"
+                        HorizontalAlignment="Center"
+                        Command="{Binding NavigateToSettingsCommand}"
+                        Theme="{StaticResource CircularHoverButtonTheme}"
+                        ToolTip.Tip="{DynamicResource StringSettings}">
+                        <TextBlock
                             HorizontalAlignment="Center"
-                            Command="{Binding NavigateToAlbumsPageCommand}"
-                            Theme="{StaticResource SidebarNavItemTheme}"
-                            ToolTip.Tip="{DynamicResource StringAlbums}">
-                            <ToggleButton.IsChecked>
-                                <Binding
-                                    Converter="{StaticResource NavigationPageToBoolConverter}"
-                                    ConverterParameter="{x:Static vm:NavigationPage.Albums}"
-                                    Mode="OneWay"
-                                    Path="CurrentNavPage" />
-                            </ToggleButton.IsChecked>
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="18"
-                                Text="&#xE93C;" />
-                        </ToggleButton>
-
-                        <ToggleButton
-                            Width="40"
-                            Height="40"
-                            Padding="0"
-                            HorizontalAlignment="Center"
-                            Command="{Binding NavigateToFavoritesCommand}"
-                            Theme="{StaticResource SidebarNavItemTheme}"
-                            ToolTip.Tip="{DynamicResource StringFavorites}">
-                            <ToggleButton.IsChecked>
-                                <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                    <Binding Path="CurrentNavPage" />
-                                    <Binding Source="{x:Static vm:NavigationPage.Favorites}" />
-                                </MultiBinding>
-                            </ToggleButton.IsChecked>
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="18"
-                                Text="&#xE87D;" />
-                        </ToggleButton>
-
-                        <ToggleButton
-                            Width="40"
-                            Height="40"
-                            Padding="0"
-                            HorizontalAlignment="Center"
-                            Command="{Binding NavigateToLibraryBrowserCommand}"
-                            CommandParameter="{x:Static models:BrowserCategory.Folders}"
-                            Theme="{StaticResource SidebarNavItemTheme}"
-                            ToolTip.Tip="{DynamicResource StringFolders}">
-                            <ToggleButton.IsChecked>
-                                <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                    <Binding Path="CurrentNavPage" />
-                                    <Binding Source="{x:Static vm:NavigationPage.Library}" />
-                                    <Binding Path="CurrentLibraryCategory" />
-                                    <Binding Source="{x:Static models:BrowserCategory.Folders}" />
-                                </MultiBinding>
-                            </ToggleButton.IsChecked>
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="18"
-                                Text="&#xE8B7;" />
-                        </ToggleButton>
-
-                        <ToggleButton
-                            Width="40"
-                            Height="40"
-                            Padding="0"
-                            HorizontalAlignment="Center"
-                            Command="{Binding NavigateToStatisticsReportCommand}"
-                            Theme="{StaticResource SidebarNavItemTheme}"
-                            ToolTip.Tip="{DynamicResource StringTopCharts}">
-                            <ToggleButton.IsChecked>
-                                <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                    <Binding Path="CurrentNavPage" />
-                                    <Binding Source="{x:Static vm:NavigationPage.Statistics}" />
-                                </MultiBinding>
-                            </ToggleButton.IsChecked>
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="18"
-                                Text="&#xE9E0;" />
-                        </ToggleButton>
-
-                        <ToggleButton
-                            Width="40"
-                            Height="40"
-                            Padding="0"
-                            HorizontalAlignment="Center"
-                            Command="{Binding NavigateToHistoryCommand}"
-                            Theme="{StaticResource SidebarNavItemTheme}"
-                            ToolTip.Tip="{DynamicResource StringRecentPlays}">
-                            <ToggleButton.IsChecked>
-                                <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                    <Binding Path="CurrentNavPage" />
-                                    <Binding Source="{x:Static vm:NavigationPage.History}" />
-                                </MultiBinding>
-                            </ToggleButton.IsChecked>
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="18"
-                                Text="&#xE81C;" />
-                        </ToggleButton>
-
-                        <ToggleButton
-                            Width="40"
-                            Height="40"
-                            Padding="0"
-                            HorizontalAlignment="Center"
-                            Command="{Binding NavigateToPlaylistCommand}"
-                            Theme="{StaticResource SidebarNavItemTheme}"
-                            ToolTip.Tip="{DynamicResource StringPlaylists}">
-                            <ToggleButton.IsChecked>
-                                <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                    <Binding Path="CurrentNavPage" />
-                                    <Binding Source="{x:Static vm:NavigationPage.Playlist}" />
-                                </MultiBinding>
-                            </ToggleButton.IsChecked>
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="18"
-                                Text="&#xE8FC;" />
-                        </ToggleButton>
-                    </StackPanel>
-
-                    <StackPanel
-                        Grid.Row="2"
-                        Margin="4,0,4,8"
-                        VerticalAlignment="Bottom"
-                        Spacing="2">
-                        <Button
-                            Width="40"
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            Command="{Binding NavigateToSettingsCommand}"
-                            Theme="{StaticResource CircularHoverButtonTheme}"
-                            ToolTip.Tip="{DynamicResource StringSettings}">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="18"
-                                Foreground="{StaticResource TextMutedBrush}"
-                                Text="&#xE713;" />
-                        </Button>
-                    </StackPanel>
-                </Grid>
+                            VerticalAlignment="Center"
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="18"
+                            Foreground="{StaticResource TextMutedBrush}"
+                            Text="&#xE713;" />
+                    </Button>
+                </StackPanel>
             </Border>
 
-            <!--  ==================== 右侧主内容区 ====================  -->
             <Grid Grid.Column="1" RowDefinitions="Auto,*">
 
-                <!--  顶部工具栏 (48px)  -->
                 <Border
                     x:Name="TitleBar"
                     Grid.Row="0"
                     Height="48"
                     Background="{StaticResource BgPrimaryBrush}">
-                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto,Auto">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto">
 
-                        <!--  返回按钮 (Column 0)  -->
                         <Button
                             Grid.Column="0"
                             Margin="16,0,0,0"
-                            Command="{Binding NavigateToLibraryCommand}"
-                            IsVisible="{Binding CurrentNavPage, Converter={StaticResource NavPageVisibilityConverter}, ConverterParameter={x:Static vm:NavigationPage.Home}, FallbackValue=Collapsed}"
+                            Command="{Binding NavigateToMusicLibraryCommand}"
+                            IsVisible="{Binding CurrentNavPage, Converter={StaticResource NavPageVisibilityConverter}, ConverterParameter={x:Static vm:NavigationPage.MusicLibrary}, FallbackValue=Collapsed}"
                             Theme="{StaticResource ToolbarButtonTheme}">
                             <TextBlock
                                 HorizontalAlignment="Center"
@@ -317,7 +173,6 @@
                                 Text="&#xE76B;" />
                         </Button>
 
-                        <!--  搜索框 (Column 1)  -->
                         <Border
                             Grid.Column="1"
                             Width="400"
@@ -349,7 +204,6 @@
                             </Grid>
                         </Border>
 
-                        <!--  播放全部按钮 (Column 2)  -->
                         <Button
                             Grid.Column="2"
                             Margin="8,0,0,0"
@@ -365,7 +219,6 @@
                                 Text="&#xE768;" />
                         </Button>
 
-                        <!--  随机播放按钮 (Column 3)  -->
                         <Button
                             Grid.Column="3"
                             Command="{Binding ShufflePlayAllCommand}"
@@ -380,10 +233,8 @@
                                 Text="&#xE81B;" />
                         </Button>
 
-                        <!--  间距 (Column 4)  -->
                         <Border Grid.Column="4" Width="4" />
 
-                        <!--  视图切换按钮 (Column 5)  -->
                         <Button
                             Grid.Column="5"
                             Margin="0,0,4,0"
@@ -410,30 +261,13 @@
                             </Panel>
                         </Button>
 
-                        <!--  设置按钮 (Column 6)  -->
-                        <Button
-                            Grid.Column="6"
-                            Command="{Binding NavigateToSettingsCommand}"
-                            Theme="{StaticResource ToolbarButtonTheme}"
-                            ToolTip.Tip="{DynamicResource StringSettings}">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="14"
-                                Foreground="{StaticResource TextMutedBrush}"
-                                Text="&#xE713;" />
-                        </Button>
-
-                        <!--  窗口控制按钮组 (Column 7)  -->
                         <StackPanel
-                            Grid.Column="7"
+                            Grid.Column="6"
                             Margin="0,0,8,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
 
-                            <!--  最小化  -->
                             <Button
                                 x:Name="MinimizeButton"
                                 Width="40"
@@ -449,7 +283,6 @@
                                     Text="&#xE921;" />
                             </Button>
 
-                            <!--  最大化/还原  -->
                             <Button
                                 x:Name="MaximizeButton"
                                 Width="40"
@@ -477,7 +310,6 @@
                                 </Panel>
                             </Button>
 
-                            <!--  关闭  -->
                             <Button
                                 x:Name="CloseButton"
                                 Width="40"
@@ -496,14 +328,12 @@
                     </Grid>
                 </Border>
 
-                <!--  主内容区  -->
                 <Grid Grid.Row="1">
                     <ContentControl Content="{Binding CurrentPage}" />
                 </Grid>
             </Grid>
         </Grid>
 
-        <!--  队列面板（覆盖层之上）  -->
         <Border
             Grid.RowSpan="2"
             Width="320"
@@ -525,7 +355,6 @@
             <ContentControl Content="{Binding QueueViewModel}" />
         </Border>
 
-        <!--  ==================== 底部播放控制栏 (72px) ====================  -->
         <Border
             Grid.Row="1"
             Height="72"
@@ -535,7 +364,6 @@
             IsVisible="{Binding IsBottomPlayerBarVisible}">
             <Grid ColumnDefinitions="Auto,*,Auto">
 
-                <!--  左侧 - 当前播放信息 (280px)  -->
                 <StackPanel
                     Grid.Column="0"
                     Width="280"
@@ -548,7 +376,6 @@
                         <behaviors:TapCommandBehavior Command="{Binding NavigateToPlayerCommand}" />
                     </i:Interaction.Behaviors>
 
-                    <!--  专辑封面  -->
                     <Border
                         Width="40"
                         Height="40"
@@ -560,7 +387,6 @@
                         <Image Source="{Binding CurrentSong.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}" Stretch="UniformToFill" />
                     </Border>
 
-                    <!--  歌曲信息  -->
                     <StackPanel VerticalAlignment="Center" Spacing="2">
                         <TextBlock
                             MaxWidth="180"
@@ -579,20 +405,17 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!--  中间 - 播放控制和进度条  -->
                 <StackPanel
                     Grid.Column="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Spacing="8">
 
-                    <!--  播放控制按钮组  -->
                     <StackPanel
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
                         Spacing="16">
 
-                        <!--  循环模式  -->
                         <Button Command="{Binding RepeatCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
                             <TextBlock
                                 HorizontalAlignment="Center"
@@ -603,7 +426,6 @@
                                 Text="&#xE8ED;" />
                         </Button>
 
-                        <!--  上一首  -->
                         <Button Command="{Binding PreviousCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
                             <TextBlock
                                 HorizontalAlignment="Center"
@@ -614,7 +436,6 @@
                                 Text="&#xE892;" />
                         </Button>
 
-                        <!--  播放/暂停  -->
                         <Button
                             Command="{Binding PlayCommand}"
                             IsVisible="{Binding !IsPlaying}"
@@ -640,7 +461,6 @@
                                 Text="&#xE769;" />
                         </Button>
 
-                        <!--  下一首  -->
                         <Button Command="{Binding NextCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
                             <TextBlock
                                 HorizontalAlignment="Center"
@@ -651,7 +471,6 @@
                                 Text="&#xE893;" />
                         </Button>
 
-                        <!--  播放列表  -->
                         <Button Command="{Binding ToggleQueuePanelCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
                             <TextBlock
                                 HorizontalAlignment="Center"
@@ -665,14 +484,12 @@
 
                     </StackPanel>
 
-                    <!--  进度条和时间显示  -->
                     <Grid
                         Width="600"
                         Margin="0,-8,0,0"
                         HorizontalAlignment="Center"
                         ColumnDefinitions="Auto,*,Auto">
 
-                        <!--  当前时间  -->
                         <TextBlock
                             Grid.Column="0"
                             Margin="0,0,8,0"
@@ -681,7 +498,6 @@
                             Foreground="{StaticResource TextMutedBrush}"
                             Text="{Binding Position, Converter={StaticResource TimeSpanToStringConverter}}" />
 
-                        <!--  进度条滑块  -->
                         <Slider
                             Grid.Column="1"
                             Maximum="{Binding DurationSeconds}"
@@ -689,7 +505,6 @@
                             Theme="{StaticResource MusicProgressSliderTheme}"
                             Value="{Binding PositionSeconds, Mode=TwoWay}" />
 
-                        <!--  总时长  -->
                         <TextBlock
                             Grid.Column="2"
                             Margin="8,0,0,0"
@@ -700,7 +515,6 @@
                     </Grid>
                 </StackPanel>
 
-                <!--  右侧 - 音量控制 (120px)  -->
                 <StackPanel
                     Grid.Column="2"
                     Width="120"
@@ -710,7 +524,6 @@
                     Orientation="Horizontal"
                     Spacing="8">
 
-                    <!--  音量图标  -->
                     <Button
                         Width="32"
                         Height="32"
@@ -737,7 +550,6 @@
                         </Panel>
                     </Button>
 
-                    <!--  音量滑块  -->
                     <Slider
                         Width="80"
                         VerticalAlignment="Center"

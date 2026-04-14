@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 
+---
 # 命名规范
 
 ## C#

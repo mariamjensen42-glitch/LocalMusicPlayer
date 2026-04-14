@@ -17,7 +17,6 @@ public static class ServiceCollectionExtensions
         AddMediaServices(services);
         AddPlaylistServices(services);
         AddSystemServices(services);
-        AddStatisticsServices(services);
         AddFileServices(services);
         AddViewModels(services);
         return services;
@@ -62,7 +61,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IAlbumArtService, AlbumArtService>();
         services.AddSingleton<ICoverManagerService, CoverManagerService>();
         services.AddSingleton<ILyricsService, LyricsService>();
-        services.AddSingleton<IOnlineLyricsService, OnlineLyricsService>();
     }
 
     private static void AddPlaylistServices(IServiceCollection services)
@@ -70,23 +68,13 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IPlaylistService, PlaylistService>();
         services.AddSingleton<IUserPlaylistService, UserPlaylistService>();
         services.AddSingleton<IPlayHistoryService, PlayHistoryService>();
-        services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
     }
 
     private static void AddSystemServices(IServiceCollection services)
     {
         services.AddSingleton<IConfigurationService, ConfigurationService>();
-        services.AddSingleton<ISystemTrayService, SystemTrayService>();
-#pragma warning disable CA1416
-        services.AddSingleton<IAutoStartService, AutoStartService>();
-#pragma warning restore CA1416
         services.AddSingleton<AppDbContext>();
         services.AddSingleton<IDatabaseService, DatabaseService>();
-    }
-
-    private static void AddStatisticsServices(IServiceCollection services)
-    {
-        services.AddSingleton<IStatisticsService, StatisticsService>();
     }
 
     private static void AddFileServices(IServiceCollection services)
@@ -99,22 +87,12 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<SettingsViewModel>();
-        services.AddTransient<StatisticsViewModel>();
-        services.AddTransient<LibraryBrowserViewModel>();
-        services.AddTransient<StatisticsReportViewModel>();
         services.AddTransient<PlayerPageViewModel>();
         services.AddTransient<PlaylistManagementViewModel>();
         services.AddTransient<PlaylistListViewModel>();
-        services.AddTransient<LibraryCategoryViewModel>();
         services.AddTransient<QueueViewModel>();
-        services.AddTransient<PlayHistoryViewModel>();
         services.AddTransient<ArtistDetailViewModel>();
         services.AddTransient<AlbumDetailViewModel>();
-        services.AddTransient<HomeViewModel>();
-        services.AddTransient<ArtistsPageViewModel>();
-        services.AddTransient<AlbumsPageViewModel>();
         services.AddTransient<MetadataEditorViewModel>();
-        services.AddTransient<BatchMetadataEditorViewModel>();
-        services.AddTransient<SmartPlaylistSongsViewModel>();
     }
 }

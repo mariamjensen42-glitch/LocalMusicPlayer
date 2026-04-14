@@ -240,6 +240,17 @@
         <Setter Property="Cursor" Value="Hand" />
     </ControlTheme>
 
+    <ControlTheme x:Key="IconButtonTheme" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource BgElementBrush}" />
+        </Style>
+    </ControlTheme>
+
     <ControlTheme x:Key="CardButtonTheme" TargetType="Button">
         <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
@@ -981,5 +992,129 @@
         <Setter Property="Background" Value="{StaticResource BgElement2Brush}" />
     </ControlTheme>
 
+    <!--  ==================== TabControl 样式 ====================  -->
+    <ControlTheme x:Key="MusicLibraryTabControlTheme" TargetType="TabControl">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid RowDefinitions="Auto,*">
+                    <ItemsPresenter
+                        Grid.Row="0"
+                        Name="PART_ItemsPresenter"
+                        ItemsPanel="{TemplateBinding ItemsPanel}" />
+                    <ContentPresenter
+                        Grid.Row="1"
+                        Name="PART_SelectedContentHost"
+                        Margin="{TemplateBinding Padding}"
+                        Content="{TemplateBinding SelectedContent}"
+                        ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="MusicLibraryTabItemTheme" TargetType="TabItem">
+        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    Name="PART_LayoutRoot"
+                    Background="{TemplateBinding Background}"
+                    Padding="{TemplateBinding Padding}">
+                    <ContentPresenter
+                        Name="PART_ContentPresenter"
+                        Content="{TemplateBinding Header}"
+                        ContentTemplate="{TemplateBinding HeaderTemplate}"
+                        Foreground="{TemplateBinding Foreground}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:selected">
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <!--  ==================== 滚动条样式 ====================  -->
+    <ControlTheme x:Key="ModernScrollBarTheme" TargetType="ScrollBar">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Width" Value="8" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}" Width="{TemplateBinding Width}">
+                    <Track Name="PART_Track" Orientation="Vertical" IsDirectionReversed="True">
+                        <Track.Thumb>
+                            <Thumb Name="PART_Thumb" MinHeight="30">
+                                <Thumb.Template>
+                                    <ControlTemplate>
+                                        <Border Background="#40FFFFFF" CornerRadius="4" Margin="2,0" />
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </Track.Thumb>
+                    </Track>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Width" Value="12" />
+        </Style>
+    </ControlTheme>
+
+    <!--  ==================== 歌曲行样式 ====================  -->
+    <ControlTheme x:Key="SongRowTheme" TargetType="Border">
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Margin" Value="0,2" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <!--  ==================== 当前播放歌曲行样式 ====================  -->
+    <ControlTheme x:Key="PlayingSongRowTheme" TargetType="Border">
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Margin" Value="0,2" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="Background" Value="{StaticResource AccentPurpleTranslucent}" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="BorderBrush" Value="{StaticResource AccentPurpleBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+    </ControlTheme>
+
+    <!--  ==================== 收藏按钮样式 ====================  -->
+    <ControlTheme x:Key="FavoriteButtonTheme" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Opacity" Value="0.6" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Background="{TemplateBinding Background}">
+                    <ContentPresenter
+                        Padding="{TemplateBinding Padding}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Content="{TemplateBinding Content}" />
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="RenderTransform" Value="scale(1.1)" />
+        </Style>
+        <Style Selector="^:pressed">
+            <Setter Property="Opacity" Value="0.8" />
+            <Setter Property="RenderTransform" Value="scale(0.95)" />
+        </Style>
+    </ControlTheme>
 
 </ResourceDictionary>

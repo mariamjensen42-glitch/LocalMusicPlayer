@@ -356,27 +356,6 @@
                         Orientation="Horizontal"
                         Spacing="10">
                         <Button
-                            Command="{Binding SearchOnlineLyricsCommand}"
-                            Foreground="{StaticResource TextMutedBrush}"
-                            IsVisible="{Binding !IsSearchingLyrics}"
-                            Theme="{StaticResource CircularHoverButtonTheme}"
-                            ToolTip.Tip="{DynamicResource StringSearchLyrics}">
-                            <TextBlock
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="14"
-                                Text="&#xE721;" />
-                        </Button>
-                        <Button
-                            Foreground="{StaticResource AccentPurpleBrush}"
-                            IsVisible="{Binding IsSearchingLyrics}"
-                            Theme="{StaticResource CircularHoverButtonTheme}"
-                            ToolTip.Tip="{DynamicResource StringSearching}">
-                            <TextBlock
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="14"
-                                Text="&#xE895;" />
-                        </Button>
-                        <Button
                             Command="{Binding ToggleTranslationCommand}"
                             Foreground="{StaticResource TextMutedBrush}"
                             Theme="{StaticResource CircularHoverButtonTheme}">
@@ -476,17 +455,6 @@
                         IsVisible="{Binding !HasLyrics}"
                         Text="{StaticResource StringNoLyrics}" />
 
-                    <!-- 歌词搜索状态 -->
-                    <TextBlock
-                        Grid.Row="1"
-                        Margin="0,0,0,16"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        FontFamily="{StaticResource FontFamilyPrimary}"
-                        FontSize="12"
-                        Foreground="{StaticResource AccentPurpleBrush}"
-                        IsVisible="{Binding LyricSearchStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                        Text="{Binding LyricSearchStatus}" />
                 </Grid>
             </Grid>
         </Grid>

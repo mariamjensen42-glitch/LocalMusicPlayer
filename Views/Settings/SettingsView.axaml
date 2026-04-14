@@ -113,16 +113,6 @@
                     <StackPanel Spacing="12">
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Grid.Column="0"
-                                       Text="{StaticResource StringAutoStartOnBoot}"
-                                       FontSize="14"
-                                       Foreground="{StaticResource TextPrimaryBrush}"
-                                       VerticalAlignment="Center" />
-                            <ToggleSwitch Grid.Column="1"
-                                          IsChecked="{Binding AutoStartOnBoot}" />
-                        </Grid>
-
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Grid.Column="0"
                                        Text="{StaticResource StringResumeLastPlayback}"
                                        FontSize="14"
                                        Foreground="{StaticResource TextPrimaryBrush}"

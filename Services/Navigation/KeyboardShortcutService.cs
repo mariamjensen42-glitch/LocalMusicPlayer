@@ -7,19 +7,16 @@ public class KeyboardShortcutService : IKeyboardShortcutService
 {
     private readonly IMusicPlayerService _musicPlayerService;
     private readonly IPlaylistService _playlistService;
-    private readonly IStatisticsService _statisticsService;
     private Action? _navigateBackAction;
 
     public event EventHandler<string>? ShortcutExecuted;
 
     public KeyboardShortcutService(
         IMusicPlayerService musicPlayerService,
-        IPlaylistService playlistService,
-        IStatisticsService statisticsService)
+        IPlaylistService playlistService)
     {
         _musicPlayerService = musicPlayerService;
         _playlistService = playlistService;
-        _statisticsService = statisticsService;
     }
 
     public void SetNavigateBackAction(Action action)
@@ -67,7 +64,6 @@ public class KeyboardShortcutService : IKeyboardShortcutService
             var currentSong = _playlistService.CurrentSong;
             if (currentSong != null)
             {
-                _statisticsService.RecordPlayStart(currentSong);
                 _musicPlayerService.Play(currentSong);
                 ShortcutExecuted?.Invoke(this, "Next track");
             }
@@ -81,7 +77,6 @@ public class KeyboardShortcutService : IKeyboardShortcutService
             var currentSong = _playlistService.CurrentSong;
             if (currentSong != null)
             {
-                _statisticsService.RecordPlayStart(currentSong);
                 _musicPlayerService.Play(currentSong);
                 ShortcutExecuted?.Invoke(this, "Previous track");
             }
