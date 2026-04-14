@@ -155,7 +155,7 @@
                                     <Border.Styles>
                                         <Style Selector="Border:pointerover">
                                             <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-                                            <Setter Property="RenderTransform" Value="translateY(-4)" />
+                                            <Setter Property="RenderTransform" Value="translateY(-4px)" />
                                         </Style>
                                     </Border.Styles>
                                     <StackPanel Spacing="10">

@@ -60,6 +60,16 @@ public partial class SettingsViewModel : ViewModelBase
     public ObservableCollection<string> EqualizerPresets { get; } = new();
 
     [RelayCommand]
+    private void SelectEqualizerPreset(string presetName)
+    {
+        var index = EqualizerPresets.IndexOf(presetName);
+        if (index >= 0)
+        {
+            _musicPlayerService.SetEqualizerPreset(index);
+        }
+    }
+
+    [RelayCommand]
     private async Task AddFolder()
     {
         var paths = await _dialogService.ShowFolderPickerAsync();
@@ -266,15 +276,5 @@ public partial class SettingsViewModel : ViewModelBase
     partial void OnEqualizerPreampChanged(float value)
     {
         _musicPlayerService.SetEqualizerPreamp(value);
-    }
-
-    [RelayCommand]
-    private void SelectEqualizerPreset(string presetName)
-    {
-        var index = EqualizerPresets.IndexOf(presetName);
-        if (index >= 0)
-        {
-            _musicPlayerService.SetEqualizerPreset(index);
-        }
     }
 }
