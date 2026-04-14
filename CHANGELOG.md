@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.5.0...v1.6.0) (2026-04-14)
+
+
+### ✨ 新功能
+
+* Statistics SQLite migration, EQ equalizer, SmartPlaylist editor UI ([7a04402](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/7a04402166c63f4e713f20c1f0b198f46e32b0d9))
+
 ## [1.5.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.4.0...v1.5.0) (2026-04-14)
 
 
