@@ -1,160 +1,134 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Color x:Key="BgPrimary">#FF0A0A0A</Color>
-    <Color x:Key="BgSidebar">#FF0F0F0F</Color>
-    <Color x:Key="BgCard">#FF111111</Color>
-    <Color x:Key="BgCardHover">#FF1A1A1A</Color>
-    <Color x:Key="BgInput">#FF0A0A0A</Color>
-    <Color x:Key="BgElement">#FF2A2A2A</Color>
+    <!-- ── Backgrounds ─────────────────────────────────── -->
+    <Color x:Key="BgPrimary">#090909</Color>
+    <Color x:Key="BgSidebar">#0C0C0C</Color>
+    <Color x:Key="BgCard">#111111</Color>
+    <Color x:Key="BgCardHover">#181818</Color>
+    <Color x:Key="BgInput">#0D0D0D</Color>
+    <Color x:Key="BgElement">#1A1A1A</Color>
+    <Color x:Key="BgActiveRow">#1C1C1C</Color>
 
-    <Color x:Key="TextPrimary">#FFFFFFFF</Color>
-    <Color x:Key="TextSecondary">#FFA1A1AA</Color>
-    <Color x:Key="TextMuted">#FF71717A</Color>
+    <!-- ── Text ─────────────────────────────────────────── -->
+    <Color x:Key="TextPrimary">#FFFFFF</Color>
+    <Color x:Key="TextSecondary">#888888</Color>
+    <Color x:Key="TextMuted">#555555</Color>
 
-    <Color x:Key="AccentPurple">#FFA855F7</Color>
-    <Color x:Key="AccentPurpleHover">#FFB06AF8</Color>
-    <Color x:Key="AccentPink">#FFEC4899</Color>
+    <!-- ── Accent — 单色灰蓝，克制 ─────────────────────── -->
+    <Color x:Key="Accent">#5B8DEF</Color>
+    <Color x:Key="AccentHover">#6B9AFF</Color>
+    <Color x:Key="AccentDim">#2A3A5A</Color>
 
-    <Color x:Key="BorderSubtle">#FF1A1A1A</Color>
-    <Color x:Key="BorderFocus">#FFE040FB</Color>
+    <!-- ── Borders — 极淡，仅作分隔线 ─────────────────── -->
+    <Color x:Key="BorderSubtle">#1C1C1C</Color>
+    <Color x:Key="BorderFocus">#5B8DEF</Color>
 
-    <Color x:Key="AccentPurpleTranslucent">#1AA855F7</Color>
-    <Color x:Key="AccentPurpleBorder">#33A855F7</Color>
-    <Color x:Key="AccentBlue">#FF3B82F6</Color>
-    <Color x:Key="AccentGreen">#FF22C55E</Color>
-    <Color x:Key="AccentOrange">#FFF97316</Color>
-    <Color x:Key="BgTableHeader">#FF0A0A0A</Color>
-    <Color x:Key="BgActiveRow">#20A855F7</Color>
-    <Color x:Key="ActiveRowBorder">#60A855F7</Color>
-    <Color x:Key="PlayerBarBg">#FF0F0F0F</Color>
-    <Color x:Key="BgElement2">#FF27273A</Color>
+    <!-- ── 状态色 ──────────────────────────────────────── -->
+    <Color x:Key="AccentGreen">#4CAF82</Color>
+    <Color x:Key="AccentOrange">#D4956A</Color>
+    <Color x:Key="HeartInactive">#3A3A3A</Color>
+    <Color x:Key="SliderTrackOverlay">#1FFFFFFF</Color>
+    <Color x:Key="SongRowBorder">#1A1A1A</Color>
+    <Color x:Key="PlayerBarBg">#0C0C0C</Color>
+    <Color x:Key="BgElement2">#161616</Color>
 
-    <Color x:Key="TitleBarButtonHover">#1AA855F7</Color>
-    <Color x:Key="TitleBarCloseHover">#FFE63946</Color>
-
-    <Color x:Key="HeartInactive">#FF555555</Color>
-    <Color x:Key="SliderTrackOverlay">#1AFFFFFF</Color>
-    <Color x:Key="SongRowBorder">#FF333333</Color>
-
+    <!-- ── Brushes ─────────────────────────────────────── -->
     <SolidColorBrush x:Key="BgPrimaryBrush" Color="{StaticResource BgPrimary}" />
     <SolidColorBrush x:Key="BgSidebarBrush" Color="{StaticResource BgSidebar}" />
     <SolidColorBrush x:Key="BgCardBrush" Color="{StaticResource BgCard}" />
     <SolidColorBrush x:Key="BgCardHoverBrush" Color="{StaticResource BgCardHover}" />
     <SolidColorBrush x:Key="BgInputBrush" Color="{StaticResource BgInput}" />
     <SolidColorBrush x:Key="BgElementBrush" Color="{StaticResource BgElement}" />
+    <SolidColorBrush x:Key="BgActiveRowBrush" Color="{StaticResource BgActiveRow}" />
 
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
     <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
 
-    <SolidColorBrush x:Key="AccentPurpleBrush" Color="{StaticResource AccentPurple}" />
-    <SolidColorBrush x:Key="AccentPurpleHoverBrush" Color="{StaticResource AccentPurpleHover}" />
-    <SolidColorBrush x:Key="AccentPinkBrush" Color="{StaticResource AccentPink}" />
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHover}" />
+    <SolidColorBrush x:Key="AccentDimBrush" Color="{StaticResource AccentDim}" />
 
     <SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtle}" />
     <SolidColorBrush x:Key="BorderFocusBrush" Color="{StaticResource BorderFocus}" />
 
-    <SolidColorBrush x:Key="AccentPurpleTranslucentBrush" Color="{StaticResource AccentPurpleTranslucent}" />
-    <SolidColorBrush x:Key="AccentPurpleBorderBrush" Color="{StaticResource AccentPurpleBorder}" />
-    <SolidColorBrush x:Key="AccentBlueBrush" Color="{StaticResource AccentBlue}" />
     <SolidColorBrush x:Key="AccentGreenBrush" Color="{StaticResource AccentGreen}" />
     <SolidColorBrush x:Key="AccentOrangeBrush" Color="{StaticResource AccentOrange}" />
-    <SolidColorBrush x:Key="BgTableHeaderBrush" Color="{StaticResource BgTableHeader}" />
-    <SolidColorBrush x:Key="BgActiveRowBrush" Color="{StaticResource BgActiveRow}" />
-    <SolidColorBrush x:Key="ActiveRowBorderBrush" Color="{StaticResource ActiveRowBorder}" />
+    <SolidColorBrush x:Key="BgTableHeaderBrush" Color="#0D0D0D" />
+    <SolidColorBrush x:Key="BgActiveRowBrush2" Color="{StaticResource BgActiveRow}" />
     <SolidColorBrush x:Key="PlayerBarBgBrush" Color="{StaticResource PlayerBarBg}" />
     <SolidColorBrush x:Key="BgElement2Brush" Color="{StaticResource BgElement2}" />
 
-    <LinearGradientBrush x:Key="PurplePinkVerticalGradientBrush" StartPoint="0%,0%" EndPoint="0%,100%">
-        <GradientStop Offset="0" Color="#FFA855F7" />
-        <GradientStop Offset="1" Color="#FFEC4899" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PurplePinkHorizontalGradientBrush" StartPoint="0%,0%" EndPoint="100%,0%">
-        <GradientStop Offset="0" Color="#FFA855F7" />
-        <GradientStop Offset="1" Color="#FFEC4899" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PurplePinkDiagonalGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-        <GradientStop Offset="0" Color="#FFA855F7" />
-        <GradientStop Offset="1" Color="#FFEC4899" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ProgressGradientBrush" StartPoint="0%,0%" EndPoint="100%,0%">
-        <GradientStop Offset="0" Color="#FFA855F7" />
-        <GradientStop Offset="1" Color="#FFEC4899" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PlayButtonGradient" StartPoint="0%,0%" EndPoint="0%,100%">
-        <GradientStop Offset="0" Color="#FFA855F7" />
-        <GradientStop Offset="1" Color="#FFEC4899" />
-    </LinearGradientBrush>
-
-    <SolidColorBrush x:Key="SliderTrackBgBrush" Color="#FF1A1A1A" />
-    <SolidColorBrush x:Key="SliderVolumeFillBrush" Color="#FFA1A1AA" />
+    <!-- 去掉所有渐变，只保留单色按钮背景 -->
+    <SolidColorBrush x:Key="PlayButtonBackground" Color="{StaticResource Accent}" />
+    <SolidColorBrush x:Key="SliderTrackBgBrush" Color="#1A1A1A" />
+    <SolidColorBrush x:Key="SliderVolumeFillBrush" Color="{StaticResource TextSecondary}" />
     <SolidColorBrush x:Key="SliderTrackOverlayBrush" Color="{StaticResource SliderTrackOverlay}" />
-
     <SolidColorBrush x:Key="HeartInactiveBrush" Color="{StaticResource HeartInactive}" />
     <SolidColorBrush x:Key="SongRowBorderBrush" Color="{StaticResource SongRowBorder}" />
 
-    <x:Double x:Key="IconButtonSize">40</x:Double>
-    <x:Double x:Key="IconButtonSizeLarge">72</x:Double>
-    <x:Double x:Key="IconButtonSizeSmall">34</x:Double>
-    <x:Double x:Key="IconButtonSizeTiny">24</x:Double>
+    <!-- ── 尺寸 ───────────────────────────────────────── -->
+    <x:Double x:Key="IconButtonSize">36</x:Double>
+    <x:Double x:Key="IconButtonSizeLarge">56</x:Double>
+    <x:Double x:Key="IconButtonSizeSmall">30</x:Double>
+    <x:Double x:Key="IconButtonSizeTiny">22</x:Double>
 
-    <CornerRadius x:Key="DefaultCornerRadius">12</CornerRadius>
-    <CornerRadius x:Key="CardCornerRadius">8</CornerRadius>
-    <CornerRadius x:Key="SmallCornerRadius">6</CornerRadius>
-    <CornerRadius x:Key="TinyCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="DefaultCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="CardCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="SmallCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="TinyCornerRadius">3</CornerRadius>
 
     <x:Double x:Key="FontSizeSmall">11</x:Double>
     <x:Double x:Key="FontSizeNormal">13</x:Double>
     <x:Double x:Key="FontSizeMedium">14</x:Double>
     <x:Double x:Key="FontSizeLarge">16</x:Double>
     <x:Double x:Key="FontSizeXLarge">18</x:Double>
-    <x:Double x:Key="FontSizeTitle">32</x:Double>
+    <x:Double x:Key="FontSizeTitle">26</x:Double>
 
     <FontFamily x:Key="FontFamilyPrimary">Inter</FontFamily>
     <FontFamily x:Key="FontFamilyMono">Consolas, monospace</FontFamily>
 
-    <ControlTheme x:Key="TitleTextStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="{StaticResource FontSizeTitle}" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-    </ControlTheme>
+    <!-- ── Control Themes ─────────────────────────────── -->
 
     <ControlTheme x:Key="OutlineButton" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="14,8" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="SidebarButtonTheme" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="12,10" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="10,8" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border
-                    Padding="{TemplateBinding Padding}"
-                    Background="{TemplateBinding Background}"
-                    CornerRadius="{TemplateBinding CornerRadius}">
-                    <ContentPresenter
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        Content="{TemplateBinding Content}" />
+                <Border Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <ContentPresenter HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Center"
+                                      Content="{TemplateBinding Content}" />
                 </Border>
             </ControlTemplate>
         </Setter>
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="^:selected">
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
         </Style>
     </ControlTheme>
 
@@ -163,13 +137,8 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="CornerRadius" Value="0" />
         <Style Selector="^:pointerover">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <SolidColorBrush Color="{StaticResource TitleBarButtonHover}" />
-                </Setter.Value>
-            </Setter>
+            <Setter Property="Background" Value="#1AFFFFFF" />
         </Style>
     </ControlTheme>
 
@@ -178,23 +147,17 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="CornerRadius" Value="0" />
         <Style Selector="^:pointerover">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <SolidColorBrush Color="{StaticResource TitleBarCloseHover}" />
-                </Setter.Value>
-            </Setter>
+            <Setter Property="Background" Value="#E63946" />
         </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="CircleIconButtonTheme" TargetType="Button">
         <Setter Property="Width" Value="{StaticResource IconButtonSize}" />
         <Setter Property="Height" Value="{StaticResource IconButtonSize}" />
-        <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource DefaultCornerRadius}" />
+        <Setter Property="Background" Value="{StaticResource BgElementBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="18" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Padding" Value="0" />
     </ControlTheme>
@@ -202,9 +165,9 @@
     <ControlTheme x:Key="CircleIconButtonLargeTheme" TargetType="Button">
         <Setter Property="Width" Value="{StaticResource IconButtonSizeLarge}" />
         <Setter Property="Height" Value="{StaticResource IconButtonSizeLarge}" />
-        <Setter Property="Background" Value="{StaticResource PlayButtonGradient}" />
+        <Setter Property="Background" Value="{StaticResource AccentBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="36" />
+        <Setter Property="CornerRadius" Value="28" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Padding" Value="0" />
     </ControlTheme>
@@ -212,10 +175,9 @@
     <ControlTheme x:Key="CircleIconButtonSmallTheme" TargetType="Button">
         <Setter Property="Width" Value="{StaticResource IconButtonSizeSmall}" />
         <Setter Property="Height" Value="{StaticResource IconButtonSizeSmall}" />
-        <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource SongRowBorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="9999" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="15" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -224,78 +186,83 @@
     <ControlTheme x:Key="TransparentIconButtonTheme" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="8" />
+        <Setter Property="Padding" Value="6" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="CornerRadius" Value="50" />
+        <Setter Property="CornerRadius" Value="6" />
     </ControlTheme>
 
     <ControlTheme x:Key="SidebarIconButtonTheme" TargetType="Button">
         <Setter Property="Width" Value="{StaticResource IconButtonSize}" />
         <Setter Property="Height" Value="{StaticResource IconButtonSize}" />
-        <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource CardCornerRadius}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="6" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
     </ControlTheme>
 
     <ControlTheme x:Key="CardButtonTheme" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource CardCornerRadius}" />
-        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="Background" Value="{StaticResource BgElementBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="12,10" />
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="PrimaryButtonTheme" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource PurplePinkVerticalGradientBrush}" />
+        <Setter Property="Background" Value="{StaticResource AccentBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="14,8" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Foreground" Value="White" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource AccentHoverBrush}" />
+        </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="SecondaryButtonTheme" TargetType="Button">
         <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="14,8" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
     </ControlTheme>
 
     <ControlTheme x:Key="AccentButtonTheme" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource AccentPurpleBrush}" />
+        <Setter Property="Background" Value="{StaticResource AccentBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="14,8" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Foreground" Value="White" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource AccentHoverBrush}" />
+        </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="IconTextButtonTheme" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="8" />
+        <Setter Property="Padding" Value="6" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="CornerRadius" Value="50" />
+        <Setter Property="CornerRadius" Value="6" />
     </ControlTheme>
 
     <ControlTheme x:Key="ToolbarButtonTheme" TargetType="Button">
-        <Setter Property="Width" Value="36" />
-        <Setter Property="Height" Value="36" />
-        <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="6" />
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Padding" Value="0" />
     </ControlTheme>
 
     <ControlTheme x:Key="PlayerIconButtonTheme" TargetType="Button">
@@ -303,46 +270,35 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="8" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="CornerRadius" Value="50" />
+        <Setter Property="CornerRadius" Value="6" />
     </ControlTheme>
 
     <ControlTheme x:Key="PlayerCircleButtonTheme" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource PurplePinkVerticalGradientBrush}" />
+        <Setter Property="Background" Value="{StaticResource AccentBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="CornerRadius" Value="50" />
+        <Setter Property="CornerRadius" Value="20" />
         <Setter Property="Width" Value="40" />
         <Setter Property="Height" Value="40" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource AccentHoverBrush}" />
+        </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="SongRowButtonTheme" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource SongRowBorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="CornerRadius" Value="9999" />
+        <Setter Property="CornerRadius" Value="17" />
         <Setter Property="Width" Value="34" />
         <Setter Property="Height" Value="34" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </ControlTheme>
 
     <ControlTheme x:Key="SongListItemTheme" TargetType="ListBoxItem">
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="Margin" Value="0,0,0,6" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="Transparent" />
-        </Style>
-        <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="Transparent" />
-        </Style>
-    </ControlTheme>
-
-    <ControlTheme x:Key="QueueListItemTheme" TargetType="ListBoxItem">
-        <Setter Property="Padding" Value="0" />
+        <Setter Property="Padding" Value="8,6" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
@@ -350,7 +306,20 @@
             <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
         </Style>
         <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{StaticResource AccentPurpleTranslucentBrush}" />
+            <Setter Property="Background" Value="{StaticResource BgActiveRowBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="QueueListItemTheme" TargetType="ListBoxItem">
+        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
+        </Style>
+        <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
         </Style>
     </ControlTheme>
 
@@ -358,33 +327,30 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="16,8" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="FontSize" Value="12" />
         <Setter Property="FontWeight" Value="Medium" />
         <Style Selector="^:checked">
-            <Setter Property="Background" Value="{StaticResource AccentPurpleBrush}" />
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
         </Style>
         <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-        </Style>
-        <Style Selector="^:checked /template/ Ellipse#CheckMark">
-            <Setter Property="IsVisible" Value="False" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         </Style>
     </ControlTheme>
 
+    <!-- CardTheme — 无边框，只保留背景和圆角 -->
     <ControlTheme x:Key="CardTheme" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="12" />
-        <Setter Property="Padding" Value="28" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="20" />
     </ControlTheme>
 
     <ControlTheme x:Key="CardHoverTheme" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="CornerRadius" Value="6" />
         <Setter Property="Cursor" Value="Hand" />
     </ControlTheme>
 
@@ -392,45 +358,34 @@
         <Setter Property="Background" Value="{StaticResource BgInputBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="CornerRadius" Value="6" />
     </ControlTheme>
 
+    <!-- Progress Slider — 单色轨 -->
     <ControlTheme x:Key="MusicProgressSliderTheme" TargetType="Slider">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border
-                    Height="20"
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    IsHitTestVisible="True">
+                <Border Height="20" VerticalAlignment="Center"
+                        Background="Transparent" IsHitTestVisible="True">
                     <Grid VerticalAlignment="Center">
-                        <Border
-                            Name="TrackBackground"
-                            Height="5"
-                            VerticalAlignment="Center"
-                            Background="{StaticResource SliderTrackBgBrush}"
-                            CornerRadius="3"
-                            IsHitTestVisible="False" />
-                        <Track
-                            Name="PART_Track"
-                            VerticalAlignment="Center"
-                            IsDirectionReversed="False"
-                            Maximum="{TemplateBinding Maximum}"
-                            Minimum="{TemplateBinding Minimum}"
-                            Orientation="Horizontal"
-                            Value="{TemplateBinding Value,
-                                                    Mode=TwoWay}">
+                        <Border Name="TrackBackground" Height="3"
+                                VerticalAlignment="Center"
+                                Background="{StaticResource SliderTrackBgBrush}"
+                                CornerRadius="2" IsHitTestVisible="False" />
+                        <Track Name="PART_Track" VerticalAlignment="Center"
+                               IsDirectionReversed="False"
+                               Maximum="{TemplateBinding Maximum}"
+                               Minimum="{TemplateBinding Minimum}"
+                               Orientation="Horizontal"
+                               Value="{TemplateBinding Value, Mode=TwoWay}">
                             <Track.DecreaseButton>
                                 <RepeatButton Focusable="False" IsHitTestVisible="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
-                                            <Border
-                                                Height="5"
-                                                VerticalAlignment="Center"
-                                                Background="{StaticResource PurplePinkHorizontalGradientBrush}"
-                                                CornerRadius="3" />
+                                            <Border Height="3" VerticalAlignment="Center"
+                                                    Background="{StaticResource AccentBrush}" CornerRadius="2" />
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
@@ -439,26 +394,17 @@
                                 <RepeatButton Focusable="False" IsHitTestVisible="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
-                                            <Border
-                                                Height="5"
-                                                VerticalAlignment="Center"
-                                                Background="Transparent" />
+                                            <Border Background="Transparent" />
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
                             </Track.IncreaseButton>
                             <Track.Thumb>
-                                <Thumb
-                                    Width="12"
-                                    Height="12"
-                                    Focusable="False">
+                                <Thumb Width="10" Height="10" Focusable="False">
                                     <Thumb.Template>
                                         <ControlTemplate>
-                                            <Border
-                                                Width="12"
-                                                Height="12"
-                                                Background="White"
-                                                CornerRadius="6" />
+                                            <Border Width="10" Height="10" Background="{StaticResource AccentBrush}"
+                                                    CornerRadius="5" />
                                         </ControlTemplate>
                                     </Thumb.Template>
                                 </Thumb>
@@ -475,35 +421,24 @@
         <Setter Property="Foreground" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border
-                    Height="16"
-                    VerticalAlignment="Center"
-                    Background="Transparent">
+                <Border Height="16" VerticalAlignment="Center" Background="Transparent">
                     <Grid VerticalAlignment="Center">
-                        <Border
-                            Name="TrackBackground"
-                            Height="5"
-                            VerticalAlignment="Center"
-                            Background="{StaticResource SliderTrackOverlayBrush}"
-                            CornerRadius="3" />
-                        <Track
-                            Name="PART_Track"
-                            VerticalAlignment="Center"
-                            IsDirectionReversed="False"
-                            Maximum="{TemplateBinding Maximum}"
-                            Minimum="{TemplateBinding Minimum}"
-                            Orientation="Horizontal"
-                            Value="{TemplateBinding Value,
-                                                    Mode=TwoWay}">
+                        <Border Name="TrackBackground" Height="3"
+                                VerticalAlignment="Center"
+                                Background="{StaticResource SliderTrackBgBrush}"
+                                CornerRadius="2" />
+                        <Track Name="PART_Track" VerticalAlignment="Center"
+                               IsDirectionReversed="False"
+                               Maximum="{TemplateBinding Maximum}"
+                               Minimum="{TemplateBinding Minimum}"
+                               Orientation="Horizontal"
+                               Value="{TemplateBinding Value, Mode=TwoWay}">
                             <Track.DecreaseButton>
                                 <RepeatButton Focusable="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
-                                            <Border
-                                                Height="5"
-                                                VerticalAlignment="Center"
-                                                Background="{StaticResource AccentPurpleBrush}"
-                                                CornerRadius="3" />
+                                            <Border Height="3" VerticalAlignment="Center"
+                                                    Background="{StaticResource TextSecondaryBrush}" CornerRadius="2" />
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
@@ -512,23 +447,17 @@
                                 <RepeatButton Focusable="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate>
-                                            <Border
-                                                Height="5"
-                                                VerticalAlignment="Center"
-                                                Background="Transparent" />
+                                            <Border Background="Transparent" />
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
                             </Track.IncreaseButton>
                             <Track.Thumb>
-                                <Thumb Width="10" Height="10">
+                                <Thumb Width="8" Height="8" Focusable="False">
                                     <Thumb.Template>
                                         <ControlTemplate>
-                                            <Border
-                                                Width="10"
-                                                Height="10"
-                                                Background="White"
-                                                CornerRadius="5" />
+                                            <Border Width="8" Height="8" Background="{StaticResource TextSecondaryBrush}"
+                                                    CornerRadius="4" />
                                         </ControlTemplate>
                                     </Thumb.Template>
                                 </Thumb>
@@ -539,447 +468,5 @@
             </ControlTemplate>
         </Setter>
     </ControlTheme>
-
-    <ControlTheme x:Key="CompactProgressSliderTheme" TargetType="Slider">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="Transparent" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border
-                    Height="20"
-                    VerticalAlignment="Center"
-                    Background="Transparent">
-                    <Grid VerticalAlignment="Center">
-                        <Border
-                            Name="TrackBackground"
-                            Height="8"
-                            VerticalAlignment="Center"
-                            Background="{StaticResource SliderTrackOverlayBrush}"
-                            CornerRadius="4" />
-                        <Track
-                            Name="PART_Track"
-                            VerticalAlignment="Center"
-                            IsDirectionReversed="False"
-                            Maximum="{TemplateBinding Maximum}"
-                            Minimum="{TemplateBinding Minimum}"
-                            Orientation="Horizontal"
-                            Value="{TemplateBinding Value,
-                                                    Mode=TwoWay}">
-                            <Track.DecreaseButton>
-                                <RepeatButton Focusable="False">
-                                    <RepeatButton.Template>
-                                        <ControlTemplate>
-                                            <Border
-                                                Height="8"
-                                                VerticalAlignment="Center"
-                                                Background="{StaticResource PurplePinkHorizontalGradientBrush}"
-                                                CornerRadius="4" />
-                                        </ControlTemplate>
-                                    </RepeatButton.Template>
-                                </RepeatButton>
-                            </Track.DecreaseButton>
-                            <Track.IncreaseButton>
-                                <RepeatButton Focusable="False">
-                                    <RepeatButton.Template>
-                                        <ControlTemplate>
-                                            <Border
-                                                Height="8"
-                                                VerticalAlignment="Center"
-                                                Background="Transparent" />
-                                        </ControlTemplate>
-                                    </RepeatButton.Template>
-                                </RepeatButton>
-                            </Track.IncreaseButton>
-                            <Track.Thumb>
-                                <Thumb
-                                    Width="12"
-                                    Height="12"
-                                    Opacity="0">
-                                    <Thumb.Template>
-                                        <ControlTemplate>
-                                            <Border
-                                                Width="12"
-                                                Height="12"
-                                                Background="Transparent"
-                                                CornerRadius="6" />
-                                        </ControlTemplate>
-                                    </Thumb.Template>
-                                </Thumb>
-                            </Track.Thumb>
-                        </Track>
-                    </Grid>
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </ControlTheme>
-
-    <!--  ==================== 首页UI重构 - 新增颜色 ====================  -->
-
-    <!--  导航项状态颜色  -->
-    <Color x:Key="NavHover">#FF1A1A1A</Color>
-    <Color x:Key="NavSelected">#20A855F7</Color>
-
-    <!--  播放控制栏颜色  -->
-    <Color x:Key="PlayButtonGradientStart">#FFA855F7</Color>
-    <Color x:Key="PlayButtonGradientEnd">#FFEC4899</Color>
-
-    <!--  专辑封面卡片阴影  -->
-    <Color x:Key="AlbumCardShadow">#40000000</Color>
-    <Color x:Key="AlbumCardShadowBlur">#26000000</Color>
-
-    <!--  新增画刷  -->
-    <SolidColorBrush x:Key="NavHoverBrush" Color="{StaticResource NavHover}" />
-    <SolidColorBrush x:Key="NavSelectedBrush" Color="{StaticResource NavSelected}" />
-    <SolidColorBrush x:Key="AlbumCardShadowBrush" Color="{StaticResource AlbumCardShadow}" />
-
-    <LinearGradientBrush x:Key="PlayButtonLargeGradient" StartPoint="0%,0%" EndPoint="100%,100%">
-        <GradientStop Offset="0" Color="#FFA855F7" />
-        <GradientStop Offset="1" Color="#FFEC4899" />
-    </LinearGradientBrush>
-
-    <!--  ==================== 首页UI重构 - 新增样式 ====================  -->
-
-    <!--  侧边栏导航项样式  -->
-    <ControlTheme x:Key="SidebarNavItemTheme" TargetType="ToggleButton">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="12,10" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Left" />
-        <Setter Property="FontSize" Value="{StaticResource FontSizeNormal}" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border
-                    Padding="{TemplateBinding Padding}"
-                    Background="{TemplateBinding Background}"
-                    CornerRadius="{TemplateBinding CornerRadius}">
-                    <StackPanel
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal"
-                        Spacing="10">
-                        <ContentPresenter VerticalAlignment="Center" Content="{TemplateBinding (Button.Tag)}" />
-                        <ContentPresenter
-                            VerticalAlignment="Center"
-                            Content="{TemplateBinding Content}"
-                            FontSize="{TemplateBinding FontSize}"
-                            Foreground="{TemplateBinding Foreground}" />
-                    </StackPanel>
-                </Border>
-            </ControlTemplate>
-        </Setter>
-        <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{StaticResource NavHoverBrush}" />
-            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        </Style>
-        <Style Selector="^:checked /template/ Border">
-            <Setter Property="Background" Value="{StaticResource NavSelectedBrush}" />
-        </Style>
-        <Style Selector="^:checked">
-            <Setter Property="Foreground" Value="{StaticResource AccentPurpleBrush}" />
-        </Style>
-    </ControlTheme>
-
-    <!--  歌曲列表行容器样式  -->
-    <ControlTheme x:Key="SongListItemRowTheme" TargetType="Border">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="12,8" />
-        <Setter Property="MinHeight" Value="56" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-        </Style>
-    </ControlTheme>
-
-    <!--  当前播放行特殊标识  -->
-    <ControlTheme x:Key="SongListActiveRowTheme" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource BgActiveRowBrush}" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="12,8" />
-        <Setter Property="MinHeight" Value="56" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="{StaticResource ActiveRowBorderBrush}" />
-    </ControlTheme>
-
-    <!--  播放大按钮样式 (48x48 渐变背景 圆形)  -->
-    <ControlTheme x:Key="PlayButtonLargeTheme" TargetType="Button">
-        <Setter Property="Width" Value="48" />
-        <Setter Property="Height" Value="48" />
-        <Setter Property="Background" Value="{StaticResource PlayButtonLargeGradient}" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="24" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="Foreground" Value="White" />
-        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border
-                    Width="{TemplateBinding Width}"
-                    Height="{TemplateBinding Height}"
-                    Background="{TemplateBinding Background}"
-                    CornerRadius="{TemplateBinding CornerRadius}">
-                    <Border.RenderTransform>
-                        <ScaleTransform ScaleX="1" ScaleY="1" />
-                    </Border.RenderTransform>
-                    <Border.Transitions>
-                        <Transitions>
-                            <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
-                        </Transitions>
-                    </Border.Transitions>
-                    <ContentPresenter
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Content="{TemplateBinding Content}" />
-                </Border>
-            </ControlTemplate>
-        </Setter>
-        <Style Selector="^:pointerover">
-            <Setter Property="Opacity" Value="0.9" />
-            <Style.Animations>
-                <Animation
-                    FillMode="Forward"
-                    IterationCount="1"
-                    Duration="0:0:0.2">
-                    <KeyFrame Cue="100%">
-                        <Setter Property="ScaleTransform.ScaleX" Value="1.05" />
-                        <Setter Property="ScaleTransform.ScaleY" Value="1.05" />
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-        </Style>
-    </ControlTheme>
-
-    <!--  控制按钮样式 (透明背景 32x32)  -->
-    <ControlTheme x:Key="PlayerControlButtonTheme" TargetType="Button">
-        <Setter Property="Width" Value="32" />
-        <Setter Property="Height" Value="32" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="16" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Padding" Value="6" />
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border
-                    Padding="{TemplateBinding Padding}"
-                    Background="{TemplateBinding Background}"
-                    CornerRadius="{TemplateBinding CornerRadius}">
-                    <Border.Transitions>
-                        <Transitions>
-                            <BrushTransition Property="Background" Duration="0:0:0.15" />
-                            <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
-                        </Transitions>
-                    </Border.Transitions>
-                    <ContentPresenter
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Content="{TemplateBinding Content}" />
-                </Border>
-            </ControlTemplate>
-        </Setter>
-        <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{StaticResource NavHoverBrush}" />
-        </Style>
-    </ControlTheme>
-
-    <!--  专辑封面卡片样式 (180x180 圆角12px 带阴影)  -->
-    <ControlTheme x:Key="AlbumCoverCardTheme" TargetType="Border">
-        <Setter Property="Width" Value="180" />
-        <Setter Property="Height" Value="180" />
-        <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
-        <Setter Property="CornerRadius" Value="12" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
-        <Setter Property="ClipToBounds" Value="True" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="BoxShadow" Value="0 4 16 0 #26000000" />
-        <Style Selector="^:pointerover">
-            <Setter Property="BorderBrush" Value="{StaticResource AccentPurpleBorderBrush}" />
-        </Style>
-    </ControlTheme>
-
-    <ControlTheme x:Key="CircularHoverButtonTheme" TargetType="Button">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="12" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="CornerRadius" Value="50" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Grid Background="{TemplateBinding Background}">
-                    <Ellipse
-                        x:Name="HoverOverlay"
-                        Fill="{StaticResource BgElementBrush}"
-                        IsHitTestVisible="False"
-                        Opacity="0" />
-                    <ContentPresenter
-                        x:Name="ContentPresenter"
-                        Padding="{TemplateBinding Padding}"
-                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                        Content="{TemplateBinding Content}" />
-                </Grid>
-            </ControlTemplate>
-        </Setter>
-        <Style Selector="^:pointerover /template/ Ellipse#HoverOverlay">
-            <Setter Property="Opacity" Value="1" />
-        </Style>
-        <Style Selector="^:pressed /template/ Ellipse#HoverOverlay">
-            <Setter Property="Opacity" Value="0.6" />
-        </Style>
-        <Style Selector="^:disabled /template/ ContentPresenter#ContentPresenter">
-            <Setter Property="Opacity" Value="0.3" />
-        </Style>
-    </ControlTheme>
-
-    <ControlTheme x:Key="NoHoverButtonTheme" TargetType="Button">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="8" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Grid Background="{TemplateBinding Background}">
-                    <ContentPresenter
-                        Padding="{TemplateBinding Padding}"
-                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                        Content="{TemplateBinding Content}" />
-                </Grid>
-            </ControlTemplate>
-        </Setter>
-        <Style Selector="^:pressed">
-            <Setter Property="Opacity" Value="0.7" />
-        </Style>
-        <Style Selector="^:disabled">
-            <Setter Property="Opacity" Value="0.3" />
-        </Style>
-    </ControlTheme>
-
-    <ControlTheme x:Key="GhostSliderTheme" TargetType="Slider">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="Transparent" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border
-                    Height="20"
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    IsHitTestVisible="True">
-                    <Grid VerticalAlignment="Center">
-                        <Border
-                            Name="TrackBackground"
-                            Height="4"
-                            VerticalAlignment="Center"
-                            Background="{StaticResource SliderTrackBgBrush}"
-                            CornerRadius="2"
-                            IsHitTestVisible="False" />
-                        <Track
-                            Name="PART_Track"
-                            VerticalAlignment="Center"
-                            IsDirectionReversed="False"
-                            Maximum="{TemplateBinding Maximum}"
-                            Minimum="{TemplateBinding Minimum}"
-                            Orientation="Horizontal"
-                            Value="{TemplateBinding Value,
-                                                    Mode=TwoWay}">
-                            <Track.DecreaseButton>
-                                <RepeatButton Focusable="False" IsHitTestVisible="False">
-                                    <RepeatButton.Template>
-                                        <ControlTemplate>
-                                            <Border
-                                                Height="4"
-                                                VerticalAlignment="Center"
-                                                Background="{StaticResource PurplePinkHorizontalGradientBrush}"
-                                                CornerRadius="2" />
-                                        </ControlTemplate>
-                                    </RepeatButton.Template>
-                                </RepeatButton>
-                            </Track.DecreaseButton>
-                            <Track.IncreaseButton>
-                                <RepeatButton Focusable="False" IsHitTestVisible="False">
-                                    <RepeatButton.Template>
-                                        <ControlTemplate>
-                                            <Border
-                                                Height="4"
-                                                VerticalAlignment="Center"
-                                                Background="Transparent" />
-                                        </ControlTemplate>
-                                    </RepeatButton.Template>
-                                </RepeatButton>
-                            </Track.IncreaseButton>
-                            <Track.Thumb>
-                                <Thumb
-                                    Width="10"
-                                    Height="6"
-                                    Focusable="False">
-                                    <Thumb.Template>
-                                        <ControlTemplate>
-                                            <Border
-                                                Width="10"
-                                                Height="6"
-                                                Background="White"
-                                                CornerRadius="3" />
-                                        </ControlTemplate>
-                                    </Thumb.Template>
-                                </Thumb>
-                            </Track.Thumb>
-                        </Track>
-                    </Grid>
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </ControlTheme>
-
-    <Color x:Key="MenuHoverBg">#20FFFFFF</Color>
-    <SolidColorBrush x:Key="MenuHoverBgBrush" Color="{StaticResource MenuHoverBg}" />
-
-    <ControlTheme x:Key="AnimatedMenuItemTheme" TargetType="MenuItem">
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        <Setter Property="Padding" Value="12,8" />
-        <Setter Property="FontSize" Value="13" />
-    </ControlTheme>
-
-    <!--  ==================== 专辑页面样式 ====================  -->
-
-    <!--  专辑卡片容器样式  -->
-    <ControlTheme x:Key="AlbumCardTheme" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
-        <Setter Property="CornerRadius" Value="{StaticResource CardCornerRadius}" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{StaticResource BgCardHoverBrush}" />
-        </Style>
-    </ControlTheme>
-
-    <!--  专辑分组标题样式  -->
-    <ControlTheme x:Key="AlbumGroupHeaderTheme" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="28" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        <Setter Property="Margin" Value="16,12,8,4" />
-    </ControlTheme>
-
-    <!--  歌曲表头样式  -->
-    <ControlTheme x:Key="SongTableHeaderTheme" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource BgTableHeaderBrush}" />
-        <Setter Property="CornerRadius" Value="12,12,0,0" />
-        <Setter Property="Padding" Value="20,10" />
-    </ControlTheme>
-
-    <!--  详情页封面容器  -->
-    <ControlTheme x:Key="DetailCoverTheme" TargetType="Border">
-        <Setter Property="Width" Value="150" />
-        <Setter Property="Height" Value="150" />
-        <Setter Property="CornerRadius" Value="5" />
-        <Setter Property="ClipToBounds" Value="True" />
-        <Setter Property="Background" Value="{StaticResource BgElement2Brush}" />
-    </ControlTheme>
-
 
 </ResourceDictionary>
