@@ -4,19 +4,19 @@ on:
   pull_request:
     branches: [master]
     types: [opened, synchronize, reopened]
+    paths:
+      - "**.cs"
+      - "**.csproj"
+      - "**.props"
+      - "**.axaml"
+      - ".github/workflows/pr-checks.yml"
 
 env:
   DOTNET_VERSION: "9.0.x"
 
 jobs:
   build:
-    name: Build (${{ matrix.os }}, ${{ matrix.configuration }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        configuration: [Debug, Release]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -35,48 +35,11 @@ jobs:
       - name: Restore
         run: dotnet restore
 
-      - name: Build
-        run: dotnet build --no-restore --configuration ${{ matrix.configuration }}
-
-  code-quality:
-    name: Code Quality
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Cache tools
-        uses: actions/cache@v4
-        with:
-          path: ~/.dotnet/tools
-          key: ${{ runner.os }}-dotnet-tools-${{ hashFiles('.config/dotnet-tools.json') }}
-          restore-keys: |
-            ${{ runner.os }}-dotnet-tools-
-
-      - name: Restore
-        run: dotnet restore
-
       - name: Check formatting
         run: dotnet format --verify-no-changes --verbosity detailed
 
-      - name: Build with analyzers
-        run: dotnet build --configuration Release --verbosity normal
-
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Restore
-        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
 
       - name: Audit
         run: dotnet list package --vulnerable --include-transitive

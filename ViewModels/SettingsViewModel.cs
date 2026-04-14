@@ -290,4 +290,14 @@ public partial class SettingsViewModel : ViewModelBase
     {
         _musicPlayerService.SetEqualizerPreamp(value);
     }
+
+    [RelayCommand]
+    private void SelectEqualizerPreset(string presetName)
+    {
+        var index = EqualizerPresets.IndexOf(presetName);
+        if (index >= 0)
+        {
+            _musicPlayerService.SetEqualizerPreset(index);
+        }
+    }
 }

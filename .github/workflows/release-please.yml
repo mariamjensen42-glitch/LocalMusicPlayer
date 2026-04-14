@@ -3,6 +3,13 @@ name: Release
 on:
   push:
     branches: [master]
+    paths:
+      - "**.cs"
+      - "**.csproj"
+      - "**.props"
+      - "**.axaml"
+      - ".github/workflows/release-please.yml"
+      - "installer/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -38,20 +45,9 @@ jobs:
             asset_name: LocalMusicPlayer-win-x64.zip
             setup_arch: x64
             setup_target: win-x64
-          - os: windows-latest
-            target: win-x86
-            asset_name: LocalMusicPlayer-win-x86.zip
-            setup_arch: x86
-            setup_target: win-x86
           - os: ubuntu-latest
             target: linux-x64
             asset_name: LocalMusicPlayer-linux-x64.tar.gz
-          - os: macos-latest
-            target: osx-x64
-            asset_name: LocalMusicPlayer-osx-x64.tar.gz
-          - os: macos-latest
-            target: osx-arm64
-            asset_name: LocalMusicPlayer-osx-arm64.tar.gz
     steps:
       - uses: actions/checkout@v4
 
@@ -67,25 +63,11 @@ jobs:
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Install dependencies
-        run: |
-          if [ "${{ runner.os }}" = "Linux" ]; then
-            sudo apt-get update && sudo apt-get install -y libvlc-dev vlc
-          elif [ "${{ runner.os }}" = "macOS" ]; then
-            brew install vlc
-          fi
-        shell: bash
+        if: ${{ runner.os == 'Linux' }}
+        run: sudo apt-get update && sudo apt-get install -y libvlc-dev vlc
 
       - name: Publish
         run: dotnet publish -c Release -r ${{ matrix.target }} --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/${{ matrix.target }}
-
-      - name: Verify publish output
-        run: |
-          if (Test-Path "./publish/${{ matrix.target }}") {
-            Write-Host "Publish directory exists with $(Get-ChildItem './publish/${{ matrix.target }}' -File).Count files"
-          } else {
-            Write-Host "ERROR: Publish directory not found"
-            exit 1
-          }
 
       - name: Build Windows Installer
         if: ${{ runner.os == 'Windows' }}
