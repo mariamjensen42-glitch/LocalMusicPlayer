@@ -14,6 +14,6 @@ public class MultiEnumToBoolConverter : IMultiValueConverter
         if (values == null || values.Count < 2 || values[0] == null || values[1] == null)
             return false;
 
-        return values[0].Equals(values[1]);
+        return Equals(values[0], values[1]);
     }
 }

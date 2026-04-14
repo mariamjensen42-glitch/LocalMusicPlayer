@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="600"
              x:Class="LocalMusicPlayer.Views.Playlist.QueueView"
              x:DataType="vm:QueueViewModel"
-             x:CompileBindings="True">
+             x:CompileBindings="False">
 
     <Design.DataContext>
         <vm:QueueViewModel />

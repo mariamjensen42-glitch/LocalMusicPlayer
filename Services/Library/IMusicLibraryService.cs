@@ -12,12 +12,4 @@ public interface IMusicLibraryService
     void AddSongs(IEnumerable<Song> songs);
     void AddSong(Song song);
     void RemoveSong(Song song);
-
-    List<ArtistInfo> GetArtists();
-    List<AlbumInfo> GetAlbums();
-    List<GenreInfo> GetGenres();
-    List<Song> GetSongsByArtist(string artist);
-    List<Song> GetSongsByAlbum(string album);
-    List<Song> GetSongsByGenre(string genre);
-    List<FolderNode> GetFolderStructure();
 }

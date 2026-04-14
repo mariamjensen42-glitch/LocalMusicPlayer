@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using CommunityToolkit.Mvvm;
 using System;
 
 namespace LocalMusicPlayer;

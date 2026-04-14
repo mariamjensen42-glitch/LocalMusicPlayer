@@ -7,6 +7,7 @@ namespace LocalMusicPlayer.Views.Player;
 public partial class PlayerPageView : UserControl
 {
     private Popup? _speedPopup;
+    private Popup? _speedPopupNarrow;
 
     public PlayerPageView()
     {
@@ -17,15 +18,22 @@ public partial class PlayerPageView : UserControl
             if (DataContext is PlayerPageViewModel viewModel)
             {
                 _speedPopup = this.FindControl<Popup>("SpeedPopup");
+                _speedPopupNarrow = this.FindControl<Popup>("SpeedPopupNarrow");
             }
         };
     }
 
     public void OnSpeedButtonClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (_speedPopup != null)
+        TogglePopup(_speedPopup);
+        TogglePopup(_speedPopupNarrow);
+    }
+
+    private static void TogglePopup(Popup? popup)
+    {
+        if (popup != null)
         {
-            _speedPopup.IsOpen = !_speedPopup.IsOpen;
+            popup.IsOpen = !popup.IsOpen;
         }
     }
 }

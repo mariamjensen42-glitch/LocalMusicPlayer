@@ -207,7 +207,7 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
             _equalizerPresetId = -1;
             _equalizer = null;
             if (_mediaPlayer != null)
-                _mediaPlayer.SetEqualizer(null);
+                _mediaPlayer.SetEqualizer(null!);
             _logger?.LogDebug("[MusicPlayer] Equalizer disabled");
             return;
         }

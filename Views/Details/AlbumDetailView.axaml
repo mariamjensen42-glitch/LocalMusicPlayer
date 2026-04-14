@@ -11,7 +11,7 @@
     xmlns:vm="using:LocalMusicPlayer.ViewModels"
     d:DesignHeight="700"
     d:DesignWidth="1000"
-    x:CompileBindings="True"
+    x:CompileBindings="False"
     x:DataType="vm:AlbumDetailViewModel"
     mc:Ignorable="d">
 
@@ -209,11 +209,6 @@
                                             <MenuItem Header="{DynamicResource StringAddToPlaylist}" />
                                             <Separator />
                                             <MenuItem
-                                                Command="{Binding $parent[ListBox].DataContext.AddToCurrentPlaylistCommand}"
-                                                CommandParameter="{Binding}"
-                                                Header="{DynamicResource StringQueue}" />
-                                            <Separator />
-                                            <MenuItem
                                                 Command="{Binding $parent[ListBox].DataContext.EditSongMetadataCommand}"
                                                 CommandParameter="{Binding}"
                                                 Header="{DynamicResource StringEditInfo}" />
@@ -264,22 +259,14 @@
                                             TextTrimming="CharacterEllipsis" />
 
                                         <!--  艺术家  -->
-                                        <Button
+                                        <TextBlock
                                             Grid.Column="3"
-                                            Margin="8,5,5,5"
-                                            Padding="5"
-                                            HorizontalAlignment="Left"
+                                            Margin="8,0"
                                             VerticalAlignment="Center"
-                                            Command="{Binding $parent[ListBox].DataContext.NavigateToArtistCommand}"
-                                            CommandParameter="{Binding Artist}"
-                                            Theme="{StaticResource NoHoverButtonTheme}">
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                FontSize="12"
-                                                Foreground="{StaticResource TextMutedBrush}"
-                                                Text="{Binding Artist}"
-                                                TextTrimming="CharacterEllipsis" />
-                                        </Button>
+                                            FontSize="12"
+                                            Foreground="{StaticResource TextMutedBrush}"
+                                            Text="{Binding Artist}"
+                                            TextTrimming="CharacterEllipsis" />
 
                                         <!--  时长  -->
                                         <TextBlock
@@ -292,21 +279,6 @@
                                             Foreground="{StaticResource TextMutedBrush}"
                                             Text="{Binding Duration, Converter={StaticResource TimeSpanToStringConverter}}" />
 
-                                        <!--  添加到队列  -->
-                                        <Button
-                                            Grid.Column="10"
-                                            Margin="5"
-                                            VerticalAlignment="Center"
-                                            Command="{Binding $parent[ListBox].DataContext.AddToCurrentPlaylistCommand}"
-                                            CommandParameter="{Binding}"
-                                            Theme="{StaticResource NoHoverButtonTheme}">
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                FontFamily="Segoe Fluent Icons"
-                                                FontSize="14"
-                                                Foreground="{StaticResource TextMutedBrush}"
-                                                Text="&#xE710;" />
-                                        </Button>
                                     </Grid>
                                 </Border>
                             </DataTemplate>

@@ -157,6 +157,10 @@ public partial class GradientBackgroundControl : UserControl, IDisposable
         var cts = new CancellationTokenSource();
         _loadCts = cts;
 
+        // Capture property values on UI thread before entering background task
+        bool useImageDominantTheme = UseImageDominantTheme;
+        bool isDark = IsDark;
+
         try
         {
             var result = await Task.Run(() =>
@@ -186,9 +190,9 @@ public partial class GradientBackgroundControl : UserControl, IDisposable
 
                 var palette = ExtractDominantColors(pixels, targetW, targetH, 4);
 
-                bool effectiveIsDark = UseImageDominantTheme
+                bool effectiveIsDark = useImageDominantTheme
                     ? IsImageDark(pixels, targetW, targetH)
-                    : IsDark;
+                    : isDark;
 
                 ScalePaletteLuminance(palette, effectiveIsDark);
 

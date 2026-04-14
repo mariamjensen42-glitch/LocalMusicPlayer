@@ -61,26 +61,6 @@ public partial class AlbumDetailViewModel : DetailViewModelBase
         }
     }
 
-    [RelayCommand]
-    private void AddToCurrentPlaylist(Song song)
-    {
-    }
-
-    [RelayCommand]
-    private void OpenInExplorer(Song song)
-    {
-    }
-
-    [RelayCommand]
-    private void NavigateToArtist(string artist)
-    {
-    }
-
-    [RelayCommand]
-    private void NavigateToAlbum(string album)
-    {
-    }
-
     partial void OnSelectedSongChanged(Song? value)
     {
         if (value != null)

@@ -3,21 +3,28 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="App.axaml" value="LocalMusicPlayer.csproj" />
+        <entry key="Controls/AlbumArtControl.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Styles/Resources.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Styles/Strings.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Details/AlbumDetailView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Details/ArtistDetailView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Editors/BatchMetadataEditorView.axaml" value="LocalMusicPlayer.csproj" />
+        <entry key="Views/Editors/MetadataEditorView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Library/AlbumsPageView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Library/ArtistsPageView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Library/HomeView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Library/LibraryBrowserView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Library/LibraryCategoryView.axaml" value="LocalMusicPlayer.csproj" />
+        <entry key="Views/Library/MusicLibraryView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Main/MainWindow.axaml" value="LocalMusicPlayer.csproj" />
+        <entry key="Views/Player/MusicProgressBar.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Player/PlayerPageView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Playlist/PlaylistListView.axaml" value="LocalMusicPlayer.csproj" />
+        <entry key="Views/Playlist/PlaylistManagementView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Playlist/QueueView.axaml" value="LocalMusicPlayer.csproj" />
         <entry key="Views/Settings/SettingsView.axaml" value="LocalMusicPlayer.csproj" />
+        <entry key="Views/Shared/DetailHeaderView.axaml" value="LocalMusicPlayer.csproj" />
       </map>
     </option>
   </component>

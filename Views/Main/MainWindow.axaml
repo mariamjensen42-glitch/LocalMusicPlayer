@@ -77,12 +77,13 @@
                                 <Binding Source="{x:Static vm:NavigationPage.MusicLibrary}" />
                             </MultiBinding>
                         </ToggleButton.IsChecked>
-                        <TextBlock
+                        <PathIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="18"
-                            Text="&#xE8D6;" />
+                            Data="{StaticResource IconMusic}"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            Width="20"
+                            Height="20" />
                     </ToggleButton>
 
                     <ToggleButton
@@ -99,12 +100,13 @@
                                 <Binding Source="{x:Static vm:NavigationPage.Favorites}" />
                             </MultiBinding>
                         </ToggleButton.IsChecked>
-                        <TextBlock
+                        <PathIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="18"
-                            Text="&#xE87D;" />
+                            Data="{StaticResource IconHeart}"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            Width="20"
+                            Height="20" />
                     </ToggleButton>
 
                     <ToggleButton
@@ -121,12 +123,13 @@
                                 <Binding Source="{x:Static vm:NavigationPage.Playlist}" />
                             </MultiBinding>
                         </ToggleButton.IsChecked>
-                        <TextBlock
+                        <PathIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="18"
-                            Text="&#xE8FC;" />
+                            Data="{StaticResource IconPlaylist}"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            Width="20"
+                            Height="20" />
                     </ToggleButton>
 
                     <Button
@@ -138,13 +141,13 @@
                         Command="{Binding NavigateToSettingsCommand}"
                         Theme="{StaticResource CircularHoverButtonTheme}"
                         ToolTip.Tip="{DynamicResource StringSettings}">
-                        <TextBlock
+                        <PathIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="18"
+                            Data="{StaticResource IconSettings}"
                             Foreground="{StaticResource TextMutedBrush}"
-                            Text="&#xE713;" />
+                            Width="20"
+                            Height="20" />
                     </Button>
                 </StackPanel>
             </Border>
@@ -156,7 +159,7 @@
                     Grid.Row="0"
                     Height="48"
                     Background="{StaticResource BgPrimaryBrush}">
-                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto">
 
                         <Button
                             Grid.Column="0"

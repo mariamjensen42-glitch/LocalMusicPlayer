@@ -53,13 +53,11 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IMusicLibraryService, MusicLibraryService>();
         services.AddSingleton<IScanService, ScanService>();
         services.AddSingleton<ILibraryCategoryService, LibraryCategoryService>();
-        services.AddSingleton<IDedupService, DedupService>();
     }
 
     private static void AddMediaServices(IServiceCollection services)
     {
         services.AddSingleton<IAlbumArtService, AlbumArtService>();
-        services.AddSingleton<ICoverManagerService, CoverManagerService>();
         services.AddSingleton<ILyricsService, LyricsService>();
     }
 
@@ -80,7 +78,6 @@ public static class ServiceCollectionExtensions
     private static void AddFileServices(IServiceCollection services)
     {
         services.AddSingleton<IFileWatcherService, FileWatcherService>();
-        services.AddSingleton<IFileManagerService, FileManagerService>();
     }
 
     private static void AddViewModels(IServiceCollection services)

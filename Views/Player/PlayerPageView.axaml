@@ -99,13 +99,37 @@
                 </StackPanel>
             </Grid>
 
-            <!-- 主内容区域 - 自适应布局 -->
-            <Grid
+            <!-- 主内容区域 - 响应式布局 -->
+            <Border
                 Grid.Row="1"
                 Margin="24,16,24,24"
-                ColumnDefinitions="1.2*,*">
+                Container.Name="PlayerContentContainer"
+                Container.Sizing="Width">
+                <Border.Styles>
+                    <ContainerQuery Name="PlayerContentContainer" Query="max-width:900">
+                        <Style Selector="Grid#WideLayout">
+                            <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                        <Style Selector="Grid#NarrowLayout">
+                            <Setter Property="IsVisible" Value="True" />
+                        </Style>
+                    </ContainerQuery>
+                    <ContainerQuery Name="PlayerContentContainer" Query="min-width:901">
+                        <Style Selector="Grid#WideLayout">
+                            <Setter Property="IsVisible" Value="True" />
+                        </Style>
+                        <Style Selector="Grid#NarrowLayout">
+                            <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                    </ContainerQuery>
+                </Border.Styles>
+                <Panel>
+
+                <!-- 宽屏布局：左右分栏 -->
+                <Grid x:Name="WideLayout" ColumnDefinitions="1.2*,*">
                 <!-- 左侧：专辑封面和播放控制 -->
                 <ScrollViewer
+                    x:Name="LeftPanel"
                     Grid.Column="0"
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Disabled">
@@ -114,18 +138,24 @@
                         HorizontalAlignment="Center"
                         Spacing="16">
                         <!-- 专辑封面 - 自适应大小 -->
-                        <controls:AlbumArtControl
-                            MaxWidth="480"
-                            MaxHeight="480"
-                            MinWidth="200"
-                            MinHeight="200"
+                        <Border
+                            x:Name="AlbumArtWrapper"
+                            MaxWidth="360"
+                            MaxHeight="360"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Stretch"
-                            CornerRadiusValue="16"
-                            ImageBytes="{Binding ImageBytes}"
-                            IsActive="{Binding IsBackgroundEnabled}"
-                            IsDark="True"
-                            IsShadowEnabled="True" />
+                            VerticalAlignment="Stretch">
+                            <controls:AlbumArtControl
+                                x:Name="AlbumArt"
+                                MinWidth="160"
+                                MinHeight="160"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                CornerRadiusValue="16"
+                                ImageBytes="{Binding ImageBytes}"
+                                IsActive="{Binding IsBackgroundEnabled}"
+                                IsDark="True"
+                                IsShadowEnabled="True" />
+                        </Border>
 
                         <!-- 歌曲信息 -->
                         <StackPanel
@@ -345,6 +375,7 @@
 
                 <!-- 右侧：歌词区域 -->
                 <Grid
+                    x:Name="RightPanel"
                     Grid.Column="1"
                     Margin="8,0,0,0"
                     RowDefinitions="Auto,*">
@@ -457,6 +488,208 @@
 
                 </Grid>
             </Grid>
+
+            <!-- 窄屏布局：上下堆叠 -->
+            <Grid
+                x:Name="NarrowLayout"
+                IsVisible="False"
+                RowDefinitions="Auto,*">
+                <!-- 上半部分：专辑封面和播放控制 -->
+                <ScrollViewer
+                    Grid.Row="0"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Disabled">
+                    <StackPanel
+                        Margin="0,0,0,16"
+                        HorizontalAlignment="Center"
+                        Spacing="12">
+                        <Border
+                            HorizontalAlignment="Center"
+                            MaxWidth="260"
+                            MaxHeight="260">
+                            <controls:AlbumArtControl
+                                MinWidth="160"
+                                MinHeight="160"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                CornerRadiusValue="16"
+                                ImageBytes="{Binding ImageBytes}"
+                                IsActive="{Binding IsBackgroundEnabled}"
+                                IsDark="True"
+                                IsShadowEnabled="True" />
+                        </Border>
+
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            Spacing="4">
+                            <TextBlock
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Text="{Binding CurrentSong.Title}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                FontSize="13"
+                                Foreground="{StaticResource TextSecondaryBrush}"
+                                Text="{Binding CurrentSong.Artist}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="10">
+                            <player:MusicProgressBar />
+                        </StackPanel>
+
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="20">
+                            <Button Command="{Binding ShuffleCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                <Panel>
+                                    <TextBlock FontFamily="Segoe Fluent Icons" FontSize="20" Foreground="{StaticResource AccentPurpleBrush}" IsVisible="{Binding IsShuffle}" Text="&#xE8B1;" />
+                                    <TextBlock FontFamily="Segoe Fluent Icons" FontSize="20" Foreground="{StaticResource TextMutedBrush}" IsVisible="{Binding !IsShuffle}" Text="&#xE8B1;" />
+                                </Panel>
+                            </Button>
+                            <Button Command="{Binding PreviousCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                <TextBlock FontFamily="Segoe Fluent Icons" FontSize="26" Foreground="White" Text="&#xE892;" />
+                            </Button>
+                            <Button Command="{Binding PlayCommand}" IsVisible="{Binding !IsPlaying}" Theme="{StaticResource CircleIconButtonLargeTheme}">
+                                <TextBlock FontFamily="Segoe Fluent Icons" FontSize="26" Foreground="White" Text="&#xE768;" />
+                            </Button>
+                            <Button Command="{Binding PauseCommand}" IsVisible="{Binding IsPlaying}" Theme="{StaticResource CircleIconButtonLargeTheme}">
+                                <TextBlock FontFamily="Segoe Fluent Icons" FontSize="26" Foreground="White" Text="&#xE769;" />
+                            </Button>
+                            <Button Command="{Binding NextCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                <TextBlock FontFamily="Segoe Fluent Icons" FontSize="26" Foreground="White" Text="&#xE893;" />
+                            </Button>
+                            <Button Command="{Binding RepeatCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                <Grid>
+                                    <Panel>
+                                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="20" Foreground="{StaticResource AccentPurpleBrush}" IsVisible="{Binding IsRepeat}" Text="&#xE8ED;" />
+                                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="20" Foreground="{StaticResource TextMutedBrush}" IsVisible="{Binding !IsRepeat}" Text="&#xE8ED;" />
+                                    </Panel>
+                                    <TextBlock Margin="0,0,2,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" FontWeight="Bold" Foreground="{StaticResource AccentPurpleBrush}" IsVisible="{Binding IsSingleLoop}" Text="1" />
+                                </Grid>
+                            </Button>
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="*,*">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14">
+                                <Button Command="{Binding ToggleFavoriteCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                    <Panel>
+                                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="20" Foreground="{StaticResource AccentPinkBrush}" IsVisible="{Binding CurrentSong.IsFavorite}" Text="&#xEB52;" />
+                                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="20" Foreground="{StaticResource TextMutedBrush}" IsVisible="{Binding !CurrentSong.IsFavorite}" Text="&#xEB51;" />
+                                    </Panel>
+                                </Button>
+                                <Button Foreground="{StaticResource TextMutedBrush}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                    <TextBlock FontFamily="Segoe Fluent Icons" FontSize="16" Text="&#xE72D;" />
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="14">
+                                <Popup x:Name="SpeedPopupNarrow" HorizontalAlignment="Left" IsLightDismissEnabled="True">
+                                    <Border Padding="8" Background="{StaticResource BgCardBrush}" BoxShadow="0 8 32 0 #00000060" CornerRadius="12">
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Margin="8,4,8,8" HorizontalAlignment="Center" FontSize="12" Foreground="{StaticResource TextMutedBrush}" Text="{DynamicResource StringPlaybackSpeed}" />
+                                            <ItemsControl ItemsSource="{Binding AvailablePlaybackRates}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Padding="14,8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="Transparent" Command="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).ChangePlaybackRateCommand}" CommandParameter="{Binding}" Content="{Binding StringFormat='{}{0}x'}" CornerRadius="8" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Border>
+                                </Popup>
+                                <Button Click="OnSpeedButtonClick" Foreground="{StaticResource TextMutedBrush}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <TextBlock VerticalAlignment="Center" FontFamily="Segoe Fluent Icons" FontSize="14" Text="&#xEC57;" />
+                                        <TextBlock VerticalAlignment="Center" FontSize="11" Text="{Binding PlaybackRate, StringFormat='{}{0:0.##}x'}" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{Binding ToggleMuteCommand}" Foreground="{StaticResource TextMutedBrush}" Theme="{StaticResource CircularHoverButtonTheme}">
+                                    <Panel>
+                                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="16" IsVisible="{Binding !IsMuted}" Text="&#xE15D;" />
+                                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="16" IsVisible="{Binding IsMuted}" Text="&#xE198;" />
+                                    </Panel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- 下半部分：歌词区域 -->
+                <Grid
+                    Grid.Row="1"
+                    RowDefinitions="Auto,*">
+                    <StackPanel
+                        Grid.Row="0"
+                        Margin="0,0,0,12"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="10">
+                        <Button Command="{Binding ToggleTranslationCommand}" Foreground="{StaticResource TextMutedBrush}" Theme="{StaticResource CircularHoverButtonTheme}">
+                            <Panel>
+                                <TextBlock FontFamily="Segoe Fluent Icons" FontSize="14" Foreground="{StaticResource AccentPurpleBrush}" IsVisible="{Binding ShowTranslation}" Text="&#xE8BD;" />
+                                <TextBlock FontFamily="Segoe Fluent Icons" FontSize="14" IsVisible="{Binding !ShowTranslation}" Text="&#xE8BD;" />
+                            </Panel>
+                        </Button>
+                        <Button Command="{Binding DecreaseLyricFontSizeCommand}" Foreground="{StaticResource TextMutedBrush}" Theme="{StaticResource CircularHoverButtonTheme}">
+                            <TextBlock FontFamily="Segoe Fluent Icons" FontSize="14" Text="&#xE8D7;" />
+                        </Button>
+                        <TextBlock Width="24" VerticalAlignment="Center" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Text="{Binding LyricFontSize, StringFormat='{}{0:0}'}" TextAlignment="Center" />
+                        <Button Command="{Binding IncreaseLyricFontSizeCommand}" Foreground="{StaticResource TextMutedBrush}" Theme="{StaticResource CircularHoverButtonTheme}">
+                            <TextBlock FontFamily="Segoe Fluent Icons" FontSize="14" Text="&#xE8D8;" />
+                        </Button>
+                    </StackPanel>
+
+                    <Border Grid.Row="1" ClipToBounds="True">
+                        <Border.OpacityMask>
+                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                                <GradientStop Offset="0" Color="Transparent" />
+                                <GradientStop Offset="0.05" Color="Transparent" />
+                                <GradientStop Offset="0.35" Color="White" />
+                                <GradientStop Offset="0.65" Color="White" />
+                                <GradientStop Offset="0.95" Color="Transparent" />
+                                <GradientStop Offset="1" Color="Transparent" />
+                            </LinearGradientBrush>
+                        </Border.OpacityMask>
+                        <ScrollViewer x:Name="LyricsScrollViewerNarrow" HorizontalScrollBarVisibility="Disabled" IsVisible="{Binding HasLyrics}" VerticalScrollBarVisibility="Hidden">
+                            <ItemsControl Margin="0,200,0,200" HorizontalAlignment="Stretch" ItemsSource="{Binding Lyrics}">
+                                <i:Interaction.Behaviors>
+                                    <behaviors:LyricsAutoScrollBehavior CurrentIndex="{Binding CurrentLyricIndex}" TargetScrollViewer="{Binding #LyricsScrollViewerNarrow}" />
+                                </i:Interaction.Behaviors>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="services:LyricLine">
+                                        <controls:LyricsLineControl
+                                            ActiveForeground="White"
+                                            InactiveForeground="{StaticResource TextMutedBrush}"
+                                            IsCurrentLine="{Binding IsActive}"
+                                            IsTranslationVisible="{Binding IsTranslationVisible}"
+                                            IsWFWLyrics="True"
+                                            LyricsFontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize}"
+                                            LyricsText="{Binding Text}"
+                                            TranslateFontSize="{Binding $parent[UserControl].((vm:PlayerPageViewModel)DataContext).LyricFontSize, Converter={StaticResource LyricTranslationFontSizeConverter}}"
+                                            TranslateText="{Binding Translation}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource FontFamilyPrimary}"
+                        FontSize="14"
+                        Foreground="{StaticResource TextMutedBrush}"
+                        IsVisible="{Binding !HasLyrics}"
+                        Text="{StaticResource StringNoLyrics}" />
+                </Grid>
+            </Grid>
+                </Panel>
+            </Border>
         </Grid>
     </Grid>
 </UserControl>
