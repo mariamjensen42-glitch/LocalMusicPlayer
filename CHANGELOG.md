@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.7.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.6.0...v1.7.0) (2026-04-14)
+
+
+### ✨ 新功能
+
+* **设置:** 添加均衡器预设选择功能 ([48a207e](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/48a207e7ecba8802a4ba19c47dee10658a906772))
+
+
+### ♻️ 重构
+
+* **CI:** 简化工作流配置并优化构建目标 ([48a207e](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/48a207e7ecba8802a4ba19c47dee10658a906772))
+* minimalist UI — monochrome palette, no gradients, flat cards, reduced borders ([30d36b0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/30d36b005ee5e7308b1f96fc129b37924f395aca))
+
+
+### 🧹 其他
+
+* **数据库:** 忽略模型变更警告 ([48a207e](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/48a207e7ecba8802a4ba19c47dee10658a906772))
+
 ## [1.6.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.5.0...v1.6.0) (2026-04-14)
 
 
