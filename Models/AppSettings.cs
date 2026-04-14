@@ -71,4 +71,5 @@ public class AppSettings
     public string AudioQuality { get; set; } = "Standard";
     public bool DownloadAlbumArtwork { get; set; } = true;
     public bool AutoDetectMetadata { get; set; }
+    public bool IsEqualizerEnabled { get; set; }
 }

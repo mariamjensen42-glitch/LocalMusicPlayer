@@ -16,6 +16,9 @@ public class AppDbContext : DbContext
     public DbSet<AppSettingsEntity> Settings => Set<AppSettingsEntity>();
     public DbSet<PlaylistEntity> Playlists => Set<PlaylistEntity>();
     public DbSet<PlaylistSongEntity> PlaylistSongs => Set<PlaylistSongEntity>();
+    public DbSet<SongStatisticsEntity> SongStatistics => Set<SongStatisticsEntity>();
+    public DbSet<ListeningHistoryRecordEntity> ListeningHistory => Set<ListeningHistoryRecordEntity>();
+    public DbSet<StatisticsMetaEntity> StatisticsMeta => Set<StatisticsMetaEntity>();
 
     private readonly string _dbPath;
 
@@ -93,6 +96,26 @@ public class AppDbContext : DbContext
             entity.Property(e => e.PlaylistId).HasMaxLength(100).IsRequired();
             entity.Property(e => e.FilePath).HasMaxLength(2000).IsRequired();
         });
+
+        modelBuilder.Entity<SongStatisticsEntity>(entity =>
+        {
+            entity.HasKey(e => e.FilePath);
+            entity.Property(e => e.FilePath).HasMaxLength(2000);
+        });
+
+        modelBuilder.Entity<ListeningHistoryRecordEntity>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.PlayedAt);
+            entity.HasIndex(e => e.FilePath);
+            entity.Property(e => e.FilePath).HasMaxLength(2000);
+        });
+
+        modelBuilder.Entity<StatisticsMetaEntity>(entity =>
+        {
+            entity.HasKey(e => e.Key);
+            entity.Property(e => e.Key).HasMaxLength(100);
+        });
     }
 }
 
@@ -152,4 +175,28 @@ public class PlaylistSongEntity
     public string PlaylistId { get; set; } = string.Empty;
     public string FilePath { get; set; } = string.Empty;
     public int SortOrder { get; set; }
+}
+
+public class SongStatisticsEntity
+{
+    public string FilePath { get; set; } = string.Empty;
+    public int PlayCount { get; set; }
+    public DateTime? LastPlayedTime { get; set; }
+    public long TotalPlayedDurationMs { get; set; }
+}
+
+public class ListeningHistoryRecordEntity
+{
+    public int Id { get; set; }
+    public string FilePath { get; set; } = string.Empty;
+    public DateTime PlayedAt { get; set; }
+    public long PlayedDurationMs { get; set; }
+    public double CompletionPercentage { get; set; }
+}
+
+public class StatisticsMetaEntity
+{
+    public string Key { get; set; } = string.Empty;
+    public long TotalPlayTimeMs { get; set; }
+    public DateTime? FirstScanDate { get; set; }
 }

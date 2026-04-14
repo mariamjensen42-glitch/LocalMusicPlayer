@@ -11,17 +11,23 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using LocalMusicPlayer.Models;
+using LocalMusicPlayer.Services.OnlineLyrics;
+using LocalMusicPlayer.ViewModels;
 using LocalMusicPlayer.Views.Editors;
+using LocalMusicPlayer.Views.SmartPlaylist;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LocalMusicPlayer.Services;
 
 public class DialogService : IDialogService
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly IViewModelFactory _viewModelFactory;
     private readonly IUserPlaylistService _userPlaylistService;
 
-    public DialogService(IViewModelFactory viewModelFactory, IUserPlaylistService userPlaylistService)
+    public DialogService(IServiceProvider serviceProvider, IViewModelFactory viewModelFactory, IUserPlaylistService userPlaylistService)
     {
+        _serviceProvider = serviceProvider;
         _viewModelFactory = viewModelFactory;
         _userPlaylistService = userPlaylistService;
     }
@@ -456,6 +462,29 @@ public class DialogService : IDialogService
         await dialog.ShowDialog(mainWindow);
 
         return selectedResult;
+    }
+
+    public async Task ShowSmartPlaylistEditorDialogAsync(SmartPlaylist? playlist, Action? onSaved = null)
+    {
+        var mainWindow = GetMainWindow();
+        if (mainWindow == null) return;
+
+        var viewModel = new SmartPlaylistEditorViewModel(
+            _serviceProvider!.GetRequiredService<ISmartPlaylistService>(),
+            this,
+            playlist);
+
+        viewModel.OnSaved += () =>
+        {
+            onSaved?.Invoke();
+        };
+
+        var dialog = new SmartPlaylistEditorView
+        {
+            DataContext = viewModel
+        };
+
+        await dialog.ShowDialog(mainWindow);
     }
 
     private Window? GetMainWindow()

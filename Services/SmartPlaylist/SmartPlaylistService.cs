@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using LocalMusicPlayer.Models;
 
@@ -10,6 +12,9 @@ public class SmartPlaylistService : ISmartPlaylistService
 {
     private readonly IMusicLibraryService _musicLibraryService;
     private readonly IStatisticsService _statisticsService;
+    private readonly List<SmartPlaylist> _playlists = new();
+
+    private readonly string _filePath;
 
     public SmartPlaylistService(
         IMusicLibraryService musicLibraryService,
@@ -17,18 +22,51 @@ public class SmartPlaylistService : ISmartPlaylistService
     {
         _musicLibraryService = musicLibraryService;
         _statisticsService = statisticsService;
+
+        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        var appFolder = Path.Combine(appDataPath, "LocalMusicPlayer");
+        Directory.CreateDirectory(appFolder);
+        _filePath = Path.Combine(appFolder, "smart_playlists.json");
+
+        LoadPlaylists();
     }
 
-    public IReadOnlyList<SmartPlaylist> GetSmartPlaylists()
+    private void LoadPlaylists()
     {
-        return new List<SmartPlaylist>
+        _playlists.Clear();
+
+        // Default playlists
+        _playlists.Add(new SmartPlaylist { Name = "播放最多", Rule = SmartPlaylistRule.MostPlayed, Limit = 50 });
+        _playlists.Add(new SmartPlaylist { Name = "最近播放", Rule = SmartPlaylistRule.RecentlyPlayed, Limit = 50 });
+        _playlists.Add(new SmartPlaylist { Name = "从未播放", Rule = SmartPlaylistRule.NeverPlayed, Limit = 50 });
+        _playlists.Add(new SmartPlaylist { Name = "最近添加", Rule = SmartPlaylistRule.RecentlyAdded, Limit = 50 });
+
+        if (File.Exists(_filePath))
         {
-            new() { Name = "播放最多", Rule = SmartPlaylistRule.MostPlayed, Limit = 50 },
-            new() { Name = "最近播放", Rule = SmartPlaylistRule.RecentlyPlayed, Limit = 50 },
-            new() { Name = "从未播放", Rule = SmartPlaylistRule.NeverPlayed, Limit = 50 },
-            new() { Name = "最近添加", Rule = SmartPlaylistRule.RecentlyAdded, Limit = 50 },
-        };
+            try
+            {
+                var json = File.ReadAllText(_filePath);
+                var saved = JsonSerializer.Deserialize<List<SmartPlaylist>>(json);
+                if (saved != null)
+                {
+                    _playlists.Clear();
+                    _playlists.AddRange(saved);
+                }
+            }
+            catch
+            {
+                // Use defaults
+            }
+        }
     }
+
+    private void Persist()
+    {
+        var json = JsonSerializer.Serialize(_playlists, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(_filePath, json);
+    }
+
+    public IReadOnlyList<SmartPlaylist> GetSmartPlaylists() => _playlists.AsReadOnly();
 
     public Task<List<Song>> GetSongsForSmartPlaylistAsync(SmartPlaylist smartPlaylist)
     {
@@ -61,5 +99,26 @@ public class SmartPlaylistService : ISmartPlaylistService
         };
 
         return Task.FromResult(result.ToList());
+    }
+
+    public void SaveSmartPlaylist(SmartPlaylist playlist)
+    {
+        var existing = _playlists.FirstOrDefault(p => p.Name == playlist.Name);
+        if (existing != null)
+        {
+            _playlists.Remove(existing);
+        }
+        _playlists.Add(playlist);
+        Persist();
+    }
+
+    public void DeleteSmartPlaylist(string name)
+    {
+        var existing = _playlists.FirstOrDefault(p => p.Name == name);
+        if (existing != null)
+        {
+            _playlists.Remove(existing);
+            Persist();
+        }
     }
 }

@@ -16,6 +16,7 @@ public partial class SettingsViewModel : ViewModelBase
     private readonly IConfigurationService _configService;
     private readonly IPlaybackStateService _playbackStateService;
     private readonly IAutoStartService _autoStartService;
+    private readonly IMusicPlayerService _musicPlayerService;
 
     public ObservableCollection<string> ScanFolders { get; } = new();
 
@@ -54,6 +55,12 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] private bool _autoStartOnBoot;
 
     [ObservableProperty] private bool _resumeLastPlayback = true;
+
+    [ObservableProperty] private bool _isEqualizerEnabled;
+
+    [ObservableProperty] private float _equalizerPreamp;
+
+    public ObservableCollection<string> EqualizerPresets { get; } = new();
 
     [RelayCommand]
     private async Task AddFolder()
@@ -118,7 +125,8 @@ public partial class SettingsViewModel : ViewModelBase
         IMusicLibraryService musicLibraryService,
         IConfigurationService configService,
         IPlaybackStateService playbackStateService,
-        IAutoStartService autoStartService)
+        IAutoStartService autoStartService,
+        IMusicPlayerService musicPlayerService)
     {
         _dialogService = dialogService;
         _scanService = scanService;
@@ -126,6 +134,7 @@ public partial class SettingsViewModel : ViewModelBase
         _configService = configService;
         _playbackStateService = playbackStateService;
         _autoStartService = autoStartService;
+        _musicPlayerService = musicPlayerService;
 
         LoadSettings();
     }
@@ -157,6 +166,17 @@ public partial class SettingsViewModel : ViewModelBase
         ResumeLastPlayback = settings.ResumeLastPlayback;
         SongCount = _musicLibraryService.Songs.Count;
         AlbumCount = _musicLibraryService.Songs.Select(s => s.Album).Distinct().Count();
+
+        // Load EQ settings
+        IsEqualizerEnabled = settings.IsEqualizerEnabled;
+        EqualizerPreamp = _musicPlayerService.EqualizerPreamp;
+
+        var presetCount = _musicPlayerService.GetEqualizerPresetCount();
+        EqualizerPresets.Clear();
+        for (int i = 0; i < presetCount; i++)
+        {
+            EqualizerPresets.Add(_musicPlayerService.GetEqualizerPresetName(i));
+        }
 
         if (settings.LastScanTime.HasValue)
         {
@@ -257,5 +277,17 @@ public partial class SettingsViewModel : ViewModelBase
     {
         _configService.CurrentSettings.ResumeLastPlayback = value;
         _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    partial void OnIsEqualizerEnabledChanged(bool value)
+    {
+        _musicPlayerService.SetEqualizerPreset(value ? 0 : -1);
+        _configService.CurrentSettings.IsEqualizerEnabled = value;
+        _ = _configService.SaveSettingsAsync().ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    partial void OnEqualizerPreampChanged(float value)
+    {
+        _musicPlayerService.SetEqualizerPreamp(value);
     }
 }

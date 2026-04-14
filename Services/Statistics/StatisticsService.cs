@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using LocalMusicPlayer.Data;
 using LocalMusicPlayer.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LocalMusicPlayer.Services;
 
@@ -13,6 +15,7 @@ public class StatisticsService : IStatisticsService
     private readonly IMusicPlayerService _musicPlayerService;
     private readonly IMusicLibraryService _musicLibraryService;
     private readonly IConfigurationService _configService;
+    private readonly AppDbContext _db;
 
     private Song? _currentSong;
     private TimeSpan _playStartTime;
@@ -20,44 +23,117 @@ public class StatisticsService : IStatisticsService
     private TimeSpan _songDuration;
     private bool _isPlaying;
 
-    private Dictionary<string, SongStatistics> _songStatistics = new();
-    private List<ListeningHistoryEntry> _listeningHistory = new();
-    private long _totalPlayTimeMs;
-    private DateTime? _firstScanDate;
-
-    private readonly string _statisticsFilePath;
+    private const string MetaKey = "global";
     private const double PlayThresholdPercentage = 0.3;
 
-    public int TotalPlayCount => _songStatistics.Values.Sum(s => s.PlayCount);
-    public TimeSpan TotalPlayTime => TimeSpan.FromMilliseconds(_totalPlayTimeMs);
-    public int UsageDays => _firstScanDate != null ? (int)(DateTime.Now - _firstScanDate.Value).TotalDays + 1 : 1;
+    public int TotalPlayCount => _db.SongStatistics.Sum(s => s.PlayCount);
+    public TimeSpan TotalPlayTime => TimeSpan.FromMilliseconds(GetMeta()?.TotalPlayTimeMs ?? 0);
+    public int UsageDays
+    {
+        get
+        {
+            var first = GetMeta()?.FirstScanDate;
+            return first != null ? (int)(DateTime.Now - first.Value).TotalDays + 1 : 1;
+        }
+    }
 
     public event EventHandler? StatisticsChanged;
 
     public StatisticsService(
         IMusicPlayerService musicPlayerService,
         IMusicLibraryService musicLibraryService,
-        IConfigurationService configService)
+        IConfigurationService configService,
+        AppDbContext db)
     {
         _musicPlayerService = musicPlayerService;
         _musicLibraryService = musicLibraryService;
         _configService = configService;
-
-        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var appFolder = Path.Combine(appDataPath, "LocalMusicPlayer");
-        Directory.CreateDirectory(appFolder);
-        _statisticsFilePath = Path.Combine(appFolder, "statistics.json");
+        _db = db;
 
         _musicPlayerService.PlaybackStateChanged += OnPlaybackStateChanged;
         _musicPlayerService.PositionChanged += OnPositionChanged;
         _musicPlayerService.PlaybackEnded += OnPlaybackEnded;
 
-        _ = LoadStatisticsAsync();
+        _ = InitializeAsync();
     }
 
     public void Initialize()
     {
-        _ = LoadStatisticsAsync();
+        _ = InitializeAsync();
+    }
+
+    private async Task InitializeAsync()
+    {
+        await MigrateFromJsonIfNeededAsync();
+        await SyncStatisticsToSongsAsync();
+    }
+
+    private async Task MigrateFromJsonIfNeededAsync()
+    {
+        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var appFolder = Path.Combine(appDataPath, "LocalMusicPlayer");
+        var statisticsFilePath = Path.Combine(appFolder, "statistics.json");
+
+        if (!File.Exists(statisticsFilePath))
+            return;
+
+        // Check if already migrated
+        if (await _db.SongStatistics.AnyAsync())
+            return;
+
+        try
+        {
+            var json = await File.ReadAllTextAsync(statisticsFilePath);
+            var data = JsonSerializer.Deserialize<StatisticsData>(json);
+            if (data == null) return;
+
+            if (data.SongStatistics != null)
+            {
+                foreach (var kvp in data.SongStatistics)
+                {
+                    _db.SongStatistics.Add(new SongStatisticsEntity
+                    {
+                        FilePath = kvp.Key,
+                        PlayCount = kvp.Value.PlayCount,
+                        LastPlayedTime = kvp.Value.LastPlayedTime,
+                        TotalPlayedDurationMs = kvp.Value.TotalPlayedDurationMs
+                    });
+                }
+            }
+
+            if (data.ListeningHistory != null)
+            {
+                foreach (var entry in data.ListeningHistory)
+                {
+                    _db.ListeningHistory.Add(new ListeningHistoryRecordEntity
+                    {
+                        FilePath = entry.FilePath,
+                        PlayedAt = entry.PlayedAt,
+                        PlayedDurationMs = entry.PlayedDurationMs,
+                        CompletionPercentage = entry.CompletionPercentage
+                    });
+                }
+            }
+
+            _db.StatisticsMeta.Add(new StatisticsMetaEntity
+            {
+                Key = MetaKey,
+                TotalPlayTimeMs = data.TotalPlayTimeMs,
+                FirstScanDate = data.FirstScanDate
+            });
+
+            await _db.SaveChangesAsync();
+        }
+        catch
+        {
+            // If migration fails, start fresh
+        }
+    }
+
+    private StatisticsMetaEntity? GetMeta()
+    {
+        return _db.StatisticsMeta.Local.FirstOrDefault(m => m.Key == MetaKey)
+            ?? _db.StatisticsMeta.FirstOrDefault(m => m.Key == MetaKey);
     }
 
     public LibraryStatistics GetLibraryStatistics()
@@ -96,12 +172,13 @@ public class StatisticsService : IStatisticsService
         {
             var filePath = _currentSong.FilePath;
 
-            if (!_songStatistics.ContainsKey(filePath))
+            var stats = _db.SongStatistics.FirstOrDefault(s => s.FilePath == filePath);
+            if (stats == null)
             {
-                _songStatistics[filePath] = new SongStatistics { FilePath = filePath };
+                stats = new SongStatisticsEntity { FilePath = filePath };
+                _db.SongStatistics.Add(stats);
             }
 
-            var stats = _songStatistics[filePath];
             stats.PlayCount++;
             stats.LastPlayedTime = DateTime.Now;
             stats.TotalPlayedDurationMs += (long)_accumulatedDuration.TotalMilliseconds;
@@ -109,9 +186,7 @@ public class StatisticsService : IStatisticsService
             _currentSong.PlayCount = stats.PlayCount;
             _currentSong.LastPlayedTime = stats.LastPlayedTime;
 
-            _totalPlayTimeMs += (long)_accumulatedDuration.TotalMilliseconds;
-
-            _listeningHistory.Add(new ListeningHistoryEntry
+            _db.ListeningHistory.Add(new ListeningHistoryRecordEntity
             {
                 FilePath = filePath,
                 PlayedAt = DateTime.Now,
@@ -119,8 +194,18 @@ public class StatisticsService : IStatisticsService
                 CompletionPercentage = playPercentage
             });
 
+            var meta = GetMeta();
+            if (meta == null)
+            {
+                meta = new StatisticsMetaEntity { Key = MetaKey };
+                _db.StatisticsMeta.Add(meta);
+            }
+            meta.TotalPlayTimeMs += (long)_accumulatedDuration.TotalMilliseconds;
+            if (meta.FirstScanDate == null && _musicLibraryService.Songs.Count > 0)
+                meta.FirstScanDate = DateTime.Now;
+
+            _db.SaveChanges();
             StatisticsChanged?.Invoke(this, EventArgs.Empty);
-            _ = SaveStatisticsAsync();
         }
 
         _isPlaying = false;
@@ -130,23 +215,23 @@ public class StatisticsService : IStatisticsService
     public IReadOnlyList<SongPlayRecord> GetTopPlayedSongs(int count)
     {
         var result = new List<SongPlayRecord>();
-        var topSongs = _songStatistics
-            .Where(s => s.Value.PlayCount > 0)
-            .OrderByDescending(s => s.Value.PlayCount)
-            .ThenByDescending(s => s.Value.LastPlayedTime)
+        var topSongs = _db.SongStatistics
+            .Where(s => s.PlayCount > 0)
+            .OrderByDescending(s => s.PlayCount)
+            .ThenByDescending(s => s.LastPlayedTime)
             .Take(count)
             .ToList();
 
         for (int i = 0; i < topSongs.Count; i++)
         {
             var s = topSongs[i];
-            var song = _musicLibraryService.Songs.FirstOrDefault(libSong => libSong.FilePath == s.Key);
+            var song = _musicLibraryService.Songs.FirstOrDefault(libSong => libSong.FilePath == s.FilePath);
             result.Add(new SongPlayRecord
             {
                 Rank = i + 1,
-                Song = song ?? new Song { Title = "Unknown", FilePath = s.Key },
-                PlayCount = s.Value.PlayCount,
-                LastPlayedTime = s.Value.LastPlayedTime
+                Song = song ?? new Song { Title = "Unknown", FilePath = s.FilePath },
+                PlayCount = s.PlayCount,
+                LastPlayedTime = s.LastPlayedTime
             });
         }
 
@@ -156,71 +241,36 @@ public class StatisticsService : IStatisticsService
     public IReadOnlyList<SongPlayRecord> GetRecentlyPlayedSongs(int count)
     {
         var result = new List<SongPlayRecord>();
-        var recentSongs = _songStatistics
-            .Where(s => s.Value.LastPlayedTime != null)
-            .OrderByDescending(s => s.Value.LastPlayedTime)
+        var recentSongs = _db.SongStatistics
+            .Where(s => s.LastPlayedTime != null)
+            .OrderByDescending(s => s.LastPlayedTime)
             .Take(count)
             .ToList();
 
         for (int i = 0; i < recentSongs.Count; i++)
         {
             var s = recentSongs[i];
-            var song = _musicLibraryService.Songs.FirstOrDefault(libSong => libSong.FilePath == s.Key);
+            var song = _musicLibraryService.Songs.FirstOrDefault(libSong => libSong.FilePath == s.FilePath);
             result.Add(new SongPlayRecord
             {
                 Rank = i + 1,
-                Song = song ?? new Song { Title = "Unknown", FilePath = s.Key },
-                PlayCount = s.Value.PlayCount,
-                LastPlayedTime = s.Value.LastPlayedTime
+                Song = song ?? new Song { Title = "Unknown", FilePath = s.FilePath },
+                PlayCount = s.PlayCount,
+                LastPlayedTime = s.LastPlayedTime
             });
         }
 
         return result;
     }
 
-    public async Task SaveStatisticsAsync()
+    public Task SaveStatisticsAsync()
     {
-        var data = new StatisticsData
-        {
-            SongStatistics = _songStatistics,
-            ListeningHistory = _listeningHistory,
-            TotalPlayTimeMs = _totalPlayTimeMs,
-            FirstScanDate = _firstScanDate
-        };
-
-        var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-        await File.WriteAllTextAsync(_statisticsFilePath, json);
+        return Task.CompletedTask;
     }
 
     public async Task LoadStatisticsAsync()
     {
-        if (File.Exists(_statisticsFilePath))
-        {
-            var json = await File.ReadAllTextAsync(_statisticsFilePath);
-            var data = JsonSerializer.Deserialize<StatisticsData>(json);
-            if (data != null)
-            {
-                _songStatistics = data.SongStatistics ?? new Dictionary<string, SongStatistics>();
-                _listeningHistory = data.ListeningHistory ?? new List<ListeningHistoryEntry>();
-                _totalPlayTimeMs = data.TotalPlayTimeMs;
-                _firstScanDate = data.FirstScanDate;
-            }
-        }
-        else
-        {
-            await _configService.LoadSettingsAsync();
-            _songStatistics = _configService.CurrentSettings.SongStatistics ?? new Dictionary<string, SongStatistics>();
-            _totalPlayTimeMs = _configService.CurrentSettings.TotalPlayTimeMs;
-            _firstScanDate = _configService.CurrentSettings.FirstScanDate;
-        }
-
-        if (_firstScanDate == null && _musicLibraryService.Songs.Count > 0)
-        {
-            _firstScanDate = DateTime.Now;
-            await SaveStatisticsAsync();
-        }
-
-        SyncStatisticsToSongs();
+        await InitializeAsync();
     }
 
     public async Task TrackPlayAsync(Song song, TimeSpan playedDuration)
@@ -234,12 +284,13 @@ public class StatisticsService : IStatisticsService
 
         var filePath = song.FilePath;
 
-        if (!_songStatistics.ContainsKey(filePath))
+        var stats = _db.SongStatistics.FirstOrDefault(s => s.FilePath == filePath);
+        if (stats == null)
         {
-            _songStatistics[filePath] = new SongStatistics { FilePath = filePath };
+            stats = new SongStatisticsEntity { FilePath = filePath };
+            _db.SongStatistics.Add(stats);
         }
 
-        var stats = _songStatistics[filePath];
         stats.PlayCount++;
         stats.LastPlayedTime = DateTime.Now;
         stats.TotalPlayedDurationMs += (long)playedDuration.TotalMilliseconds;
@@ -247,9 +298,15 @@ public class StatisticsService : IStatisticsService
         song.PlayCount = stats.PlayCount;
         song.LastPlayedTime = stats.LastPlayedTime;
 
-        _totalPlayTimeMs += (long)playedDuration.TotalMilliseconds;
+        var meta = GetMeta();
+        if (meta == null)
+        {
+            meta = new StatisticsMetaEntity { Key = MetaKey };
+            _db.StatisticsMeta.Add(meta);
+        }
+        meta.TotalPlayTimeMs += (long)playedDuration.TotalMilliseconds;
 
-        _listeningHistory.Add(new ListeningHistoryEntry
+        _db.ListeningHistory.Add(new ListeningHistoryRecordEntity
         {
             FilePath = filePath,
             PlayedAt = DateTime.Now,
@@ -257,8 +314,8 @@ public class StatisticsService : IStatisticsService
             CompletionPercentage = playPercentage
         });
 
+        await _db.SaveChangesAsync();
         StatisticsChanged?.Invoke(this, EventArgs.Empty);
-        await SaveStatisticsAsync();
     }
 
     public async Task<StatisticsReport> GetStatisticsReportAsync()
@@ -273,7 +330,7 @@ public class StatisticsService : IStatisticsService
                 TotalPlayTime = TotalPlayTime,
                 UniqueArtists = _musicLibraryService.Songs.Select(s => s.Artist).Distinct(StringComparer.OrdinalIgnoreCase).Count(),
                 UniqueAlbums = _musicLibraryService.Songs.Select(s => s.Album).Distinct(StringComparer.OrdinalIgnoreCase).Count(),
-                FirstListenDate = _firstScanDate,
+                FirstListenDate = GetMeta()?.FirstScanDate,
                 ListeningDays = UsageDays,
                 AverageDailyPlayTime = UsageDays > 0 ? TotalPlayTime.TotalMinutes / UsageDays : 0
             },
@@ -288,7 +345,7 @@ public class StatisticsService : IStatisticsService
 
     public Task<IReadOnlyList<ListeningHistoryItem>> GetListeningHistoryAsync(DateTime? startDate, DateTime? endDate)
     {
-        var query = _listeningHistory.AsEnumerable();
+        var query = _db.ListeningHistory.AsEnumerable();
 
         if (startDate.HasValue)
             query = query.Where(h => h.PlayedAt >= startDate.Value);
@@ -319,17 +376,17 @@ public class StatisticsService : IStatisticsService
     {
         var artistStats = new Dictionary<string, ArtistStatistics>(StringComparer.OrdinalIgnoreCase);
 
+        var allStats = _db.SongStatistics.ToList();
+
         foreach (var song in _musicLibraryService.Songs)
         {
-            if (!_songStatistics.TryGetValue(song.FilePath, out var stats) || stats.PlayCount == 0)
+            var stats = allStats.FirstOrDefault(s => s.FilePath == song.FilePath);
+            if (stats == null || stats.PlayCount == 0)
                 continue;
 
             if (!artistStats.TryGetValue(song.Artist, out var artistStat))
             {
-                artistStat = new ArtistStatistics
-                {
-                    ArtistName = song.Artist
-                };
+                artistStat = new ArtistStatistics { ArtistName = song.Artist };
                 artistStats[song.Artist] = artistStat;
             }
 
@@ -354,10 +411,12 @@ public class StatisticsService : IStatisticsService
     public Task<IReadOnlyList<AlbumStatistics>> GetTopAlbumsAsync(int count)
     {
         var albumStats = new Dictionary<string, AlbumStatistics>(StringComparer.OrdinalIgnoreCase);
+        var allStats = _db.SongStatistics.ToList();
 
         foreach (var song in _musicLibraryService.Songs)
         {
-            if (!_songStatistics.TryGetValue(song.FilePath, out var stats) || stats.PlayCount == 0)
+            var stats = allStats.FirstOrDefault(s => s.FilePath == song.FilePath);
+            if (stats == null || stats.PlayCount == 0)
                 continue;
 
             var albumKey = $"{song.Album}|{song.Artist}";
@@ -398,19 +457,19 @@ public class StatisticsService : IStatisticsService
     public Task<IReadOnlyList<GenreDistribution>> GetGenreDistributionAsync()
     {
         var genreStats = new Dictionary<string, (int SongCount, int PlayCount, long TotalPlayTimeMs)>();
+        var allStats = _db.SongStatistics.ToList();
 
         foreach (var song in _musicLibraryService.Songs)
         {
             var genre = string.IsNullOrEmpty(song.Genre) ? "Unknown" : song.Genre;
 
             if (!genreStats.TryGetValue(genre, out var stat))
-            {
                 stat = (0, 0, 0);
-            }
 
             stat.SongCount++;
 
-            if (_songStatistics.TryGetValue(song.FilePath, out var songStat))
+            var songStat = allStats.FirstOrDefault(s => s.FilePath == song.FilePath);
+            if (songStat != null)
             {
                 stat.PlayCount += songStat.PlayCount;
                 stat.TotalPlayTimeMs += songStat.TotalPlayedDurationMs;
@@ -436,16 +495,19 @@ public class StatisticsService : IStatisticsService
         return Task.FromResult<IReadOnlyList<GenreDistribution>>(result);
     }
 
-    private void SyncStatisticsToSongs()
+    private async Task SyncStatisticsToSongsAsync()
     {
+        var allStats = _db.SongStatistics.ToList();
         foreach (var song in _musicLibraryService.Songs)
         {
-            if (_songStatistics.TryGetValue(song.FilePath, out var stats))
+            var stats = allStats.FirstOrDefault(s => s.FilePath == song.FilePath);
+            if (stats != null)
             {
                 song.PlayCount = stats.PlayCount;
                 song.LastPlayedTime = stats.LastPlayedTime;
             }
         }
+        await Task.CompletedTask;
     }
 
     private void OnPlaybackStateChanged(object? sender, PlayState state)

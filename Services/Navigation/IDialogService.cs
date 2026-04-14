@@ -18,4 +18,5 @@ public interface IDialogService
     Task<IReadOnlyList<string>?> ShowFolderPickerAsync();
     Task ShowAddToPlaylistDialogAsync(Song song);
     Task<OnlineLyricResult?> ShowLyricSearchResultDialogAsync(Song song, OnlineLyricResult? result);
+    Task ShowSmartPlaylistEditorDialogAsync(SmartPlaylist? playlist, Action? onSaved = null);
 }

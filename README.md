@@ -8,9 +8,7 @@
 [![LibVLC](https://img.shields.io/badge/LibVLC-3.9.6-orange.svg)](https://www.videolan.org/)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
 
-一款基于 Avalonia UI 的跨平台本地音乐播放器，支持 Windows、Linux 和 macOS。111
-
-1111111111111
+一款基于 Avalonia UI 的跨平台本地音乐播放器，支持 Windows、Linux 和 macOS。
 
 ## ✨ 功能特性
 
@@ -21,42 +19,45 @@
 - 进度控制：进度条拖拽、音量调节、静音
 - 播放模式：顺序播放、随机播放、循环播放
 
-### 音乐库管理
-- 自动扫描本地音乐文件夹
-- 实时监控文件夹变化，新增/删除文件自动更新
-- 支持按歌手、专辑、文件夹、收藏分类浏览
-- 歌曲详情：标题、艺术家、专辑、时长、封面、播放次数
-
-### 歌手/专辑详情页
-- 展示封面图、名称、歌曲数量、总时长
-- 歌曲列表：序号、标题、专辑/艺术家、播放次数、时长
-- 快捷操作：播放全部、随机播放、单曲播放
+### 歌词支持
+- 自动匹配本地歌词文件
+- QQ音乐在线歌词搜索
+- 逐字高亮同步显示
 
 ### 播放列表
 - 创建、编辑、删除自定义播放列表
+- 智能播放列表（Smart Playlist）
 - 收藏歌曲功能
+- 播放历史记录
+- 列表导入导出
 - 播放队列管理，实时查看和调整播放顺序
 
-### 播放统计
-- 记录每首歌曲的播放次数
-- 记录最后播放时间
-- 统计总播放时长、歌曲数量等
-
-### 歌词支持
-- 自动匹配歌曲歌词文件
-- 实时同步歌词显示
+### 音乐库管理
+- 自动扫描本地音乐文件夹
+- 实时监控文件夹变化，新增/删除文件自动更新
+- 支持按歌手、专辑、文件夹、收藏、流派分类浏览
+- 批量标签编辑
+- 文件拖拽导入
+- 歌曲去重
 
 ### 界面功能
 - 现代化深色主题设计
 - 侧边栏导航：音乐库、分类、统计、设置
 - 底部播放控制栏：当前播放信息、播放控制、进度条、音量
 - 右侧播放队列面板
+- 迷你播放模式（Mini Player）
+- 系统托盘运行
 
 ### 快捷键支持
 - 空格键：播放/暂停
 - 左右方向键：上一曲/下一曲
 - 上下方向键：音量调节
 - Ctrl+F：搜索
+
+### 其他
+- 播放统计（次数、时长、总播放量）
+- 自动启动设置
+- 播放速度控制
 
 ## 🚀 快速开始
 
@@ -83,23 +84,30 @@ dotnet run
 - [LibVLCSharp 3.9.6](https://www.videolan.org/vlc/libvlc.html) - 多媒体播放引擎
 - [TagLibSharp 2.3.0](https://github.com/mono/taglib-sharp) - 音频元数据读取
 - [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) - MVVM 框架
+- [EF Core + SQLite](https://docs.microsoft.com/ef/core/) - 本地数据库
 
 ## 📁 项目结构
 
 ```
 LocalMusicPlayer/
-├── Models/              # 数据模型 (Song, Playlist, ArtistGroup, AlbumGroup 等)
-├── Services/             # 业务服务层 (播放器、扫描、播放列表、统计等)
-│   ├── MusicPlayerService/    # 音频播放
-│   ├── ScanService/          # 音乐库扫描
-│   ├── PlaylistService/      # 播放列表管理
-│   ├── StatisticsService/    # 播放统计
-│   └── ...
-├── ViewModels/           # MVVM 视图模型
-├── Views/                # Avalonia XAML 视图
-├── Converters/           # 数据转换器
-├── Styles/               # 样式资源 (颜色、主题、按钮样式)
-└── Assets/               # 静态资源
+├── Models/              # 数据模型
+├── Services/            # 业务服务层
+│   ├── File/            # 文件管理、监控
+│   ├── Library/         # 音乐库扫描、分类
+│   ├── Media/           # 封面、歌词
+│   ├── Navigation/      # 导航、对话框
+│   ├── OnlineLyrics/    # 在线歌词搜索
+│   ├── Playback/        # 音频播放
+│   ├── Playlist/        # 播放列表、历史
+│   ├── SmartPlaylist/   # 智能播放列表
+│   ├── Statistics/      # 播放统计
+│   └── System/          # 系统配置、托盘
+├── ViewModels/          # MVVM 视图模型
+├── Views/               # Avalonia XAML 视图
+├── Converters/          # 数据转换器
+├── Styles/              # 样式资源
+├── Data/                # EF Core 数据库
+└── Assets/             # 静态资源
 ```
 
 ## 🤝 贡献指南

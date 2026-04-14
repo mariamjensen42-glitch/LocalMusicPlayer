@@ -1,6 +1,6 @@
+using LibVLCSharp.Shared;
 using System;
 using System.Threading.Tasks;
-using LibVLCSharp.Shared;
 using LocalMusicPlayer.Models;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +19,8 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
     private bool _replayGainEnabled = true;
     private float _replayGainAdjustment = 0f;
     private readonly ILogger<MusicPlayerService>? _logger;
+    private Equalizer? _equalizer;
+    private int _equalizerPresetId = -1; // -1 = flat / off
 
     public event EventHandler? PlaybackEnded;
     public event EventHandler<PlayState>? PlaybackStateChanged;
@@ -33,6 +35,11 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
     public int Volume => _volume;
     public bool IsMuted => _isMuted;
     public float PlaybackRate => _playbackRate;
+    public bool IsEqualizerEnabled => _equalizer != null && _equalizerPresetId >= 0;
+
+    public int EqualizerBandCount => _equalizer != null ? (int)_equalizer.BandCount : 0;
+    public float EqualizerPreamp => _equalizer?.Preamp ?? 0f;
+    public int EqualizerPresetId => _equalizerPresetId;
 
     public MusicPlayerService(ILogger<MusicPlayerService>? logger = null)
     {
@@ -190,6 +197,88 @@ public class MusicPlayerService : IMusicPlayerService, IDisposable
             await Task.Delay((int)stepDuration);
         }
     }
+
+    public void SetEqualizerPreset(int presetId)
+    {
+        // Disable if negative or exceeds preset count
+        using var tmpEq = new Equalizer();
+        if (presetId < 0 || presetId >= (int)tmpEq.PresetCount)
+        {
+            _equalizerPresetId = -1;
+            _equalizer = null;
+            if (_mediaPlayer != null)
+                _mediaPlayer.SetEqualizer(null);
+            _logger?.LogDebug("[MusicPlayer] Equalizer disabled");
+            return;
+        }
+
+        _equalizerPresetId = presetId;
+        _equalizer = new Equalizer((uint)presetId);
+        if (_mediaPlayer != null)
+            _mediaPlayer.SetEqualizer(_equalizer);
+        _logger?.LogDebug("[MusicPlayer] Equalizer preset {PresetId} applied", presetId);
+    }
+
+    public void SetEqualizerBand(int band, float gain)
+    {
+        if (_equalizer == null)
+        {
+            _equalizer = new Equalizer();
+            _equalizerPresetId = 0; // Custom
+        }
+        _equalizer.SetAmp(gain, (uint)band);
+        if (_mediaPlayer != null)
+            _mediaPlayer.SetEqualizer(_equalizer);
+    }
+
+    public void SetEqualizerPreamp(float preamp)
+    {
+        if (_equalizer == null)
+            _equalizer = new Equalizer();
+        _equalizer.SetPreamp(preamp);
+        if (_mediaPlayer != null)
+            _mediaPlayer.SetEqualizer(_equalizer);
+    }
+
+    public float GetEqualizerBand(int band)
+    {
+        if (_equalizer == null)
+            return 0f;
+        return _equalizer.Amp((uint)band);
+    }
+
+    public float[] GetAllEqualizerBands()
+    {
+        if (_equalizer == null)
+            return Array.Empty<float>();
+        var bandCount = (int)_equalizer.BandCount;
+        var bands = new float[bandCount];
+        for (int i = 0; i < bandCount; i++)
+            bands[i] = _equalizer.Amp((uint)i);
+        return bands;
+    }
+
+    public static string GetPresetName(int presetId)
+    {
+        if (presetId < 0)
+            return "Flat";
+        using var tmpEq = new Equalizer();
+        if (presetId >= (int)tmpEq.PresetCount)
+            return "Flat";
+        return tmpEq.PresetName((uint)presetId) ?? "Flat";
+    }
+
+    public static int GetPresetCount()
+    {
+        using var tmp = new Equalizer();
+        return (int)tmp.PresetCount;
+    }
+
+    // Instance methods matching IMusicPlayerService
+    string IMusicPlayerService.GetEqualizerPresetName(int presetId) => GetPresetName(presetId);
+    int IMusicPlayerService.GetEqualizerPresetCount() => GetPresetCount();
+    float IMusicPlayerService.GetEqualizerBand(int band) => GetEqualizerBand(band);
+    float[] IMusicPlayerService.GetAllEqualizerBands() => GetAllEqualizerBands();
 
     private void OnEndReached(object? sender, EventArgs e)
     {
