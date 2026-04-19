@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.8.1](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.8.0...v1.8.1) (2026-04-14)
+
+
+### 🐛 修复
+
+* 修复 GradientBackgroundControl 线程安全问题 ([32ac229](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/32ac229735bf9979ce59cbe0d818c342e1057c5b))
+
+
+### 💄 代码样式
+
+* 优化导航图标使用 SVG 路径 ([32ac229](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/32ac229735bf9979ce59cbe0d818c342e1057c5b))
+
+
+### ♻️ 重构
+
+* 移除未使用的模型和服务 ([32ac229](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/32ac229735bf9979ce59cbe0d818c342e1057c5b))
+
+
+### ⚡ 性能优化
+
+* 优化 PlayerPageView 的弹出框管理 ([32ac229](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/32ac229735bf9979ce59cbe0d818c342e1057c5b))
+
+
+### 🧹 其他
+
+* 清理解决方案配置文件 ([32ac229](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/32ac229735bf9979ce59cbe0d818c342e1057c5b))
+
 ## [1.8.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.7.0...v1.8.0) (2026-04-14)
 
 
