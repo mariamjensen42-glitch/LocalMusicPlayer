@@ -385,3 +385,10 @@
 - TextPrimaryBrush / TextSecondaryBrush / TextMutedBrush：文本色
 - BorderSubtleBrush：边框色
 - AccentPurple / AccentDim：强调色
+
+## 二十、UI 组件库
+
+### 1. FluentAvaloniaUI
+- 添加 FluentAvaloniaUI 包引用（版本 2.4.0）
+- 在 App.axaml 中配置 FluentAvaloniaUI 控件样式
+- 为应用程序提供现代化的 Fluent 设计风格控件
