@@ -6,3 +6,4 @@ riderModule.iml
 installer-output/
 msix-package/
 publish/
+*.DotSettings.user
