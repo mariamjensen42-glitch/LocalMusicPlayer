@@ -118,8 +118,8 @@
     <x:String x:Key="StringRecentPlays">最近播放</x:String>
     <x:String x:Key="StringPlaylists">播放列表</x:String>
     <x:String x:Key="StringSearchSongs">搜索歌曲</x:String>
-    <x:String x:Key="StringMusicLibrary">Music Library</x:String>
-    <x:String x:Key="StringFavorites">Favorites</x:String>
+    <x:String x:Key="StringMusicLibrary">音乐库</x:String>
+    <x:String x:Key="StringFavorites">收藏</x:String>
     <x:String x:Key="StringStatisticsReport">Statistics Report</x:String>
     <x:String x:Key="StringPlayHistory">播放历史</x:String>
     <x:String x:Key="StringGenres">Genres</x:String>

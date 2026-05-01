@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using FluentAvalonia.UI.Controls;
 using LocalMusicPlayer.ViewModels;
 using LocalMusicPlayer.Services;
 
@@ -32,14 +33,38 @@ public partial class MainWindow : Window
 
         InitializeComponent();
 
-        TitleBar.PointerPressed += OnTitleBarPointerPressed;
+        TitleBarDragArea.PointerPressed += OnTitleBarPointerPressed;
         PropertyChanged += OnPropertyChanged;
         UpdateMaximizeRestoreIcons();
         DataContextChanged += OnDataContextChanged;
         KeyDown += OnKeyDown;
 
+        NavView.ItemInvoked += OnNavigationItemInvoked;
+
         AddHandler(DragDrop.DragOverEvent, OnDragOver);
         AddHandler(DragDrop.DropEvent, OnDrop);
+    }
+
+    private void OnNavigationItemInvoked(object? sender, NavigationViewItemInvokedEventArgs e)
+    {
+        if (_mainWindowViewModel == null) return;
+
+        var tag = e.InvokedItemContainer?.Tag?.ToString();
+        switch (tag)
+        {
+            case "MusicLibrary":
+                _mainWindowViewModel.NavigateToMusicLibraryCommand.Execute(null);
+                break;
+            case "Favorites":
+                _mainWindowViewModel.NavigateToFavoritesCommand.Execute(null);
+                break;
+            case "Playlist":
+                _mainWindowViewModel.NavigateToPlaylistCommand.Execute(null);
+                break;
+            case "Settings":
+                _mainWindowViewModel.NavigateToSettingsCommand.Execute(null);
+                break;
+        }
     }
 
     private void OnDragOver(object? sender, DragEventArgs e)
@@ -145,16 +170,6 @@ public partial class MainWindow : Window
         }
     }
 
-    private void UpdateTitleBarChrome(bool isPlayerPage)
-    {
-        ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
-        ExtendClientAreaToDecorationsHint = true;
-
-        TitleBar.Background = isPlayerPage
-            ? FindResource<SolidColorBrush>("BgSidebarBrush")
-            : FindResource<SolidColorBrush>("BgPrimaryBrush");
-    }
-
     private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
         if (e.Property == WindowStateProperty)
@@ -192,40 +207,5 @@ public partial class MainWindow : Window
     private void CloseButton_Click(object? sender, RoutedEventArgs e)
     {
         Close();
-    }
-
-    public void PlayPause()
-    {
-        var vm = DataContext as ViewModels.MainWindowViewModel;
-        if (vm != null)
-        {
-            if (vm.IsPlaying)
-                vm.PauseCommand.Execute(null);
-            else
-                vm.PlayCommand.Execute(null);
-        }
-    }
-
-    public void NextTrack()
-    {
-        var vm = DataContext as ViewModels.MainWindowViewModel;
-        if (vm != null)
-        {
-            vm.NextCommand.Execute(null);
-        }
-    }
-
-    public void PreviousTrack()
-    {
-        var vm = DataContext as ViewModels.MainWindowViewModel;
-        if (vm != null)
-        {
-            vm.PreviousCommand.Execute(null);
-        }
-    }
-
-    private T? FindResource<T>(string key) where T : class
-    {
-        return (T?)this.FindResource(key);
     }
 }

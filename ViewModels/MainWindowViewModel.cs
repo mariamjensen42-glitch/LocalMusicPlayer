@@ -222,6 +222,7 @@ public partial class MainWindowViewModel : ViewModelBase, IPlaybackProgress
     [RelayCommand]
     private void NavigateToPlaylist()
     {
+        CurrentNavPage = NavigationPage.Playlist;
         PlaylistListViewModel = _viewModelFactory.CreatePlaylistListViewModel();
         PlaylistListViewModel.OnPlaylistSelected = NavigateToPlaylistDetail;
         CurrentPage = PlaylistListViewModel;

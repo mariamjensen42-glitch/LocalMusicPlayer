@@ -3,14 +3,14 @@
              x:Class="LocalMusicPlayer.App"
              xmlns:local="using:LocalMusicPlayer.ViewModels"
              xmlns:converters="using:LocalMusicPlayer.Converters"
-             RequestedThemeVariant="Default">
+             xmlns:sty="using:FluentAvalonia.Styling"
+             RequestedThemeVariant="Dark">
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
 
     <Application.Styles>
-        <FluentTheme />
-        <StyleInclude Source="avares://FluentAvaloniaUI/Styles/Controls.xaml" />
+        <sty:FluentAvaloniaTheme />
     </Application.Styles>
 
     <Application.Resources>
@@ -33,3 +33,4 @@
         </ResourceDictionary>
     </Application.Resources>
 </Application>
+

@@ -473,7 +473,8 @@
                                 <Thumb Width="8" Height="8" Focusable="False">
                                     <Thumb.Template>
                                         <ControlTemplate>
-                                            <Border Width="8" Height="8" Background="{StaticResource TextSecondaryBrush}"
+                                            <Border Width="8" Height="8"
+                                                    Background="{StaticResource TextSecondaryBrush}"
                                                     CornerRadius="4" />
                                         </ControlTemplate>
                                     </Thumb.Template>
@@ -1056,3 +1057,4 @@
         </Style>
     </ControlTheme>
 </ResourceDictionary>
+

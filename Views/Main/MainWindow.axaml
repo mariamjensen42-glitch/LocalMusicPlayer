@@ -7,9 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:LocalMusicPlayer.Models"
-    xmlns:services="using:LocalMusicPlayer.Services"
     xmlns:vm="using:LocalMusicPlayer.ViewModels"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
     Title="{DynamicResource StringAppTitle}"
     MinWidth="800"
     MinHeight="600"
@@ -32,15 +31,14 @@
     <Window.Resources>
         <converters:BoolToWidthConverter x:Key="BoolToWidthConverter" />
         <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
-        <converters:NavigationPageToBoolConverter x:Key="NavigationPageToBoolConverter" />
-        <converters:NavPageVisibilityConverter x:Key="NavPageVisibilityConverter" />
         <converters:StringToBrushConverter x:Key="StringToBrushConverter" />
         <converters:BoolToLyricColorConverter x:Key="BoolToLyricColorConverter" />
-        <converters:BoolToLyricFontWeightConverter x:Key="BoolToFontWeightConverter" />
+        <converters:BoolToLyricFontWeightConverter x:Key="BoolToLyricFontWeightConverter" />
         <converters:LyricTranslationFontSizeConverter x:Key="LyricTranslationFontSizeConverter" />
     </Window.Resources>
 
     <Grid RowDefinitions="*,Auto">
+
         <Border
             Grid.RowSpan="2"
             Background="{StaticResource BgPrimaryBrush}"
@@ -49,293 +47,128 @@
             <ContentControl Content="{Binding PlayerPageViewModel}" />
         </Border>
 
-        <Grid
-            Grid.Row="0"
-            ColumnDefinitions="Auto,*">
+        <Panel Grid.Row="0">
+
+            <ui:NavigationView
+                x:Name="NavView"
+                x:CompileBindings="False"
+                x:DataType="vm:MainWindowViewModel"
+                CompactPaneLength="48"
+                IsBackButtonVisible="False"
+                IsPaneToggleButtonVisible="True"
+                IsSettingsVisible="False"
+                OpenPaneLength="220"
+                PaneDisplayMode="Left">
+
+                <ui:NavigationView.AutoCompleteBox>
+                    <AutoCompleteBox
+                        x:Name="SearchBox"
+                        MinimumPrefixLength="1"
+                        Text="{Binding SearchText, Mode=TwoWay}"
+                        Watermark="{DynamicResource StringSearchSongs}" />
+                </ui:NavigationView.AutoCompleteBox>
+
+                <ui:NavigationView.MenuItems>
+                    <ui:NavigationViewItem Content="{DynamicResource StringAllSongs}" Tag="MusicLibrary">
+                        <ui:NavigationViewItem.IconSource>
+                            <ui:PathIconSource Data="{StaticResource IconMusic}" />
+                        </ui:NavigationViewItem.IconSource>
+                    </ui:NavigationViewItem>
+                    <ui:NavigationViewItem Content="{DynamicResource StringFavorites}" Tag="Favorites">
+                        <ui:NavigationViewItem.IconSource>
+                            <ui:PathIconSource Data="{StaticResource IconHeart}" />
+                        </ui:NavigationViewItem.IconSource>
+                    </ui:NavigationViewItem>
+                    <ui:NavigationViewItem Content="{DynamicResource StringPlaylists}" Tag="Playlist">
+                        <ui:NavigationViewItem.IconSource>
+                            <ui:PathIconSource Data="{StaticResource IconPlaylist}" />
+                        </ui:NavigationViewItem.IconSource>
+                    </ui:NavigationViewItem>
+                    <ui:NavigationViewItem Content="{DynamicResource StringSettings}" Tag="Settings">
+                        <ui:NavigationViewItem.IconSource>
+                            <ui:PathIconSource Data="{StaticResource IconSettings}" />
+                        </ui:NavigationViewItem.IconSource>
+                    </ui:NavigationViewItem>
+                </ui:NavigationView.MenuItems>
+
+                <ContentControl Content="{Binding CurrentPage}" />
+
+            </ui:NavigationView>
 
             <Border
-                x:Name="Sidebar"
-                Grid.Column="0"
-                Width="48"
-                Background="{StaticResource BgSidebarBrush}">
-                <StackPanel
-                    Margin="4,0,4,24"
-                    VerticalAlignment="Top"
-                    Spacing="2">
+                x:Name="TitleBarDragArea"
+                Height="48"
+                Margin="220,0,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top"
+                Background="Transparent" />
 
-                    <ToggleButton
-                        Width="40"
-                        Height="40"
-                        Padding="0"
+            <StackPanel
+                Margin="0,0,8,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Orientation="Horizontal"
+                ZIndex="300">
+
+                <Button
+                    x:Name="MinimizeButton"
+                    Width="40"
+                    Height="40"
+                    Click="MinimizeButton_Click"
+                    Theme="{StaticResource TitleBarButtonTheme}">
+                    <TextBlock
                         HorizontalAlignment="Center"
-                        Command="{Binding NavigateToMusicLibraryCommand}"
-                        Theme="{StaticResource SidebarNavItemTheme}"
-                        ToolTip.Tip="{DynamicResource StringAllSongs}">
-                        <ToggleButton.IsChecked>
-                            <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                <Binding Path="CurrentNavPage" />
-                                <Binding Source="{x:Static vm:NavigationPage.MusicLibrary}" />
-                            </MultiBinding>
-                        </ToggleButton.IsChecked>
-                        <PathIcon
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe Fluent Icons"
+                        FontSize="14"
+                        Foreground="{StaticResource TextSecondaryBrush}"
+                        Text="&#xE921;" />
+                </Button>
+
+                <Button
+                    x:Name="MaximizeButton"
+                    Width="40"
+                    Height="40"
+                    Click="MaximizeButton_Click"
+                    Theme="{StaticResource TitleBarButtonTheme}">
+                    <Panel>
+                        <TextBlock
+                            x:Name="MaximizeIcon"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Data="{StaticResource IconMusic}"
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="14"
                             Foreground="{StaticResource TextSecondaryBrush}"
-                            Width="20"
-                            Height="20" />
-                    </ToggleButton>
-
-                    <ToggleButton
-                        Width="40"
-                        Height="40"
-                        Padding="0"
-                        HorizontalAlignment="Center"
-                        Command="{Binding NavigateToFavoritesCommand}"
-                        Theme="{StaticResource SidebarNavItemTheme}"
-                        ToolTip.Tip="{DynamicResource StringFavorites}">
-                        <ToggleButton.IsChecked>
-                            <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                <Binding Path="CurrentNavPage" />
-                                <Binding Source="{x:Static vm:NavigationPage.Favorites}" />
-                            </MultiBinding>
-                        </ToggleButton.IsChecked>
-                        <PathIcon
+                            Text="&#xE922;" />
+                        <TextBlock
+                            x:Name="RestoreIcon"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Data="{StaticResource IconHeart}"
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="14"
                             Foreground="{StaticResource TextSecondaryBrush}"
-                            Width="20"
-                            Height="20" />
-                    </ToggleButton>
+                            IsVisible="False"
+                            Text="&#xE923;" />
+                    </Panel>
+                </Button>
 
-                    <ToggleButton
-                        Width="40"
-                        Height="40"
-                        Padding="0"
+                <Button
+                    x:Name="CloseButton"
+                    Width="40"
+                    Height="40"
+                    Click="CloseButton_Click"
+                    Theme="{StaticResource TitleBarCloseButtonTheme}">
+                    <TextBlock
                         HorizontalAlignment="Center"
-                        Command="{Binding NavigateToPlaylistCommand}"
-                        Theme="{StaticResource SidebarNavItemTheme}"
-                        ToolTip.Tip="{DynamicResource StringPlaylists}">
-                        <ToggleButton.IsChecked>
-                            <MultiBinding Converter="{x:Static converters:MultiEnumToBoolConverter.Instance}">
-                                <Binding Path="CurrentNavPage" />
-                                <Binding Source="{x:Static vm:NavigationPage.Playlist}" />
-                            </MultiBinding>
-                        </ToggleButton.IsChecked>
-                        <PathIcon
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Data="{StaticResource IconPlaylist}"
-                            Foreground="{StaticResource TextSecondaryBrush}"
-                            Width="20"
-                            Height="20" />
-                    </ToggleButton>
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe Fluent Icons"
+                        FontSize="14"
+                        Foreground="{StaticResource TextSecondaryBrush}"
+                        Text="&#xE8BB;" />
+                </Button>
+            </StackPanel>
 
-                    <Button
-                        Width="40"
-                        Height="40"
-                        Margin="0,24,0,0"
-                        Padding="0"
-                        HorizontalAlignment="Center"
-                        Command="{Binding NavigateToSettingsCommand}"
-                        Theme="{StaticResource CircularHoverButtonTheme}"
-                        ToolTip.Tip="{DynamicResource StringSettings}">
-                        <PathIcon
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Data="{StaticResource IconSettings}"
-                            Foreground="{StaticResource TextMutedBrush}"
-                            Width="20"
-                            Height="20" />
-                    </Button>
-                </StackPanel>
-            </Border>
-
-            <Grid Grid.Column="1" RowDefinitions="Auto,*">
-
-                <Border
-                    x:Name="TitleBar"
-                    Grid.Row="0"
-                    Height="48"
-                    Background="{StaticResource BgPrimaryBrush}">
-                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto">
-
-                        <Button
-                            Grid.Column="0"
-                            Margin="16,0,0,0"
-                            Command="{Binding NavigateToMusicLibraryCommand}"
-                            IsVisible="{Binding CurrentNavPage, Converter={StaticResource NavPageVisibilityConverter}, ConverterParameter={x:Static vm:NavigationPage.MusicLibrary}, FallbackValue=Collapsed}"
-                            Theme="{StaticResource ToolbarButtonTheme}">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="14"
-                                Foreground="{StaticResource TextMutedBrush}"
-                                Text="&#xE76B;" />
-                        </Button>
-
-                        <Border
-                            Grid.Column="1"
-                            Width="400"
-                            Height="36"
-                            Margin="8,0,0,0"
-                            HorizontalAlignment="Center"
-                            Background="{StaticResource BgCardBrush}"
-                            CornerRadius="8">
-                            <Grid ColumnDefinitions="Auto,*">
-                                <TextBlock
-                                    Grid.Column="0"
-                                    Margin="12,0,8,0"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Foreground="{StaticResource TextMutedBrush}"
-                                    Text="&#xE71E;" />
-                                <TextBox
-                                    x:Name="SearchTextBox"
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    CaretBrush="{StaticResource TextPrimaryBrush}"
-                                    Foreground="{StaticResource TextPrimaryBrush}"
-                                    Text="{Binding SearchText, Mode=TwoWay}"
-                                    Watermark="{DynamicResource StringSearchSongs}" />
-                            </Grid>
-                        </Border>
-
-                        <Button
-                            Grid.Column="2"
-                            Margin="8,0,0,0"
-                            Command="{Binding PlayAllCommand}"
-                            Theme="{StaticResource ToolbarButtonTheme}"
-                            ToolTip.Tip="{DynamicResource StringPlayAll}">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="14"
-                                Foreground="{StaticResource TextMutedBrush}"
-                                Text="&#xE768;" />
-                        </Button>
-
-                        <Button
-                            Grid.Column="3"
-                            Command="{Binding ShufflePlayAllCommand}"
-                            Theme="{StaticResource ToolbarButtonTheme}"
-                            ToolTip.Tip="{DynamicResource StringShuffle}">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="14"
-                                Foreground="{StaticResource TextMutedBrush}"
-                                Text="&#xE81B;" />
-                        </Button>
-
-                        <Border Grid.Column="4" Width="4" />
-
-                        <Button
-                            Grid.Column="5"
-                            Margin="0,0,4,0"
-                            Command="{Binding ToggleViewCommand}"
-                            Theme="{StaticResource ToolbarButtonTheme}"
-                            ToolTip.Tip="{DynamicResource StringGridView}">
-                            <Panel>
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Foreground="{StaticResource TextMutedBrush}"
-                                    IsVisible="{Binding !IsGridView}"
-                                    Text="&#xE80A;" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Foreground="{StaticResource TextMutedBrush}"
-                                    IsVisible="{Binding IsGridView}"
-                                    Text="&#xE8FD;" />
-                            </Panel>
-                        </Button>
-
-                        <StackPanel
-                            Grid.Column="6"
-                            Margin="0,0,8,0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
-
-                            <Button
-                                x:Name="MinimizeButton"
-                                Width="40"
-                                Height="40"
-                                Click="MinimizeButton_Click"
-                                Theme="{StaticResource TitleBarButtonTheme}">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Foreground="{StaticResource TextSecondaryBrush}"
-                                    Text="&#xE921;" />
-                            </Button>
-
-                            <Button
-                                x:Name="MaximizeButton"
-                                Width="40"
-                                Height="40"
-                                Click="MaximizeButton_Click"
-                                Theme="{StaticResource TitleBarButtonTheme}">
-                                <Panel>
-                                    <TextBlock
-                                        x:Name="MaximizeIcon"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontFamily="Segoe Fluent Icons"
-                                        FontSize="14"
-                                        Foreground="{StaticResource TextSecondaryBrush}"
-                                        Text="&#xE922;" />
-                                    <TextBlock
-                                        x:Name="RestoreIcon"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontFamily="Segoe Fluent Icons"
-                                        FontSize="14"
-                                        Foreground="{StaticResource TextSecondaryBrush}"
-                                        IsVisible="False"
-                                        Text="&#xE923;" />
-                                </Panel>
-                            </Button>
-
-                            <Button
-                                x:Name="CloseButton"
-                                Width="40"
-                                Height="40"
-                                Click="CloseButton_Click"
-                                Theme="{StaticResource TitleBarCloseButtonTheme}">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Foreground="{StaticResource TextSecondaryBrush}"
-                                    Text="&#xE8BB;" />
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
-                <Grid Grid.Row="1">
-                    <ContentControl Content="{Binding CurrentPage}" />
-                </Grid>
-            </Grid>
-        </Grid>
+        </Panel>
 
         <Border
             Grid.RowSpan="2"
@@ -387,7 +220,9 @@
                         BorderThickness="1"
                         ClipToBounds="True"
                         CornerRadius="6">
-                        <Image Source="{Binding CurrentSong.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}" Stretch="UniformToFill" />
+                        <Image
+                            Source="{Binding CurrentSong.AlbumArtPath, Converter={StaticResource AlbumArtConverter}}"
+                            Stretch="UniformToFill" />
                     </Border>
 
                     <StackPanel VerticalAlignment="Center" Spacing="2">
@@ -474,7 +309,8 @@
                                 Text="&#xE893;" />
                         </Button>
 
-                        <Button Command="{Binding ToggleQueuePanelCommand}" Theme="{StaticResource CircularHoverButtonTheme}">
+                        <Button Command="{Binding ToggleQueuePanelCommand}"
+                                Theme="{StaticResource CircularHoverButtonTheme}">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -483,7 +319,6 @@
                                 Foreground="{StaticResource TextPrimaryBrush}"
                                 Text="&#xE8F1;" />
                         </Button>
-
 
                     </StackPanel>
 
@@ -567,3 +402,4 @@
     </Grid>
 
 </Window>
+
