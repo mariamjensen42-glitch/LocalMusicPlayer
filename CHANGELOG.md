@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.9.0](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.8.1...v1.9.0) (2026-05-01)
+
+
+### ✨ 新功能
+
+* integrate FluentAvaloniaUI for modern UI components ([b9f2c32](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/b9f2c325142fe2bba18e10301c3ed9bbf9dd004b))
+* **UI:** 重构主窗口导航界面并优化样式 ([73c8235](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/73c8235175fac60af392f3ab619fc1fc2f4cf63e))
+* 使用 FluentAvaloniaUI 组件 ([f0dd0d8](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/f0dd0d81fef4cf6a99bd685524e14c10d124d4d0))
+
+
+### 🧹 其他
+
+* 清理无用文件和图片资源 ([f3cbf3b](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/commit/f3cbf3b9ccac98d3af434bd494a57cc4409ae4b9))
+
 ## [1.8.1](https://github.com/mariamjensen42-glitch/LocalMusicPlayer/compare/v1.8.0...v1.8.1) (2026-04-14)
 
 
